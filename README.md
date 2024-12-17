@@ -50,10 +50,7 @@ La partie backend de comprend:
 - chaque microservice métier utilse sa propre base de données MySql pour la persistance les data
 
 - **1 api microservice transverse**: 
-    - ```exalt-hexagonal-archi-kafka-keycloak-gateway-service-proxy```  
-    - la ***exalt-hexagonal-archi-kafka-keycloak-gateway-service-proxy*** route toutes les requêtes vers le backend.
-    - une forme de ***résilience*** est implémentée dans la ***gateway-service-proxy*** lorsque le backend demandé n'est pas disponible.
-
+    - ```exalt-hexagonal-archi-kafka-keycloak-backend-gateway-oauth2-client```  to oute users' requests to backend microservices
 - **infrastructure kafka**: pour la persistance et la distribution des événements kafka
     - un zookeeper-server 
     - 2 kafka-servers
