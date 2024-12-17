@@ -25,10 +25,11 @@ Refering the flow below
 -  and routes authenticated client requêtes (postman) to Backend resources servers. 
 ![flows1](diagrams/exalt-bank-account-app-flows-1.gif)
 
-After implementing the frontend application (Angular App), refering the flow below: 
+After connecting the **Frontend App** (Angular App) to the **Backend Microservices**, refering the flow below: 
 - all the configurations are moved on frontend side and removed on Backend-Gateway-Client side
 - The Backend-Gateway-Client becomes a simple gateway to route any request without any check
-- Frontend App is configured as trusted is KeyCloak
+    - it is no longer a TokenRelay
+- Frontend App is configured as trusted is KeyCloak, refer to flow below:
 ![flows2](diagrams/exalt-bank-account-app-flows-2.gif)
 
 # Partie Backend
