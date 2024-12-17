@@ -1,0 +1,37 @@
+FROM maven:3.9.8-eclipse-temurin-21-alpine AS builder
+ARG BANK_ACCOUNT_API_APP_NAME
+ARG BANK_ACCOUNT_API_SERVER_PORT
+ARG DATABASE_HOSTNAME
+ARG DATABASE_HOST_PORT
+ARG BANK_ACCOUNT_API_DB
+ARG DATABASE_ROOT_USER
+ARG DATABASE_ROOT_PWD
+ARG SERVICE_REGISTRY_APPLICATION_NAME
+ARG SERVICE_REGISTRY_SERVER_PORT
+
+ENV BANK_ACCOUNT_API_APP_NAME=${BANK_ACCOUNT_API_APP_NAME}
+ENV BANK_ACCOUNT_API_SERVER_PORT=${BANK_ACCOUNT_API_SERVER_PORT}
+ENV DATABASE_HOSTNAME=${DATABASE_HOSTNAME}
+ENV DATABASE_HOST_PORT=${DATABASE_HOST_PORT}
+ENV BANK_ACCOUNT_API_DB=${BANK_ACCOUNT_API_DB}
+ENV DATABASE_ROOT_USER=${DATABASE_ROOT_USER}
+ENV DATABASE_ROOT_PWD=${DATABASE_ROOT_PWD}
+ENV SERVICE_REGISTRY_APPLICATION_NAME=${SERVICE_REGISTRY_APPLICATION_NAME}
+ENV SERVICE_REGISTRY_SERVER_PORT=${SERVICE_REGISTRY_SERVER_PORT}
+
+WORKDIR /build/
+COPY pom.xml /build/
+COPY src /build/src
+RUN mvn package -DskipTest
+WORKDIR /build/target/
+RUN java -Djarmode=layertools -jar exalt-hexagonal-archi-kafka-keycloak-bs-ms-bank-account-api.jar extract
+
+FROM maven:3.9.8-eclipse-temurin-21-alpine AS final
+COPY --from=builder /build/target/dependencies/ ./
+COPY --from=builder /build/target/spring-boot-loader/ ./
+COPY --from=builder /build/target/snapshot-dependencies/ ./
+COPY --from=builder /build/target/application/ ./
+
+EXPOSE ${BANK_ACCOUNT_API_SERVER_PORT}
+
+ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]

@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: ${SERVICE_REGISTRY_APPLICATION_NAME}
+  main:
+    banner-mode: off
+
+server:
+  port: ${SERVICE_REGISTRY_SERVER_PORT}
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false

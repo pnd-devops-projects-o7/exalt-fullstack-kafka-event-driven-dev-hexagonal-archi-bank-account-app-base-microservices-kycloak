@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: ${NOTIFICATION_APPLICATION_NAME}
+
+  main:
+    banner-mode: off
+  # kafka consumer
+  kafka:
+    consumer:
+      bootstrap-servers: http://kafka-server1:19092,http://kafka-server2:29092
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      properties:
+        specific:
+          avro:
+            reader: true
+    properties:
+      schema:
+        registry:
+          url: http://schema-registry-service:8081
+
+  # send mail for notification
+  mail:
+    host: ${SMTP_MAIL_HOSTNAME}
+    port: ${SMTP_MAIL_HOST_PORT}
+    username: ${SMP_MAIL_USERNAME}
+    password: ${SMTP_MAIL_PASSWORD}
+
+server:
+  port: ${NOTIFICATION_SERVER_PORT}
+
+eureka:
+  client:
+    service-url:
+      defaultZone:  http://${SERVICE_REGISTRY_APPLICATION_NAME}:${SERVICE_REGISTRY_SERVER_PORT}/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-components: always
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true

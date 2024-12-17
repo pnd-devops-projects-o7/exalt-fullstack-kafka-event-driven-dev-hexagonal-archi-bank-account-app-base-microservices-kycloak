@@ -1,0 +1,100 @@
+{
+  "namespace": "com.exalt.exalthexagonalarchikafkakeycloakcustomerapi.domain.avro_beans",
+  "name": "CustomerEvent",
+  "type": "record",
+  "fields": [
+    {
+      "name": "message",
+      "type": "string"
+    },
+    {
+      "name": "status",
+      "type": "string"
+    },
+    {
+      "name": "customer",
+      "type": {
+        "name": "Customer",
+        "type": "record",
+        "fields": [
+          {
+            "name": "customerId",
+            "type": {
+              "type": "string",
+              "logicalType": "uuid",
+              "size": 16
+            }
+          },
+          {
+            "name": "firstname",
+            "type": "string"
+          },
+          {
+            "name": "lastname",
+            "type": "string"
+          },
+          {
+            "name": "state",
+            "type": {
+              "type": "enum",
+              "name": "State",
+              "symbols": ["ACTIVE","ARCHIVE"]
+            }
+          },
+          {
+            "name": "email",
+            "type": "string"
+          },
+          {
+            "name": "createdAt",
+            "type": {
+              "type": "long",
+              "logicalType": "timestamp-millis"
+            }
+          },
+          {
+            "name": "address",
+            "type": {
+              "name": "Address",
+              "type": "record",
+              "fields": [
+                {
+                  "name": "addressId",
+                  "type": {
+                    "type": "string",
+                    "logicalType": "uuid",
+                    "size": 16
+                  }
+                },
+                {
+                  "name": "streetNum",
+                  "type": "int"
+                },
+                {
+                  "name": "streetName",
+                  "type": "string"
+                },
+                {
+                  "name": "postalCode",
+                  "type": "int"
+                },
+                {
+                  "name": "city",
+                  "type": "string"
+                },
+                {
+                  "name": "country",
+                  "type": "string"
+                },
+                {
+                  "name": "birthCountry",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

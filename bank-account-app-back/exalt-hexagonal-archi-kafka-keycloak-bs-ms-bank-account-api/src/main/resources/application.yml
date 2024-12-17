@@ -1,0 +1,47 @@
+
+spring:
+  application:
+    name: ${BANK_ACCOUNT_API_APP_NAME}
+
+  main:
+    banner-mode: off
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DATABASE_HOSTNAME}:${DATABASE_HOST_PORT}/${BANK_ACCOUNT_API_DB}
+    username: ${DATABASE_ROOT_USER}
+    password: ${DATABASE_ROOT_PWD}
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+  flyway:
+    baseline-on-migrate: true
+    validate-on-migrate: true
+    enabled: true
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+
+server:
+  port: ${BANK_ACCOUNT_API_SERVER_PORT}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-components: always
+      probes:
+        enabled: true # enable /actuator/health/liveness and /actuator/health/readiness for K8s
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${SERVICE_REGISTRY_APPLICATION_NAME}:${SERVICE_REGISTRY_SERVER_PORT}/eureka/
