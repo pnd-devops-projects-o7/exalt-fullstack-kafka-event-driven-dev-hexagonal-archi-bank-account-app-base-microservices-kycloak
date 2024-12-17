@@ -1,29 +1,35 @@
-# Bank-Account-App [Micro services | Spring boot 3 | Spring cloud | Kafka]
+# Bank-Account-App [Micro services | Spring boot 3 | Spring cloud | Kafka |  KeyCloak]
 - **Bank-Account-App** est application fullstack (Java 21 /Angular 16) orientée microservices composée des microservices **métiers** et des  microservices **transverses**.
-    - la communication entre les microservices se fait de manière **asynchrone** via une **infrastructure Kafka**
+    - la communication entre les microservices se fait de manière **synchrone** avec **Spring Web Client**
 - Chaque microservice métier est implémenté dans une **architecture hexagonale**, des tests unitaires sont écrits pour garantir la qualité du code source.
     - **SonarQube** est utilisé pour checker les vulnérabilités, le code smell, la couverture de code et la sécurité
 - Une **infrastructure Kafka** est mise en place:
     - pour persister et distribuer les événements liés à la modification des données dans la BDD.
-    - assurer une communication asynchrone entre les microservices
-- Un **KeyCloak authentication provider** est utilisé et la sécurité des ressources des backends (microservices) est implémentée.
+- Un **KeyCloak Identity Provider (IDP)** est utilisé pour authifier et autoriser l'accès au resources server (Backend microservice)
     - utilisation d'un **JWT** géré par **KeyCloak**
 - Une **application frontend** en Angular 16 pour servir de ui aux utilisateurs.
 - mise en place d'un workflow avec Jenkins pour automatiser les jobs: ***build***, ***test***, ***docker build***, ***docker push***.
 
 ## Bank-Account-App architecture
 L'architecture globale de l'application **Bank-Account-App**
-![application-architecture](diagrams/Peek%202024-12-13%2013-41.gif)
+![application-architecture](diagrams/exalt-bank-account-app-archi.gif)
 
 ## Bank-Account-App conceptual model
 Modèle global conceptuel de l'application **Bank-Account-App**
 ![conceptual-model](diagrams/exalt-account-conception.jpg)
 
 ## Authentication & authorization flows to backend resources
-![resources-authentication](diagrams/authentication-authorization-flow.png)
-- for client, we use ***postman*** and an ***Angular application***
-- for authentication & authorization server we use ***KeyCloak***
-- backend resources is a ***Bank-Account-App*** base microservices
+Before connecting the frontend application (Angular App), a **Backend-Gateway-OAuth2-Client** is configured as **trusted** in KeyCloak.  
+Refering the flow below
+- Backend-Gateway-Client serves as **TokenRelay** between **KeyCloak** IDP and **Backend resources servers**
+-  and routes authenticated client requêtes (postman) to Backend resources servers. 
+![flows1](diagrams/exalt-bank-account-app-flows-1.gif)
+
+After implementing the frontend application (Angular App), refering the flow below: 
+- all the configurations are moved on frontend side and removed on Backend-Gateway-Client side
+- The Backend-Gateway-Client becomes a simple gateway to route any request without any check
+- Frontend App is configured as trusted is KeyCloak
+![flows2](diagrams/exalt-bank-account-app-flows-2.gif)
 
 # Partie Backend
 La partie backend de comprend:
