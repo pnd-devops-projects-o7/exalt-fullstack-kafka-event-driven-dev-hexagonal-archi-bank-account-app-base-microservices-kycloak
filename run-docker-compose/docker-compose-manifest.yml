@@ -1,29 +1,5 @@
 services:
-  #infrastructure
-  bank-account-app-db-server:
-    container_name: ${DATABASE_HOSTNAME}
-    image: mysql:8.4.1
-    ports:
-      - ${DATABASE_HOST_PORT}:${DATABASE_HOST_PORT}
-    volumes:
-      - bank-account-app-volume:/var/lib/mysql
-      - ./bs-ms-dbs:/docker-entrypoint-initdb.d
-    environment:
-      MYSQL_ROOT_PASSWORD: ${DATABASE_ROOT_PWD}
-      # The user,password that Keycloak is going to create and use
-      MYSQL_DATABASE: ${KEYCLOAK_DB}
-      MYSQL_USER: ${KEYCLOAK_DATABASE_USER}
-      MYSQL_PASSWORD: ${KEYCLOAK_DATABASE_PWD}
-    networks:
-      - bank-account-app-net
-    healthcheck:
-      test: [ "CMD", "mysqladmin" ,"ping", "-h", "${SERVER_ADDRESS}", "-u${DATABASE_ROOT_USER}", "-p${DATABASE_ROOT_PWD}" ]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-      start_period: 20s
-    restart: no
-
+#kaka infrastructure: zookeeper, kafka-server-1&2, schema registry-service & kafka-ui
   zookeeper-server:
     image: zookeeper:3.5.9
     container_name: zookeeper-server
@@ -104,6 +80,8 @@ services:
     environment:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry-service
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka-server-1:19092,kafka-server-2:29092
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+      SCHEMA_REGISTRY_AUTHENTICATION_ROLES: write,read,admin
     networks:
       - bank-account-app-net
     restart: no
@@ -131,8 +109,31 @@ services:
     networks:
       - bank-account-app-net
     restart: no
-
-  # keycloak
+# database
+  bank-account-app-db-server:
+    container_name: ${DATABASE_HOSTNAME}
+    image: mysql:8.4.1
+    ports:
+      - ${DATABASE_HOST_PORT}:${DATABASE_HOST_PORT}
+    volumes:
+      - bank-account-app-volume:/var/lib/mysql
+      - ./bs-ms-dbs:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DATABASE_ROOT_PWD}
+      # The user,password that Keycloak is going to create and use
+      MYSQL_DATABASE: ${KEYCLOAK_DB}
+      MYSQL_USER: ${KEYCLOAK_DATABASE_USER}
+      MYSQL_PASSWORD: ${KEYCLOAK_DATABASE_PWD}
+    networks:
+      - bank-account-app-net
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "${SERVER_ADDRESS}", "-u${DATABASE_ROOT_USER}", "-p${DATABASE_ROOT_PWD}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+    restart: no
+  # keycloak IDP
   keycloak-authentication-provider-bank-account-app:
     container_name: keycloak-authentication-provider-bank-account-app
     image: quay.io/keycloak/keycloak:26.0.6
@@ -269,7 +270,7 @@ services:
       DATABASE_ROOT_PWD: ${DATABASE_ROOT_PWD}
       SERVICE_REGISTRY_API_APP_NAME: ${SERVICE_REGISTRY_API_APP_NAME}
       SERVICE_REGISTRY_API_SERVER_PORT: ${SERVICE_REGISTRY_API_SERVER_PORT}
-      KAFKA_TOPIC_NAME: ${KAFKA_TOPIC_NAME}
+      CUSTOMER_TOPIC_NAME: ${CUSTOMER_TOPIC_NAME}
       KAFKA_TOPIC_PARTITIONS: ${KAFKA_TOPIC_PARTITIONS}
       KAFKA_TOPIC_REPLICAS: ${KAFKA_TOPIC_REPLICAS}
       KAFKA_TOPIC_RETENTION_DURATION: ${KAFKA_TOPIC_RETENTION_DURATION}

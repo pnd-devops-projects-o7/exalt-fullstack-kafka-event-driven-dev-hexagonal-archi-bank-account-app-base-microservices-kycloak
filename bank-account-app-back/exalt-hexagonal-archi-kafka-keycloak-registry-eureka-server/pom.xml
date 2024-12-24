@@ -46,7 +46,7 @@
 	</dependencyManagement>
 
 	<build>
-		<finalName>exalt-hexagonal-archi-kafka-keycloak-eureka-server</finalName>
+		<finalName>${project.name}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

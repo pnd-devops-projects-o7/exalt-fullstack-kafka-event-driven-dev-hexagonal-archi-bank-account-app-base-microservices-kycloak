@@ -1,1 +1,0 @@
-ALTER TABLE customer_api_db.addresses RENAME COLUMN po_box TO postal_code;

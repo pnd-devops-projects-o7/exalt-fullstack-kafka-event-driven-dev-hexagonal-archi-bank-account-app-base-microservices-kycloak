@@ -1,3 +1,4 @@
+#file: noinspection SpringBootApplicationYaml
 spring:
   application:
     name: ${NOTIFICATION_APPLICATION_NAME}
@@ -49,3 +50,8 @@ management:
       enabled: true
     readinessstate:
       enabled: true
+# topics from where consumer read event
+kafka:
+  topics:
+    customer: t-customer
+    bank-account: t-bank-account

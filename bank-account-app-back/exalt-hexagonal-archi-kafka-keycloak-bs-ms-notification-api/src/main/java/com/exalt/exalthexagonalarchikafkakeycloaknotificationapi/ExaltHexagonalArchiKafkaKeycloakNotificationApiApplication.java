@@ -7,7 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ExaltHexagonalArchiKafkaKeycloakNotificationApiApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ExaltHexagonalArchiKafkaKeycloakNotificationApiApplication.class, args);
+		new SpringApplication(ExaltHexagonalArchiKafkaKeycloakNotificationApiApplication.class)
+				.run(args);
 	}
 
 }

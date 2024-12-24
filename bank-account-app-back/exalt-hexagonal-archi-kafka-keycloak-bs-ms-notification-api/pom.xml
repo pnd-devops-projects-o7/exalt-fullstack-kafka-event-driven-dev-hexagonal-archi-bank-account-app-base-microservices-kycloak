@@ -80,7 +80,7 @@
 	</dependencyManagement>
 
 	<build>
-		<finalName>exalt-hexagonal-archi-kafka-keycloak-bs-ms-notification-api</finalName>
+		<finalName>${project.name}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -109,7 +109,7 @@
 							<goal>schema</goal>
 						</goals>
 						<configuration>
-							<sourceDirectory>src/main/resources/avro-schema/</sourceDirectory>
+							<sourceDirectory>src/main/resources/avro-schemas/</sourceDirectory>
 							<fieldVisibility>private</fieldVisibility>
 							<stringType>String</stringType>
 							<outputDirectory>${project.basedir}/src/main/java/</outputDirectory>

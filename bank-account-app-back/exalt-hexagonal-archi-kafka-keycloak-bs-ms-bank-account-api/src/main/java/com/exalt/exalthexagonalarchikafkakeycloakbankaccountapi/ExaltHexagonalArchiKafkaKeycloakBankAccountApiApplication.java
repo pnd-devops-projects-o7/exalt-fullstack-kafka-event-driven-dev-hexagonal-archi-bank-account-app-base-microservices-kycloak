@@ -8,9 +8,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableFeignClients
 public class ExaltHexagonalArchiKafkaKeycloakBankAccountApiApplication {
 
-	public static void main(String[] args) {
-		new SpringApplication(ExaltHexagonalArchiKafkaKeycloakBankAccountApiApplication.class)
-				.run(args);
-	}
-
+    public static void main(String[] args) {
+        new SpringApplication(ExaltHexagonalArchiKafkaKeycloakBankAccountApiApplication.class)
+                .run(args);
+    }
 }
