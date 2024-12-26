@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(
-        name = "${remote.client.name}",
-        url = "${remote.client.complete-url.base-url}",
-        path = "${remote.client.complete-url.path}",
-        configuration = AccountServerJtwInterceptor.class)
+        value = "${feign-client.value}",
+        url = "${feign-client.complete-url.base-url}",
+        path = "${feign-client.complete-url.path}",
+        configuration = AccountJtwInterceptor.class)
 public interface RemoteClientService {
     @GetMapping(value = "/customers/{customerId}")
     CustomerResponseDto getRemoteCustomerById(@PathVariable(name = "customerId") String customerId);

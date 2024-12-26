@@ -10,7 +10,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 //this class is a request interceptor that account api
 //uses to send in feign request the jwt to remote
  // customer api
-public class AccountServerJtwInterceptor implements RequestInterceptor{
+public class AccountJtwInterceptor implements RequestInterceptor{
     @Override
     public void apply(RequestTemplate requestTemplate) {
         final RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();

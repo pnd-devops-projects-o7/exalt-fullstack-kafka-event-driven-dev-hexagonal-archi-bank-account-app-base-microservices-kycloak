@@ -5,5 +5,5 @@ import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure
 import java.math.BigDecimal;
 import java.time.Instant;
 
-public record OperationResponseDto (String operationId, String type, BigDecimal amount, String description,
+public record OperationResponseDto (String operationId, String operationType, BigDecimal transactionAmount, String description,
                                     Instant createdAt, AccountResponseDto accountResponseDto){ }

@@ -10,10 +10,7 @@ public class AccountValidation {
     }
 
     public static boolean accountFieldsEmpty(AccountRequestDto accountRequestDto) {
-        if (accountRequestDto == null) {
-            return false;
-        }
-        return accountRequestDto.type() != null && accountRequestDto.balance() != null && accountRequestDto.customerId() != null;
+        return accountRequestDto.type().isBlank() || accountRequestDto.balance() == null || accountRequestDto.customerId().isBlank();
     }
 
     public static boolean validFirstDeposit(BigDecimal firstDeposit) {
@@ -33,5 +30,9 @@ public class AccountValidation {
                 customerResponseDto.customerDto()
                         .customerState()
                         .equals("SUSPENDED");
+    }
+
+    public static boolean isValidAccountType(String accountType){
+        return accountType.equals("CURRENT") || accountType.equals("SAVING");
     }
 }

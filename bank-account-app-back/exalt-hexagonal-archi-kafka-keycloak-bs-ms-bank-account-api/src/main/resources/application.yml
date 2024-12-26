@@ -66,16 +66,6 @@ kafka:
 
 server:
   port: ${BANK_ACCOUNT_API_SERVER_PORT}
-# welcoming message
-application:
-  welcome-message: ${WELCOME_MSG}
-  managed-operations:
-    operation1: ${OP1}
-    operation2: ${OP2}
-    operation3: ${OP3}
-    operation4: ${OP4}
-
-
 # atcuator config, to be used by K8s for healthcheck
 management:
   endpoints:
@@ -100,9 +90,8 @@ eureka:
       defaultZone: http://${SERVICE_REGISTRY_API_APP_NAME}:${SERVICE_REGISTRY_API_SERVER_PORT}/eureka/
 
 # remote customer
-remote:
-  client:
-    name: ${CUSTOMER_API_APP_NAME}
-    complete-url:
-      base-url: ${ROUTE2_URI}
-      path: ${ROUTE2_PREDICATE}
+feign-client:
+  value: ${CUSTOMER_API_APP_NAME}
+  complete-url:
+    base-url: ${ROUTE2_URI}
+    path: ${ROUTE2_PREDICATE}

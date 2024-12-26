@@ -17,20 +17,20 @@ public class ExceptionsHandler {
         var errorResponse = ErrorResponse.builder()
                 .timestamp(Timestamp.from(Instant.now()))
                 .build();
-        var badRequestCode = 400;
+        var badRequestCodeError = ErrorResponse.builder()
+                .code(400)
+                .timestamp(Timestamp.from(Instant.now()))
+                .status(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                .build();
         var notFoundCode = 404;
         switch (runtimeException) {
             case FirstDepositBalanceNotEnoughException exception ->{
-                errorResponse.setCode(badRequestCode);
-                errorResponse.setStatus(HttpStatus.BAD_REQUEST.getReasonPhrase());
-                errorResponse.setMessage(exception.getMessage());
-                return ResponseEntity.badRequest().body(errorResponse);
+                badRequestCodeError.setMessage(exception.getMessage());
+                return ResponseEntity.badRequest().body(badRequestCodeError);
             }
             case CustomerStateException exception ->{
-                errorResponse.setCode(badRequestCode);
-                errorResponse.setStatus(HttpStatus.BAD_REQUEST.getReasonPhrase());
-                errorResponse.setMessage(exception.getMessage());
-                return ResponseEntity.badRequest().body(errorResponse);
+                badRequestCodeError.setMessage(exception.getMessage());
+                return ResponseEntity.badRequest().body(badRequestCodeError);
             }
             case RemoteClientApiUnreachableException exception ->{
                 errorResponse.setCode(notFoundCode);
@@ -41,16 +41,20 @@ public class ExceptionsHandler {
                         .body(errorResponse);
             }
             case RemoteCustomerStateUnAllowedException exception ->{
-                errorResponse.setCode(badRequestCode);
-                errorResponse.setStatus(HttpStatus.BAD_REQUEST.getReasonPhrase());
-                errorResponse.setMessage(exception.getMessage());
-                return ResponseEntity.badRequest().body(errorResponse);
+                badRequestCodeError.setMessage(exception.getMessage());
+                return ResponseEntity.badRequest().body(badRequestCodeError);
             }
             case AccountSameStateException exception ->{
-                errorResponse.setCode(badRequestCode);
-                errorResponse.setStatus(HttpStatus.BAD_REQUEST.getReasonPhrase());
-                errorResponse.setMessage(exception.getMessage());
-                return ResponseEntity.badRequest().body(errorResponse);
+                badRequestCodeError.setMessage(exception.getMessage());
+                return ResponseEntity.badRequest().body(badRequestCodeError);
+            }
+            case AccountTypeInvalidException exception ->{
+                badRequestCodeError.setMessage(exception.getMessage());
+                return ResponseEntity.badRequest().body(badRequestCodeError);
+            }
+            case AccountTypeUnAllowedException exception ->{
+                badRequestCodeError.setMessage(exception.getMessage());
+                return ResponseEntity.badRequest().body(badRequestCodeError);
             }
             default -> {
                 errorResponse.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());

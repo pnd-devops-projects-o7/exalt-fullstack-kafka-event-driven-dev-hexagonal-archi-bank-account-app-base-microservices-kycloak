@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
-@EnableFeignClients
+@EnableFeignClients//to enable component scanning interface that declare FeignClient
 public class ExaltHexagonalArchiKafkaKeycloakBankAccountApiApplication {
 
     public static void main(String[] args) {

@@ -5,13 +5,10 @@ import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.infrastructure.a
 import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.infrastructure.adapters.output.domain.entity.SavingAccount;
 
 import java.util.Collection;
-import java.util.Map;
 
 public interface OutputService {
     void createCurrentAccount(CurrentAccount currentAccount);
     void createSavingAccount (SavingAccount savingAccount);
-    Map<String, Map<String, String>> getWelcome();
-
     Collection<BankAccountEntity> getAllBankAccounts();
 
     BankAccountEntity getAccountById(String accountId);

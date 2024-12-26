@@ -2,7 +2,6 @@ package com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.domain.usecase;
 
 import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.domain.avro_beans.BankAccount;
 import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.domain.avro_beans.Customer;
-import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.enums.AccountState;
 import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.infrastructure.adapters.input.feign_client.domain.CustomerResponseDto;
 import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.infrastructure.adapters.output.domain.dtos.AccountRequestDto;
 import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.infrastructure.adapters.output.domain.dtos.AccountResponseDto;
@@ -16,8 +15,8 @@ import java.util.UUID;
 public class MapperService {
     private static final Float INIT_INTEREST_RATE = 2.5f;
     private static final Double INIT_OVERDRAFT = 10.0;
-    private static final String CURRENT_ACCOUNT="CURRENT";
-    private static final String SAVING_ACCOUNT="SAVING";
+    private static final String CURRENT_ACCOUNT = "CURRENT";
+    private static final String SAVING_ACCOUNT = "SAVING";
 
     private MapperService() {
     }
@@ -25,13 +24,12 @@ public class MapperService {
     public static BankAccount mapFromAccountRequestDto(AccountRequestDto accountRequestDto) {
         BankAccount bankAccount = new BankAccount();
         bankAccount.setAccountId(UUID.randomUUID().toString());
-        bankAccount.setAccountState(AccountState.CREATED.name());
+        bankAccount.setAccountState("CREATED");
         bankAccount.setType(accountRequestDto.type());
         bankAccount.setBalance(accountRequestDto.balance());
         bankAccount.setCreatedAt(Instant.now());
         bankAccount.setCustomer(null);
-
-        if (accountRequestDto.type().equals(CURRENT_ACCOUNT)){
+        if (accountRequestDto.type().equals(CURRENT_ACCOUNT)) {
             bankAccount.setOverdraft(INIT_OVERDRAFT);
         } else if (accountRequestDto.type().equals(SAVING_ACCOUNT)) {
             bankAccount.setInterestRate(INIT_INTEREST_RATE);
@@ -72,6 +70,8 @@ public class MapperService {
                     CURRENT_ACCOUNT,
                     currentAccount.getAccountState(),
                     currentAccount.getBalance(),
+                    currentAccount.getOverdraft(),
+                    null,
                     currentAccount.getCreatedAt(),
                     customerResponseDto);
         } else if (bankAccountEntity instanceof SavingAccount savingAccount) {
@@ -80,13 +80,15 @@ public class MapperService {
                     SAVING_ACCOUNT,
                     savingAccount.getAccountState(),
                     savingAccount.getBalance(),
+                    null,
+                    savingAccount.getInterestRate(),
                     savingAccount.getCreatedAt(),
                     customerResponseDto);
         }
         return null;
     }
 
-    public static Customer mapToCustomer(CustomerResponseDto customerResponseDto) {
+    public static Customer mapToCustomerFromCustomerResponseDto(CustomerResponseDto customerResponseDto) {
         return Customer.newBuilder()
                 .setCustomerId(customerResponseDto.customerDto().customerId())
                 .setFirstname(customerResponseDto.customerDto().firstname())
@@ -114,7 +116,7 @@ public class MapperService {
         return bankAccount;
     }
 
-    public static Customer mapFromCustomerResponseDto(CustomerResponseDto customerResponseDto){
+    public static Customer mapFromCustomerResponseDto(CustomerResponseDto customerResponseDto) {
         return Customer.newBuilder()
                 .setCustomerId(customerResponseDto.customerDto().customerId())
                 .setFirstname(customerResponseDto.customerDto().firstname())

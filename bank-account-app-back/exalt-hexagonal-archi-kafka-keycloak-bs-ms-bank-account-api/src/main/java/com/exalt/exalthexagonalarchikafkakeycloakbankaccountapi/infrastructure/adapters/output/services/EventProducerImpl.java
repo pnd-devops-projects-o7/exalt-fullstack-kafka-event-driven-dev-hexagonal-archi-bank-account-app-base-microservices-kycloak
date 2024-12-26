@@ -1,7 +1,7 @@
 package com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.infrastructure.adapters.output.services;
 
 import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.domain.avro_beans.BankAccountEvent;
-import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.domain.ports.output.KafkaEventProducer;
+import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.domain.ports.output.EventProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -15,9 +15,9 @@ import java.util.logging.Logger;
 
 @Service
 @RequiredArgsConstructor
-public class KafkaEventProducerImpl implements KafkaEventProducer {
+public class EventProducerImpl implements EventProducer {
     private final KafkaTemplate<String, BankAccountEvent> kafkaTemplate;
-    private static final Logger LOGGER = Logger.getLogger(KafkaEventProducerImpl.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(EventProducerImpl.class.getName());
     @Value("${kafka.topic-config.name}")
     private String topic;
     @Override
@@ -38,6 +38,13 @@ public class KafkaEventProducerImpl implements KafkaEventProducer {
     public void suspendAccountEvent(BankAccountEvent bankAccountEvent) {
         Message<?> message = messageBuild(bankAccountEvent,2);
         LOGGER.log(Level.INFO,"send build suspend message {0} into kafka infra", message);
+        kafkaTemplate.send(message);
+    }
+
+    @Override
+    public void updateAccountBalance(BankAccountEvent bankAccountEvent) {
+        Message<?> message = messageBuild(bankAccountEvent,3);
+        LOGGER.log(Level.INFO,"send build update balance message {0} into kafka infra", message);
         kafkaTemplate.send(message);
     }
 

@@ -10,8 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.Collection;
-import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/api/bank-account")
@@ -19,12 +19,6 @@ import java.util.Map;
 public class BankAccountApiWeb {
     private final InputService inputService;
     private static final Logger LOGGER = LoggerFactory.getLogger(BankAccountApiWeb.class.getName());
-    @GetMapping
-    @PreAuthorize("hasAnyRole('CLIENT_USER','CLIENT_ADMIN','CLIENT_OWNER')")
-    public ResponseEntity<Map<String, Map<String, String>>> welcome() {
-        LOGGER.debug("get welcome message");
-        return ResponseEntity.ok().body(inputService.getWelcome());
-    }
     @GetMapping(value = "/accounts")
     @PreAuthorize("hasAnyRole('CLIENT_ADMIN','CLIENT_OWNER')")
     public ResponseEntity<Collection<AccountResponseDto>> getAllBankAccounts(){
@@ -52,5 +46,10 @@ public class BankAccountApiWeb {
     public ResponseEntity<AccountResponseDto> suspendAccount(@PathVariable(value = "accountId") String accountId){
         LOGGER.debug("suspend an account base on id {} from active state", accountId);
         return ResponseEntity.ok().body(inputService.suspendAccount(accountId));
+    }
+    @PostMapping(value = "/accounts/update-balance/{accountId}")
+    public ResponseEntity<AccountResponseDto> updateAccountBalance(@PathVariable(value = "accountId") String accountId, @RequestParam(value = "amount") BigDecimal amount){
+        LOGGER.debug("update account balance id {}, amount {}", accountId, amount);
+        return ResponseEntity.ok().body(inputService.updateAccountBalance(accountId,amount));
     }
 }
