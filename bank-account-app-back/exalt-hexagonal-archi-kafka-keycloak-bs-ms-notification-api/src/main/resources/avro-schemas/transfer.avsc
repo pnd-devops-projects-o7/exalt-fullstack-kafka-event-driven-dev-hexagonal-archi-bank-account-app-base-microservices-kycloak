@@ -1,0 +1,212 @@
+{
+  "namespace": "com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.domain.avro_beans.transfers",
+  "name": "TransferEvent",
+  "type": "record",
+  "fields": [
+    {
+      "name": "status",
+      "type": "string"
+    },
+    {
+      "name": "message",
+      "type": "string"
+    },
+    {
+      "name": "transfer",
+      "type": {
+        "type": "record",
+        "name": "Transfer",
+        "fields": [
+          {
+            "name": "transferId",
+            "type": "string"
+          },
+          {
+            "name": "originAccount",
+            "type": {
+              "namespace": "com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.domain.avro_beans.transfers.accounts",
+              "type": "record",
+              "name": "OriginAccount",
+              "fields": [
+                {
+                  "name": "accountId",
+                  "type": "string"
+                },
+                {
+                  "name": "type",
+                  "type": "string"
+                },
+                {
+                  "name": "accountState",
+                  "type": "string"
+                },
+                {
+                  "name": "balance",
+                  "type": {
+                    "type": "string",
+                    "java-class": "java.math.BigDecimal",
+                    "precision": 7,
+                    "scale": 3
+                  }
+                },
+                {
+                  "name": "createdAt",
+                  "type": {
+                    "type": "long",
+                    "logicalType": "timestamp-millis"
+                  }
+                },
+                {
+                  "name": "overdraft",
+                  "type": "double"
+                },
+                {
+                  "name": "interestRate",
+                  "type": "double"
+                },
+                {
+                  "name": "originCustomer",
+                  "type": {
+                    "type": "record",
+                    "name": "OriginCustomer",
+                    "fields": [
+                      {
+                        "name": "customerId",
+                        "type": "string"
+                      },
+                      {
+                        "name": "firstname",
+                        "type": "string"
+                      },
+                      {
+                        "name": "lastname",
+                        "type": "string"
+                      },
+                      {
+                        "name": "email",
+                        "type": "string"
+                      },
+                      {
+                        "name": "customerState",
+                        "type": "string"
+                      },
+                      {
+                        "name": "createdAt",
+                        "type": {
+                          "type": "long",
+                          "logicalType": "timestamp-millis"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "name": "destinationAccount",
+            "type": {
+              "namespace": "com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.domain.avro_beans.transfers.accounts",
+              "type": "record",
+              "name": "DestinationAccount",
+              "fields": [
+                {
+                  "name": "accountId",
+                  "type": "string"
+                },
+                {
+                  "name": "type",
+                  "type": "string"
+                },
+                {
+                  "name": "accountState",
+                  "type": "string"
+                },
+                {
+                  "name": "balance",
+                  "type": {
+                    "type": "string",
+                    "java-class": "java.math.BigDecimal",
+                    "precision": 7,
+                    "scale": 3
+                  }
+                },
+                {
+                  "name": "createdAt",
+                  "type": {
+                    "type": "long",
+                    "logicalType": "timestamp-millis"
+                  }
+                },
+                {
+                  "name": "overdraft",
+                  "type": "double"
+                },
+                {
+                  "name": "interestRate",
+                  "type": "double"
+                },
+                {
+                  "name": "destinationCustomer",
+                  "type": {
+                    "type": "record",
+                    "name": "DestinationCustomer",
+                    "fields": [
+                      {
+                        "name": "customerId",
+                        "type": "string"
+                      },
+                      {
+                        "name": "firstname",
+                        "type": "string"
+                      },
+                      {
+                        "name": "lastname",
+                        "type": "string"
+                      },
+                      {
+                        "name": "email",
+                        "type": "string"
+                      },
+                      {
+                        "name": "customerState",
+                        "type": "string"
+                      },
+                      {
+                        "name": "createdAt",
+                        "type": {
+                          "type": "long",
+                          "logicalType": "timestamp-millis"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "name": "transferAmount",
+            "type": {
+              "type": "string",
+              "java-class": "java.math.BigDecimal",
+              "precision": 7,
+              "scale": 3
+            }
+          },
+          {
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "name": "createdAt",
+            "type": {
+              "type": "long",
+              "logicalType": "timestamp-millis"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

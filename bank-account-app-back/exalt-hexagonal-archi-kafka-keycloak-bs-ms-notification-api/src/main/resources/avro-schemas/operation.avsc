@@ -1,0 +1,135 @@
+{
+  "namespace": "com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.domain.avro_beans.operations",
+  "name": "OperationEvent",
+  "type": "record",
+  "fields": [
+    {
+      "name": "status",
+      "type": "string"
+    },
+    {
+      "name": "message",
+      "type": "string"
+    },
+    {
+      "name": "operation",
+      "type": {
+        "type": "record",
+        "name": "Operation",
+        "fields": [
+          {
+            "name": "operationId",
+            "type": "string"
+          },
+          {
+            "name": "operationType",
+            "type": "string"
+          },
+          {
+            "name": "transactionAmount",
+            "type": {
+              "type": "string",
+              "java-class": "java.math.BigDecimal",
+              "precision": 7,
+              "scale": 3
+            }
+          },
+          {
+            "name": "createdAt",
+            "type": {
+              "type": "long",
+              "logicalType": "timestamp-millis"
+            }
+          },
+          {
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "name": "bankAccount",
+            "type": {
+              "namespace": "com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.domain.avro_beans.operations.dependencies",
+              "type": "record",
+              "name": "BankAccount",
+              "fields": [
+                {
+                  "name": "accountId",
+                  "type": "string"
+                },
+                {
+                  "name": "type",
+                  "type": "string"
+                },
+                {
+                  "name": "accountState",
+                  "type": "string"
+                },
+                {
+                  "name": "balance",
+                  "type": {
+                    "type": "string",
+                    "java-class": "java.math.BigDecimal",
+                    "precision": 7,
+                    "scale": 3
+                  }
+                },
+                {
+                  "name": "createdAt",
+                  "type": {
+                    "type": "long",
+                    "logicalType": "timestamp-millis"
+                  }
+                },
+                {
+                  "name": "overdraft",
+                  "type": "double"
+                },
+                {
+                  "name": "interestRate",
+                  "type": "double"
+                },
+                {
+                  "name": "customer",
+                  "type": {
+                    "namespace": "com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.domain.avro_beans.operations.dependencies",
+                    "type": "record",
+                    "name": "Customer",
+                    "fields": [
+                      {
+                        "name": "customerId",
+                        "type": "string"
+                      },
+                      {
+                        "name": "firstname",
+                        "type": "string"
+                      },
+                      {
+                        "name": "lastname",
+                        "type": "string"
+                      },
+                      {
+                        "name": "email",
+                        "type": "string"
+                      },
+                      {
+                        "name": "customerState",
+                        "type": "string"
+                      },
+                      {
+                        "name": "createdAt",
+                        "type": {
+                          "type": "long",
+                          "logicalType": "timestamp-millis"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

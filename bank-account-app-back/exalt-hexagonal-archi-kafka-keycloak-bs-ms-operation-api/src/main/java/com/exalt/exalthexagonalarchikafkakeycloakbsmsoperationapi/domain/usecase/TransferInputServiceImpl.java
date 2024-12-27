@@ -183,8 +183,7 @@ public class TransferInputServiceImpl implements TransferInputService {
 
     //this private method builds user readable response
     private TransferResponseDto mapToTransferResponseDTo(TransferEntity transferEntity, AccountResponseDto origin, AccountResponseDto destination) {
-        return new TransferResponseDto(transferEntity.getTransferId(),
-                origin, destination, transferEntity.getTransferAmount(), transferEntity.getDescription(),
-                transferEntity.getCreatedAt());
+        return new TransferResponseDto(transferEntity.getTransferId(),transferEntity.getTransferAmount(),
+                transferEntity.getDescription(), transferEntity.getCreatedAt(),origin, destination);
     }
 }

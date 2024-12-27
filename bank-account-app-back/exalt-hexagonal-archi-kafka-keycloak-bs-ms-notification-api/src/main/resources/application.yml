@@ -53,5 +53,7 @@ management:
 # topics from where consumer read event
 kafka:
   topics:
-    customer: t-customer
-    bank-account: t-bank-account
+    topic1: ${CUSTOMER_TOPIC_NAME}
+    topic2: ${ACCOUNT_TOPIC_NAME}
+    topic3: ${OPERATION_TOPIC1_NAME}
+    topic4: ${OPERATION_TOPIC2_NAME}
