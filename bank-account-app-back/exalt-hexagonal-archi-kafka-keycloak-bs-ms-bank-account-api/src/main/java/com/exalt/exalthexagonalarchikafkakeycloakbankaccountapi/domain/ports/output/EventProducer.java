@@ -8,5 +8,9 @@ public interface EventProducer {
 
     void suspendAccountEvent(BankAccountEvent bankAccountEvent);
 
-    void updateAccountBalance(BankAccountEvent bankAccountEvent);
+    void updateAccountBalanceEvent(BankAccountEvent bankAccountEvent);
+
+    void updateAccountInterestRateEvent(BankAccountEvent bankAccountEvent);
+
+    void updateAccountOverdraftEvent(BankAccountEvent bankAccountEvent);
 }

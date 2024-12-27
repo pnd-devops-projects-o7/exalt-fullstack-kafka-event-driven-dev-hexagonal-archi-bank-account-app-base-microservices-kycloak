@@ -22,46 +22,13 @@ public class ExceptionsHandler {
                 .timestamp(Timestamp.from(Instant.now()))
                 .status(HttpStatus.BAD_REQUEST.getReasonPhrase())
                 .build();
-        var notFoundCode = 404;
-        switch (runtimeException) {
-            case FirstDepositBalanceNotEnoughException exception ->{
-                badRequestCodeError.setMessage(exception.getMessage());
-                return ResponseEntity.badRequest().body(badRequestCodeError);
-            }
-            case CustomerStateException exception ->{
-                badRequestCodeError.setMessage(exception.getMessage());
-                return ResponseEntity.badRequest().body(badRequestCodeError);
-            }
-            case RemoteClientApiUnreachableException exception ->{
-                errorResponse.setCode(notFoundCode);
-                errorResponse.setStatus(HttpStatus.NOT_FOUND.getReasonPhrase());
-                errorResponse.setMessage(exception.getMessage());
-                return ResponseEntity
-                        .status(HttpStatus.NOT_FOUND)
-                        .body(errorResponse);
-            }
-            case RemoteCustomerStateUnAllowedException exception ->{
-                badRequestCodeError.setMessage(exception.getMessage());
-                return ResponseEntity.badRequest().body(badRequestCodeError);
-            }
-            case AccountSameStateException exception ->{
-                badRequestCodeError.setMessage(exception.getMessage());
-                return ResponseEntity.badRequest().body(badRequestCodeError);
-            }
-            case AccountTypeInvalidException exception ->{
-                badRequestCodeError.setMessage(exception.getMessage());
-                return ResponseEntity.badRequest().body(badRequestCodeError);
-            }
-            case AccountTypeUnAllowedException exception ->{
-                badRequestCodeError.setMessage(exception.getMessage());
-                return ResponseEntity.badRequest().body(badRequestCodeError);
-            }
-            default -> {
-                errorResponse.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                errorResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
-                errorResponse.setMessage(runtimeException.getMessage());
-                return ResponseEntity.internalServerError().body(errorResponse);
-            }
+        if(runtimeException instanceof BankAccountApiBusinessException exception){
+            badRequestCodeError.setMessage(exception.getMessage());
+            return ResponseEntity.badRequest().body(badRequestCodeError);
         }
+        errorResponse.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        errorResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+        errorResponse.setMessage(runtimeException.getMessage());
+        return ResponseEntity.internalServerError().body(errorResponse);
     }
 }

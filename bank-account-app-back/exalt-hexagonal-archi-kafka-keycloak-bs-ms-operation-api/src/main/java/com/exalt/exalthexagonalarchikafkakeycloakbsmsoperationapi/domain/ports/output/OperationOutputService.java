@@ -4,7 +4,8 @@ import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure
 
 import java.util.Collection;
 
-public interface OutputService {
+public interface OperationOutputService {
     void createOperation(OperationEntity operationEntity);
     Collection<OperationEntity> getAllOperations();
+    OperationEntity getOperationById(String operationId);
 }

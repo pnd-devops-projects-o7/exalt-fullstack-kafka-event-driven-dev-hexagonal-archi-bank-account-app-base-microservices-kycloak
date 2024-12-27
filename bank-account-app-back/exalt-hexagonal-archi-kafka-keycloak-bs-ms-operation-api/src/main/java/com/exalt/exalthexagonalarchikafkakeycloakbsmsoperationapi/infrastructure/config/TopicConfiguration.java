@@ -13,10 +13,6 @@ public class TopicConfiguration {
     private String operationTopic;
     @Value("${kafka.topic-config.topic2}")
     private String transferTopic;
-    @Value("${kafka.topic-config.partitions}")
-    private int topicPartitions;
-    @Value("${kafka.topic-config.replicas}")
-    private int topicReplicas;
     @Value("${kafka.topic-config.retention-config.duration}")
     private String retentionDuration;
     @Value("${kafka.topic-config.retention-config.size}")
@@ -27,8 +23,8 @@ public class TopicConfiguration {
     public NewTopic createOperationTopic(){
         return TopicBuilder
                 .name(operationTopic)
-                .partitions(topicPartitions)
-                .replicas(topicReplicas)
+                .partitions(1)
+                .replicas(1)
                 .config(TopicConfig.RETENTION_MS_CONFIG, retentionDuration)
                 .config(TopicConfig.RETENTION_BYTES_CONFIG, retentionSize)
                 .config(TopicConfig.CLEANUP_POLICY_CONFIG,cleanUpPolicy)
@@ -39,8 +35,8 @@ public class TopicConfiguration {
     public NewTopic createTransferTopic(){
         return TopicBuilder
                 .name(transferTopic)
-                .partitions(topicPartitions)
-                .replicas(topicReplicas)
+                .partitions(1)
+                .replicas(1)
                 .config(TopicConfig.RETENTION_MS_CONFIG, retentionDuration)
                 .config(TopicConfig.RETENTION_BYTES_CONFIG, retentionSize)
                 .config(TopicConfig.CLEANUP_POLICY_CONFIG,cleanUpPolicy)

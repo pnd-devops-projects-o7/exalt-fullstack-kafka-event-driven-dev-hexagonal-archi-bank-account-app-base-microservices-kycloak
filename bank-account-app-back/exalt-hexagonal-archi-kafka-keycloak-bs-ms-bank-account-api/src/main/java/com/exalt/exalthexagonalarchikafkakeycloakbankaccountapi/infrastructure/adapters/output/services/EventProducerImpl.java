@@ -42,9 +42,23 @@ public class EventProducerImpl implements EventProducer {
     }
 
     @Override
-    public void updateAccountBalance(BankAccountEvent bankAccountEvent) {
+    public void updateAccountBalanceEvent(BankAccountEvent bankAccountEvent) {
         Message<?> message = messageBuild(bankAccountEvent,3);
-        LOGGER.log(Level.INFO,"send build update balance message {0} into kafka infra", message);
+        LOGGER.log(Level.INFO,"send update balance message {0} into kafka infra", message);
+        kafkaTemplate.send(message);
+    }
+
+    @Override
+    public void updateAccountInterestRateEvent(BankAccountEvent bankAccountEvent) {
+        Message<?> message = messageBuild(bankAccountEvent,4);
+        LOGGER.log(Level.INFO,"send update interest rate message {0} into kafka infra", message);
+        kafkaTemplate.send(message);
+    }
+
+    @Override
+    public void updateAccountOverdraftEvent(BankAccountEvent bankAccountEvent) {
+        Message<?> message = messageBuild(bankAccountEvent,5);
+        LOGGER.log(Level.INFO,"send update overdraft message {0} into kafka infra", message);
         kafkaTemplate.send(message);
     }
 

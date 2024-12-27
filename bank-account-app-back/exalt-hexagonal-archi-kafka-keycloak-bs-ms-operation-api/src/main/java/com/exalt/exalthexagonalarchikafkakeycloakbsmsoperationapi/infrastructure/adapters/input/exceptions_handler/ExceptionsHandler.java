@@ -22,29 +22,18 @@ public class ExceptionsHandler {
                 .build();
 
         switch (runtimeException){
-            case InputFieldsInvalidException exception ->{
+            case OperationApiBusinessException exception ->{
                 badRequesrErrorResponse.setMessage(exception.getMessage());
                 return ResponseEntity.badRequest().body(badRequesrErrorResponse);
             }
-            case TransactionAmountInvalidException exception ->{
-                badRequesrErrorResponse.setMessage(exception.getMessage());
-                return ResponseEntity.badRequest().body(badRequesrErrorResponse);
-            }
-            case OperationTypeInvalidException exception ->{
-                badRequesrErrorResponse.setMessage(exception.getMessage());
-                return ResponseEntity.badRequest().body(badRequesrErrorResponse);
-            }
-            case RemoteAccountStateUnAllowedException exception ->{
-                badRequesrErrorResponse.setMessage(exception.getMessage());
-                return ResponseEntity.badRequest().body(badRequesrErrorResponse);
-            }
-            case RemoteAccountTypeUnAllowedException exception ->{
-                badRequesrErrorResponse.setMessage(exception.getMessage());
-                return ResponseEntity.badRequest().body(badRequesrErrorResponse);
-            }
-            case RemoteAccountBalanceInsufficientException exception ->{
-                badRequesrErrorResponse.setMessage(exception.getMessage());
-                return ResponseEntity.badRequest().body(badRequesrErrorResponse);
+            case OperationNotFoundException exception ->{
+                ErrorResponse notFoundError = ErrorResponse.builder()
+                        .code(404)
+                        .status(HttpStatus.NOT_FOUND.getReasonPhrase())
+                        .message(exception.getMessage())
+                        .timestamp(Timestamp.from(Instant.now()))
+                        .build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(notFoundError);
             }
             default -> {
                 ErrorResponse errorResponse = ErrorResponse.builder()

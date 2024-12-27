@@ -61,8 +61,6 @@ kafka:
       duration: ${KAFKA_TOPIC_RETENTION_DURATION}
       size: ${KAFKA_TOPIC_RETENTION_SIZE}
       clean-up-policy: ${KAFKA_TOPIC_RETENTION_CLEANUP_POLICY}
-    topic-partitions: ${KAFKA_TOPIC_PARTITIONS}
-    topic-replicas: ${KAFKA_TOPIC_REPLICAS}
 
 server:
   port: ${BANK_ACCOUNT_API_SERVER_PORT}

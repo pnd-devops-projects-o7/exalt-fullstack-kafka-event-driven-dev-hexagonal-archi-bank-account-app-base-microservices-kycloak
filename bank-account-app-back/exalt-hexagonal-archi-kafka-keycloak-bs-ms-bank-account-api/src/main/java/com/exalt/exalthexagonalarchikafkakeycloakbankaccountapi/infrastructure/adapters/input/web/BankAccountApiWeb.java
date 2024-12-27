@@ -52,4 +52,16 @@ public class BankAccountApiWeb {
         LOGGER.debug("update account balance id {}, amount {}", accountId, amount);
         return ResponseEntity.ok().body(inputService.updateAccountBalance(accountId,amount));
     }
+
+    @PostMapping(value = "/accounts/update-irate/{accountId}")
+    public ResponseEntity<AccountResponseDto> updateAccountInterestRate(@PathVariable(value = "accountId") String accountId, @RequestParam(value = "irate") Double irate){
+        LOGGER.debug("update account interest rate id {}, irate {}", accountId, irate);
+        return ResponseEntity.ok().body(inputService.updateAccountInterestRate(accountId,irate));
+    }
+
+    @PostMapping(value = "/accounts/update-overdraft/{accountId}")
+    public ResponseEntity<AccountResponseDto> updateAccountOverdraft(@PathVariable(value = "accountId") String accountId, @RequestParam(value = "overdraft") Double overdraft){
+        LOGGER.debug("update account overdraft id {}, amount {}", accountId, overdraft);
+        return ResponseEntity.ok().body(inputService.updateAccountOverdraft(accountId,overdraft));
+    }
 }

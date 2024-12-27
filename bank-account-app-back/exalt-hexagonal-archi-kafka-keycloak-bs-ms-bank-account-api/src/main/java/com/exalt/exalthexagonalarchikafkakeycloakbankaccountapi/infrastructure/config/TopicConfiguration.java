@@ -17,16 +17,12 @@ public class TopicConfiguration {
     private String retentionSize;
     @Value("${kafka.topic-config.retention.clean-up-policy}")
     private String cleanUpPolicy;
-    @Value("${kafka.topic-config.topic-partitions}")
-    private int topicPartitions;
-    @Value("${kafka.topic-config.topic-replicas}")
-    private int topicReplicas;
 
     @Bean
     public NewTopic createTopic(){
         return TopicBuilder.name(topicName)
-                .partitions(topicPartitions)
-                .replicas(topicReplicas)
+                .partitions(6)
+                .replicas(1)
                 .config(TopicConfig.RETENTION_MS_CONFIG, retentionDuration)
                 .config(TopicConfig.RETENTION_BYTES_CONFIG, retentionSize)
                 .config(TopicConfig.CLEANUP_POLICY_CONFIG,cleanUpPolicy)

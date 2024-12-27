@@ -18,9 +18,13 @@
         "name": "Transfer",
         "fields": [
           {
+            "name": "transferId",
+            "type": "string"
+          },
+          {
             "name": "originAccount",
             "type": {
-              "namespace": "com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.domain.avro_beans.transfers.origin",
+              "namespace": "com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.domain.avro_beans.transfers.accounts",
               "type": "record",
               "name": "OriginAccount",
               "fields": [
@@ -102,7 +106,7 @@
           {
             "name": "destinationAccount",
             "type": {
-              "namespace": "com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.domain.avro_beans.transfers.destination",
+              "namespace": "com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.domain.avro_beans.transfers.accounts",
               "type": "record",
               "name": "DestinationAccount",
               "fields": [
@@ -179,6 +183,26 @@
                   }
                 }
               ]
+            }
+          },
+          {
+            "name": "transferAmount",
+            "type": {
+              "type": "string",
+              "java-class": "java.math.BigDecimal",
+              "precision": 7,
+              "scale": 3
+            }
+          },
+          {
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "name": "createdAt",
+            "type": {
+              "type": "long",
+              "logicalType": "timestamp-millis"
             }
           }
         ]

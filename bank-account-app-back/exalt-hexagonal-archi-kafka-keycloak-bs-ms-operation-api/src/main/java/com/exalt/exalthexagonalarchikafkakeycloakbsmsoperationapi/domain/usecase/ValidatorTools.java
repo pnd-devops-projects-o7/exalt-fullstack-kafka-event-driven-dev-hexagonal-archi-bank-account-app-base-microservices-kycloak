@@ -2,13 +2,15 @@ package com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.domain.usecas
 
 import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.input.feign_clients.domain.AccountResponseDto;
 import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.output.dtos.OperationRequestDto;
+import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.output.dtos.TransferRequestDto;
 
 import java.math.BigDecimal;
 
-public class OperationValidation {
-    private OperationValidation() {
+public class ValidatorTools {
+    private ValidatorTools() {
     }
 
+    //operation validators
     public static boolean operationRequestDtoFieldsEmpty(OperationRequestDto operationRequestDto) {
         return operationRequestDto.operationType().isBlank()
                 || operationRequestDto.transactionAmount() == null
@@ -25,7 +27,7 @@ public class OperationValidation {
         return accountResponseDto == null;
     }
 
-    public static boolean remoteAccountClientStateUnAllowed(String state) {
+    public static boolean remoteAccountStateUnAllowed(String state) {
         return state.equals("CREATED") || state.equals("SUSPENDED");
     }
 
@@ -37,9 +39,15 @@ public class OperationValidation {
         return operationType.equals("DEPOSIT") || operationType.equals("WITHDRAW");
     }
 
-    public static boolean accountBalanceEnough(BigDecimal balance, Double overdraft,BigDecimal bigDecimal) {
-        int comparison = balance.add(BigDecimal.valueOf(overdraft))
-                .compareTo(bigDecimal);
-        return comparison == 0 || comparison > 0;
+    public static boolean accountBalanceInsufficient(BigDecimal balance,BigDecimal bigDecimal) {
+        return balance.compareTo(bigDecimal) < 0;
+    }
+
+    //transfer validators
+    public static boolean transferRequestDtoFieldsEmpty(TransferRequestDto transferRequestDto){
+        return transferRequestDto.originAccount().isBlank()
+                || transferRequestDto.destinationAccount().isBlank()
+                || transferRequestDto.transferAmount()==null
+                || transferRequestDto.description().isBlank();
     }
 }

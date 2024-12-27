@@ -26,7 +26,7 @@ public class MapperService {
         return operation;
     }
 
-    public static BankAccount mapFromAccountResponseDto(AccountResponseDto accountResponseDto) {
+    public static Object mapFromAccountResponseDto(AccountResponseDto accountResponseDto) {
         BankAccount bankAccount = new BankAccount();
         bankAccount.setAccountId(accountResponseDto.accountId());
         bankAccount.setType(accountResponseDto.accountType());

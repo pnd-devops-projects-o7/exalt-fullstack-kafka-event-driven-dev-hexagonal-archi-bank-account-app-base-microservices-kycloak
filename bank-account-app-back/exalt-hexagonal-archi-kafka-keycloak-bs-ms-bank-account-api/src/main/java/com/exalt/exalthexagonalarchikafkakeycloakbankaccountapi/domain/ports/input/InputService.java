@@ -13,4 +13,6 @@ public interface InputService {
     AccountResponseDto activateAccount(String accountId);
     AccountResponseDto suspendAccount(String accountId);
     AccountResponseDto updateAccountBalance(String accountId, BigDecimal amount);
+    AccountResponseDto updateAccountInterestRate(String accountId, Double interestRate);
+    AccountResponseDto updateAccountOverdraft(String accountId, Double overdraft);
 }
