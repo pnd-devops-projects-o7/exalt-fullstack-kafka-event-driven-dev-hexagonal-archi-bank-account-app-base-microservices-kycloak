@@ -68,7 +68,7 @@ La partie backend de comprend:
 
 # Partie Frontend
 
-La partie frontend de **Bank-Account-App **** est une application développée en angular 16**:
+La partie frontend de **Bank-Account-App** est une application développée en angular 16:
 - Pattern observable avec **RxJs**
 - Gestion observable liés aux événements de click
 - Design graphique avec **PrimeNG**
