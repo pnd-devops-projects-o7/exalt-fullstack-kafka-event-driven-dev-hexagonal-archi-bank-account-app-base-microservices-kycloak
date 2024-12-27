@@ -1,6 +1,6 @@
 # Bank-Account-App [Micro services | Spring boot 3 | Spring cloud | Kafka |  KeyCloak]
 - **Bank-Account-App** est application fullstack (Java 21 /Angular 16) orientée microservices composée des microservices **métiers** et des  microservices **transverses**.
-    - la communication entre les microservices se fait de manière **synchrone** avec **Spring Web Client**
+    - la communication entre les microservices se fait de manière **synchrone** avec **Spring Cloud OpenFeign**
 - Chaque microservice métier est implémenté dans une **architecture hexagonale**, des tests unitaires sont écrits pour garantir la qualité du code source.
     - **SonarQube** est utilisé pour checker les vulnérabilités, le code smell, la couverture de code et la sécurité
 - Une **infrastructure Kafka** est mise en place:
@@ -36,17 +36,18 @@ After connecting the **Frontend App** (Angular App) to the **Backend Microservic
 La partie backend de comprend:
 
  - **4 applications microservices métiers**:
-    - ```exalt-hexagonal-archi-kafka-keycloak-bs-ms-customer```
+    - ```exalt-hexagonal-archi-kafka-keycloak-bs-ms-customer-api```
         - managing customers, 
         - oauth2 authentication & authorization est implémenté pour authentifier toutes les requêtes vers ce backend
-    - ```exalt-hexagonal-archi-kafka-keycloak-bs-ms-bank-account```
+    - ```exalt-hexagonal-archi-kafka-keycloak-bs-ms-bank-account-api```
         - managingg bank-accounts
         - oauth2 authentication & authorization est implémenté pour authentifier toutes les requêtes vers ce backend
-    - ```exalt-hexagonal-archi-kafka-keycloak-bs-ms-operation```,
+    - ```exalt-hexagonal-archi-kafka-keycloak-bs-ms-operation-api```,
         - managing operations on bank-accounts
         - oauth2 authentication & authorization est implémenté pour authentifier toutes les requêtes vers ce backend
-    - ```exalt-hexagonal-archi-kafka-keycloak-bs-ms-notification-service```
-        - envoie une notification par mail lorsqu'une operation d'écriture se produit sur un customer, un compte ou une operation 
+    - ```exalt-hexagonal-archi-kafka-keycloak-bs-ms-notification-api```
+        - envoie un email de notification lorsqu'un des microservices métiers: customer-api, bank-account-api, ou operation-api produit un événement dans un topic kafka
+        - cette apin'expose donc pas d'endpoint
 
 - chaque microservice métier utilse sa propre base de données MySql pour la persistance les data
 
