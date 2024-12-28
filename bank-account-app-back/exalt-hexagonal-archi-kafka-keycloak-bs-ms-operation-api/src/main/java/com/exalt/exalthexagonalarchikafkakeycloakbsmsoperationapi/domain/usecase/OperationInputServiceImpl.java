@@ -39,30 +39,12 @@ public class OperationInputServiceImpl implements OperationInputService {
 
     @Override
     public OperationResponseDto createOperation(OperationRequestDto operationRequestDto) {
+
         //list of checks for payload validity
-        if (ValidatorTools.operationRequestDtoFieldsEmpty(operationRequestDto)) {
-            throw new OperationApiBusinessException("one or more fields are empty");
-        }
-        if (!ValidatorTools.transactionAmountValid(operationRequestDto.transactionAmount())) {
-            throw new OperationApiBusinessException("operation transaction amount invalid");
-        }
-
-        if (!ValidatorTools.operationTypeValid(operationRequestDto.operationType())) {
-            throw new OperationApiBusinessException("operation type not valid");
-        }
-
+        checkPayloadValidity(operationRequestDto);
         AccountResponseDto accountResponseDto = remoteAccountService.getRemoteAccountById(operationRequestDto.accountId());
-
         //list of checks remote account
-        if (ValidatorTools.remoteAccountClientUnreachable(accountResponseDto)) {
-            throw new OperationApiBusinessException("remote account unreachable");
-        }
-        if (ValidatorTools.remoteAccountStateUnAllowed(accountResponseDto.accountState())) {
-            throw new OperationApiBusinessException("remote account state not allowed");
-        }
-        if (ValidatorTools.remoteAccountTypeUnAllowed(accountResponseDto.accountType())) {
-            throw new OperationApiBusinessException("remote account type not allowed");
-        }
+        checkRemoteAccount(accountResponseDto);
 
         switch (operationRequestDto.operationType()) {
             case WITHDRAW -> {
@@ -80,11 +62,11 @@ public class OperationInputServiceImpl implements OperationInputService {
         CustomerResponseDto customerResponseDto = remoteCustomerService
                 .getRemoteCustomerById(accountResponseDto.customerResponseDto().customerDto().customerId());
 
-        Operation operation = MapperService.mapFromOperationRequestDto(operationRequestDto);
-        BankAccount bankAccount = (BankAccount) MapperService.mapFromAccountResponseDto(accountResponseDto);
-        bankAccount.setCustomer(MapperService.mapFromCustomerResponseDto(customerResponseDto));
+        Operation operation = MapperService1.mapFromOperationRequestDto(operationRequestDto);
+        BankAccount bankAccount = (BankAccount) MapperService1.mapFromAccountResponseDto(accountResponseDto);
+        bankAccount.setCustomer(MapperService1.mapFromCustomerResponseDto(customerResponseDto));
         operation.setBankAccount(bankAccount);
-        OperationEntity operationEntity = MapperService.mapFromOperation(operation);
+        OperationEntity operationEntity = MapperService1.mapFromOperation(operation);
         //call output connector to register operation entity
         operationOutputService.createOperation(operationEntity);
         //build kafka event
@@ -96,7 +78,7 @@ public class OperationInputServiceImpl implements OperationInputService {
         // call output connector to send operation event to kafka infrastructure
         eventProducer.createOperationEvent(operationEvent);
         //build operation response dto
-        return MapperService.mapToOperationResponseDto(operationEntity, accountResponseDto);
+        return MapperService1.mapToOperationResponseDto(operationEntity, accountResponseDto);
     }
 
     @Override
@@ -104,7 +86,7 @@ public class OperationInputServiceImpl implements OperationInputService {
         Collection<OperationEntity> operationEntities = operationOutputService.getAllOperations();
         return operationEntities.stream().map(operationEntity -> {
             AccountResponseDto accountResponseDto = remoteAccountService.getRemoteAccountById(operationEntity.getAccountId());
-            return MapperService.mapToOperationResponseDto(operationEntity, accountResponseDto);
+            return MapperService1.mapToOperationResponseDto(operationEntity, accountResponseDto);
         }).toList();
     }
 
@@ -115,6 +97,35 @@ public class OperationInputServiceImpl implements OperationInputService {
             throw new OperationNotFoundException(String.format("operation with id %s not found", operationId));
         }
         AccountResponseDto accountResponseDto = remoteAccountService.getRemoteAccountById(operationEntity.getAccountId());
-        return MapperService.mapToOperationResponseDto(operationEntity,accountResponseDto);
+        return MapperService1.mapToOperationResponseDto(operationEntity,accountResponseDto);
     }
+
+    //list of checks for payload validity
+    private void checkPayloadValidity(OperationRequestDto operationRequestDto){
+        if (ValidatorTools.operationRequestDtoFieldsEmpty(operationRequestDto)) {
+            throw new OperationApiBusinessException("one or more fields are empty");
+        }
+        if (!ValidatorTools.transactionAmountValid(operationRequestDto.transactionAmount())) {
+            throw new OperationApiBusinessException("operation transaction amount invalid");
+        }
+
+        if (!ValidatorTools.operationTypeValid(operationRequestDto.operationType())) {
+            throw new OperationApiBusinessException("operation type not valid");
+        }
+    }
+
+    //list of checks remote account
+    private void checkRemoteAccount(AccountResponseDto accountResponseDto){
+
+        if (ValidatorTools.remoteAccountClientUnreachable(accountResponseDto)) {
+            throw new OperationApiBusinessException("remote account unreachable");
+        }
+        if (ValidatorTools.remoteAccountStateUnAllowed(accountResponseDto.accountState())) {
+            throw new OperationApiBusinessException("remote account state not allowed");
+        }
+        if (ValidatorTools.remoteAccountTypeUnAllowed(accountResponseDto.accountType())) {
+            throw new OperationApiBusinessException("remote account type not allowed");
+        }
+    }
+
 }

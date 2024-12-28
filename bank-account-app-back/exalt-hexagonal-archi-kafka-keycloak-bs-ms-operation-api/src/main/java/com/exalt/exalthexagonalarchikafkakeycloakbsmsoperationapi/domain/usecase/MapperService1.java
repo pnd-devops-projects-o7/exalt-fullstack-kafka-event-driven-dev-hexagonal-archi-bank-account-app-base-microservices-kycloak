@@ -12,8 +12,8 @@ import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure
 import java.time.Instant;
 import java.util.UUID;
 
-public class MapperService {
-    private MapperService(){}
+public class MapperService1 {
+    private MapperService1(){}
 
     public static Operation mapFromOperationRequestDto(OperationRequestDto operationRequestDto) {
         Operation operation = new Operation();
