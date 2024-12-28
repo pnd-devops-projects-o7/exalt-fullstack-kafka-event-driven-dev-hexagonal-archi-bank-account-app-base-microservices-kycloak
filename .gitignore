@@ -1,2 +1,4 @@
 .idea
 **/**/src/main/resources/*-local.yml
+keycloak-auth-keys/private-key.key
+keycloak-auth-keys/server-certif.csr

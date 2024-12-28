@@ -6,10 +6,10 @@ spring:
   main:
     banner-mode: off
 
-  # security configuration
+  # keycloak security configuration
   security:
     oauth2:
-      # register gateway as an oauth2 client because it redirects users' request to IDP
+      # register gateway as an oauth2 client to redirect users' request to keycloak IDP
       client:
         registration:
           exalt-backend-gateway-client:
@@ -23,7 +23,7 @@ spring:
         provider:
           keycloak-idp:
             issuer-uri: ${JWT_ISSUER}
-      # register gateway as an oauth2 resource server because teh cloud gateway exposes an endpoint to get a JWT token
+      # register gateway as an oauth2 resource server because teh cloud gateway exposes an endpoint to get a OPAQUE token
       resourceserver:
         opaquetoken:
           introspection-uri: ${spring.security.oauth2.client.provider.keycloak-idp.issuer-uri}/protocol/openid-connect/token/introspect

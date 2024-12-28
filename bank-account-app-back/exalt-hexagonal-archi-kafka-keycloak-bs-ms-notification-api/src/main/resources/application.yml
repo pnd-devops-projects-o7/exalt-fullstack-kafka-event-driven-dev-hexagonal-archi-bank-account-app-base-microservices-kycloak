@@ -1,7 +1,7 @@
 #file: noinspection SpringBootApplicationYaml
 spring:
   application:
-    name: ${NOTIFICATION_APPLICATION_NAME}
+    name: ${NOTIFICATION_API_APP_NAME}
 
   main:
     banner-mode: off
@@ -19,7 +19,6 @@ spring:
       schema:
         registry:
           url: http://schema-registry-service:8081
-
   # send mail for notification
   mail:
     host: ${SMTP_MAIL_HOSTNAME}
@@ -28,7 +27,7 @@ spring:
     password: ${SMTP_MAIL_PASSWORD}
 
 server:
-  port: ${NOTIFICATION_SERVER_PORT}
+  port: ${NOTIFICATION_API_SERVER_PORT}
 
 eureka:
   client:

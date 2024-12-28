@@ -4,6 +4,7 @@ import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.domain.avro_bean
 import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.domain.avro_beans.operations.OperationEvent;
 import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.domain.avro_beans.transfers.TransferEvent;
 import com.exalt.exalthexagonalarchikafkakeycloakcustomerapi.domain.avro_beans.CustomerEvent;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -16,15 +17,12 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
 
+
 @Service
+@RequiredArgsConstructor
 public class KafkaEventConsumerService {
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaEventConsumerService.class.getName());
     private final JavaMailSender javaMailSender;
-
-    public KafkaEventConsumerService(JavaMailSender javaMailSender) {
-        this.javaMailSender = javaMailSender;
-    }
-
     @KafkaListener(groupId = "group1", topicPartitions =
             {
                     @TopicPartition(topic = "${kafka.topics.topic1}",
@@ -36,7 +34,7 @@ public class KafkaEventConsumerService {
                                             @PartitionOffset(partition = "3", initialOffset = "0")
                                     })
             })
-    public void consumeCustomerEvent(@Payload CustomerEvent customerEvent) {
+    public void consumeCustomerEvent(@Payload CustomerEvent customerEvent)  {
         LOGGER.debug( "consuming event: {}", customerEvent);
         MimeMessagePreparator mimeMessagePreparator = prepareAndSendEmail(customerEvent.getCustomer().getEmail(),
                 customerEvent.getStatus(), customerEvent);
