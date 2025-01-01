@@ -6,8 +6,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(
-        name = "${feign-client.customer-api.name}",
-        path = "${feign-client.customer-api.path}",
+        name = "${remote-client.client2.name}",
+        url = "${remote-client.client2.base-url}",
+        path = "${remote-client.client2.context-path}",
         configuration = OperationJtwInterceptor.class)
 public interface RemoteCustomerService {
     @GetMapping(value = "/customers/{customerId}")

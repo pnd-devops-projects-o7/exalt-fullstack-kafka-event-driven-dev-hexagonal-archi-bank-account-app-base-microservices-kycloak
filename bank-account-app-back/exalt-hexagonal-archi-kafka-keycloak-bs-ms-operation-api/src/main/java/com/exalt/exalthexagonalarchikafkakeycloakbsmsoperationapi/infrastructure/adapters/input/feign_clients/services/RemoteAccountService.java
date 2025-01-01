@@ -7,8 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 
 @FeignClient(
-        name = "${feign-client.bank-account-api.name}",
-        path = "${feign-client.bank-account-api.path}",
+        name = "${remote-client.client1.name}",
+        url = "${remote-client.client1.base-url}",
+        path = "${remote-client.client1.context-path}",
         configuration = OperationJtwInterceptor.class)
 public interface RemoteAccountService {
     @GetMapping(value = "/accounts/{accountId}")
