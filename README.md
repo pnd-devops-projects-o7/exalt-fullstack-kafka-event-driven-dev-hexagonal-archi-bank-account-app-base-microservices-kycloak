@@ -1,4 +1,5 @@
 # Bank-Account-App [Archi hexagonale | Microservices | Spring boot 3 | Spring Security | Kafka |  KeyCloak]
+## summary
 - **Bank-Account-App** est application fullstack orientée microservices: 
     - des**business** microservices  et des **transverses** microservices.
     - la communication entre les business microservices est **synchrone** avec **OpenFeign** de Spring Cloud.
