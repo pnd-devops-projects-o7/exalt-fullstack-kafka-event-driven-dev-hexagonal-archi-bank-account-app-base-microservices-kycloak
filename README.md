@@ -7,7 +7,8 @@
     - **SonarQube** check les vulnérabilités, le code smell, la couverture de code et la sécurité
 - Mise en place d'une **infrastructure Kafka**:
     - pour persister et distribuer les événements liés à la modification des données dans les BDD.
-- **KeyCloak** Identity Provider (IDP) est utilisé pour authenifier et autoriser l'accès aux Backend business microservices
+- **KeyCloak** Identity Provider pour authentifier et autoriser l'accès aux Backend resource servers
+    - ici, les resource servers sont des business microservices
     - Les **users**, les **roles** et les **JWT** sont géré par **KeyCloak**
 - Une **application frontend** en Angular 16.
 - Un workflow avec Jenkins pour automatiser les jobs: 
