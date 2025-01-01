@@ -15,11 +15,11 @@ import java.time.Instant;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-public class MapperService2 {
-    private MapperService2(){}
+public class TransferMapperService {
+    private TransferMapperService(){}
     private static final String CURRENT="CURRENT";
     private static final String SAVING="SAVING";
-    private static final Logger LOGGER = Logger.getLogger(MapperService2.class.getSimpleName());
+    private static final Logger LOGGER = Logger.getLogger(TransferMapperService.class.getSimpleName());
     public static OriginAccount mapFromAccountResponseDto1(AccountResponseDto accountResponseDto, CustomerResponseDto customerResponseDto){
         OriginAccount originAccount = new OriginAccount();
         originAccount.setAccountId(accountResponseDto.accountId());

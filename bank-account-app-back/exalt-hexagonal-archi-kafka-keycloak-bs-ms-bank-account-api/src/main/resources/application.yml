@@ -64,7 +64,7 @@ kafka:
 
 server:
   port: ${BANK_ACCOUNT_API_SERVER_PORT}
-# atcuator config, to be used by K8s for healthcheck
+# actuator config, to be used by K8s for healthcheck
 management:
   endpoints:
     web:
@@ -89,7 +89,5 @@ eureka:
 
 # remote customer
 feign-client:
-  value: ${CUSTOMER_API_APP_NAME}
-  complete-url:
-    base-url: ${ROUTE2_URI}
-    path: ${ROUTE2_PREDICATE}
+  name: ${ROUTE2_ID}
+  path: ${ROUTE2_PREDICATE}

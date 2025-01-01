@@ -48,7 +48,7 @@ public class OperationInputServiceImpl implements OperationInputService {
 
         switch (operationRequestDto.operationType()) {
             case WITHDRAW -> {
-                if (ValidatorTools.accountBalanceInsufficient(accountResponseDto.balance(), operationRequestDto.transactionAmount())) {
+                if (ValidatorTools.accountBalanceInsufficient(accountResponseDto, operationRequestDto.transactionAmount())) {
                     throw new OperationApiBusinessException("remote account balance insufficient");
                 }
                 BigDecimal minusAmount = operationRequestDto.transactionAmount().negate();
@@ -62,11 +62,11 @@ public class OperationInputServiceImpl implements OperationInputService {
         CustomerResponseDto customerResponseDto = remoteCustomerService
                 .getRemoteCustomerById(accountResponseDto.customerResponseDto().customerDto().customerId());
 
-        Operation operation = MapperService1.mapFromOperationRequestDto(operationRequestDto);
-        BankAccount bankAccount = (BankAccount) MapperService1.mapFromAccountResponseDto(accountResponseDto);
-        bankAccount.setCustomer(MapperService1.mapFromCustomerResponseDto(customerResponseDto));
+        Operation operation = OperationMapperService.mapFromOperationRequestDto(operationRequestDto);
+        BankAccount bankAccount = (BankAccount) OperationMapperService.mapFromAccountResponseDto(accountResponseDto);
+        bankAccount.setCustomer(OperationMapperService.mapFromCustomerResponseDto(customerResponseDto));
         operation.setBankAccount(bankAccount);
-        OperationEntity operationEntity = MapperService1.mapFromOperation(operation);
+        OperationEntity operationEntity = OperationMapperService.mapFromOperation(operation);
         //call output connector to register operation entity
         operationOutputService.createOperation(operationEntity);
         //build kafka event
@@ -78,7 +78,7 @@ public class OperationInputServiceImpl implements OperationInputService {
         // call output connector to send operation event to kafka infrastructure
         eventProducer.createOperationEvent(operationEvent);
         //build operation response dto
-        return MapperService1.mapToOperationResponseDto(operationEntity, accountResponseDto);
+        return OperationMapperService.mapToOperationResponseDto(operationEntity, accountResponseDto);
     }
 
     @Override
@@ -86,7 +86,7 @@ public class OperationInputServiceImpl implements OperationInputService {
         Collection<OperationEntity> operationEntities = operationOutputService.getAllOperations();
         return operationEntities.stream().map(operationEntity -> {
             AccountResponseDto accountResponseDto = remoteAccountService.getRemoteAccountById(operationEntity.getAccountId());
-            return MapperService1.mapToOperationResponseDto(operationEntity, accountResponseDto);
+            return OperationMapperService.mapToOperationResponseDto(operationEntity, accountResponseDto);
         }).toList();
     }
 
@@ -97,7 +97,7 @@ public class OperationInputServiceImpl implements OperationInputService {
             throw new OperationNotFoundException(String.format("operation with id %s not found", operationId));
         }
         AccountResponseDto accountResponseDto = remoteAccountService.getRemoteAccountById(operationEntity.getAccountId());
-        return MapperService1.mapToOperationResponseDto(operationEntity,accountResponseDto);
+        return OperationMapperService.mapToOperationResponseDto(operationEntity,accountResponseDto);
     }
 
     //list of checks for payload validity

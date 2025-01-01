@@ -68,18 +68,18 @@ public class TransferInputServiceImpl implements TransferInputService {
         remoteAccountService.updateAccountBalance(destinationAccountResponseDto.accountId(), transferRequestDto.transferAmount());
 
         //build transfer event
-        Transfer transfer = MapperService2.partialMapFromRequestDto(transferRequestDto);
-        OriginAccount originAccount = MapperService2
+        Transfer transfer = TransferMapperService.partialMapFromRequestDto(transferRequestDto);
+        OriginAccount originAccount = TransferMapperService
                 .mapFromAccountResponseDto1(originAccountResponseDto, originCustomerResponseDto);
-        DestinationAccount destinationAccount = MapperService2
+        DestinationAccount destinationAccount = TransferMapperService
                 .mapFromAccountResponseDto2(destinationAccountResponseDto, destinationCustomerResponseDto);
         transfer.setOriginAccount(originAccount);
         transfer.setDestinationAccount(destinationAccount);
         //call output connector to persist transfer entity in db
-        TransferEntity transferEntity = MapperService2.mapFromTransfer(transfer);
+        TransferEntity transferEntity = TransferMapperService.mapFromTransfer(transfer);
         transferOutputService.createTransfer(transferEntity);
         //call output connector to send transfer event to kafka topic
-        TransferEvent transferEvent = MapperService2.mapToTransferEvent(transfer);
+        TransferEvent transferEvent = TransferMapperService.mapToTransferEvent(transfer);
         eventProducer.createTransfer(transferEvent);
         //build user readable response
         return mapToTransferResponseDTo(transferEntity, originAccountResponseDto, destinationAccountResponseDto);
@@ -106,7 +106,7 @@ public class TransferInputServiceImpl implements TransferInputService {
     //check validity
     private void checkRemoteAccountValidity(AccountResponseDto originAccountResponseDto, AccountResponseDto destinationAccountResponseDto,
                                             TransferRequestDto transferRequestDto) {
-        final Logger logger = Logger.getLogger(MapperService2.class.getSimpleName());
+        final Logger logger = Logger.getLogger(TransferMapperService.class.getSimpleName());
         if (ValidatorTools.remoteAccountClientUnreachable(
                 originAccountResponseDto) || ValidatorTools.remoteAccountClientUnreachable(destinationAccountResponseDto)) {
             logger.info("log remote origin or destination account unreachable");

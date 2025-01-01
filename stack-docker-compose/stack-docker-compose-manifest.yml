@@ -146,38 +146,40 @@ services:
       KC_DB_PASSWORD: ${KEYCLOAK_DATABASE_PWD}
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME}
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD}
-      KC_HOSTNAME: ${KC_HOSTNAME} # localhost development mode, keycloak hostname in production
+      KC_HOSTNAME: localhost #${KC_HOSTNAME} # keycloak hostname in production, (localhost in development)
       KC_HTTP_PORT: ${KC_HTTP_PORT}
+      KC_HTTPS_PORT: ${KC_HTTPS_PORT}
       KC_HTTP_ENABLED: true
       KC_HTTPS_ENABLED: false
       #keycloak in production configuration must have a certificate configured
       KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/conf/self-signed-certif.crt
-      KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/conf/private-key.key
+      KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/conf/signing-key.key
     volumes:
       - ../keycloak-auth-keys/self-signed-certif.crt:/opt/keycloak/conf/self-signed-certif.crt
-      - ../keycloak-auth-keys/private-key.key:/opt/keycloak/conf/private-key.key
+      - ../keycloak-auth-keys/signing-key.key:/opt/keycloak/conf/signing-key.key
     command:
-      - start-dev
+      - start-dev # development mode
+      #- start #production mode
       - --verbose
     depends_on:
       bank-account-app-db-server:
         condition: service_healthy
     ports:
-      - 8380:8380
-      - 8443:8443
+      - ${KC_HTTP_PORT}:${KC_HTTP_PORT}
+      - ${KC_HTTPS_PORT}:${KC_HTTPS_PORT}
     restart: no
 
-  exalt-hexagonal-archi-kafka-keycloak-eureka-server:
+  exalt-hexagonal-archi-kafka-keycloak-registry-eureka-server:
     container_name: ${SERVICE_REGISTRY_API_APP_NAME}
     image: placidenduwayo1/${SERVICE_REGISTRY_API_APP_NAME}:${APPLICATION_TAG}
     build:
       context: ../bank-account-app-back/exalt-hexagonal-archi-kafka-keycloak-registry-eureka-server
       dockerfile: Dockerfile
     ports:
-      - "${SERVICE_REGISTRY_API_SERVER_PORT}:${SERVICE_REGISTRY_API_SERVER_PORT}"
+      - ${SERVICE_REGISTRY_API_SERVER_PORT}:${SERVICE_REGISTRY_API_SERVER_PORT}
     environment:
       SERVICE_REGISTRY_API_APP_NAME: ${SERVICE_REGISTRY_API_APP_NAME}
-      SERVICE_REGISTRY_SERVER_PORT: ${SERVICE_REGISTRY_API_SERVER_PORT}
+      SERVICE_REGISTRY_API_SERVER_PORT: ${SERVICE_REGISTRY_API_SERVER_PORT}
     networks:
       - bank-account-app-net
     healthcheck:
@@ -195,10 +197,15 @@ services:
       context: ../bank-account-app-back/exalt-hexagonal-archi-kafka-keycloak-backend-gateway-oauth2-client
       dockerfile: Dockerfile
     ports:
-      - "${BACKEND_GATEWAY_CLIENT_SERVER_PORT}:${BACKEND_GATEWAY_CLIENT_SERVER_PORT}"
+      - ${BACKEND_GATEWAY_CLIENT_SERVER_PORT}:${BACKEND_GATEWAY_CLIENT_SERVER_PORT}
     environment:
       BACKEND_GATEWAY_CLIENT_APP_NAME: ${BACKEND_GATEWAY_CLIENT_APP_NAME}
-      BACKEND_GATEWAY_CLIENT_SERVER_PORT: ${BACKEND_GATEWAY_CLIENT_SERVER_PORT}
+      KEYCLOAK_BACKEND_GATEWAY_CLIENT_ID: ${KEYCLOAK_BACKEND_GATEWAY_CLIENT_ID}
+      KEYCLOAK_BACKEND_GATEWAY_CLIENT_NAME: ${KEYCLOAK_BACKEND_GATEWAY_CLIENT_NAME}
+      KEYCLOAK_CLIENT_SECRET: ${KEYCLOAK_CLIENT_SECRET}
+      KEYCLOAK_AUTHORIZATION_CODE: ${KEYCLOAK_AUTHORIZATION_CODE}
+      REDIRECT_URI: ${REDIRECT_URI}
+      JWT_ISSUER: ${JWT_ISSUER}
       ROUTE1_ID: ${ROUTE1_ID}
       ROUTE1_URI: ${ROUTE1_URI}
       ROUTE1_PREDICATE: ${ROUTE1_PREDICATE}
@@ -213,16 +220,11 @@ services:
       ROUTE4_PREDICATE: ${ROUTE4_PREDICATE}
       SERVICE_REGISTRY_API_APP_NAME: ${SERVICE_REGISTRY_API_APP_NAME}
       SERVICE_REGISTRY_API_SERVER_PORT: ${SERVICE_REGISTRY_API_SERVER_PORT}
-      KEYCLOAK_BACKEND_GATEWAY_CLIENT_ID: ${KEYCLOAK_BACKEND_GATEWAY_CLIENT_ID}
-      KEYCLOAK_BACKEND_GATEWAY_CLIENT_NAME: ${KEYCLOAK_BACKEND_GATEWAY_CLIENT_NAME}
-      KEYCLOAK_CLIENT_SECRET: ${KEYCLOAK_CLIENT_SECRET}
-      KEYCLOAK_AUTHORIZATION_CODE: ${KEYCLOAK_AUTHORIZATION_CODE}
-      REDIRECT_URI: ${REDIRECT_URI}
-      JWT_ISSUER: ${JWT_ISSUER}
+      BACKEND_GATEWAY_CLIENT_SERVER_PORT: ${BACKEND_GATEWAY_CLIENT_SERVER_PORT}
     networks:
       - bank-account-app-net
     depends_on:
-      exalt-hexagonal-archi-kafka-keycloak-eureka-server:
+      exalt-hexagonal-archi-kafka-keycloak-registry-eureka-server:
         condition: service_healthy
     restart: no
     #------------ business microservices-----------------
@@ -236,24 +238,27 @@ services:
       - ${BANK_ACCOUNT_API_SERVER_PORT}:${BANK_ACCOUNT_API_SERVER_PORT}
     environment:
       BANK_ACCOUNT_API_APP_NAME: ${BANK_ACCOUNT_API_APP_NAME}
-      BANK_ACCOUNT_API_SERVER_PORT: ${BANK_ACCOUNT_API_SERVER_PORT}
       DATABASE_HOSTNAME: ${DATABASE_HOSTNAME}
       DATABASE_HOST_PORT: ${DATABASE_HOST_PORT}
       BANK_ACCOUNT_API_DB: ${BANK_ACCOUNT_API_DB}
       DATABASE_ROOT_USER: ${DATABASE_ROOT_USER}
       DATABASE_ROOT_PWD: ${DATABASE_ROOT_PWD}
-      SERVICE_REGISTRY_API_APP_NAME: ${SERVICE_REGISTRY_API_APP_NAME}
-      SERVICE_REGISTRY_API_SERVER_PORT: ${SERVICE_REGISTRY_API_SERVER_PORT}
       JWT_ISSUER: ${JWT_ISSUER}
       KEYCLOAK_BACKEND_GATEWAY_CLIENT_ID: ${KEYCLOAK_BACKEND_GATEWAY_CLIENT_ID}
       ACCOUNT_TOPIC_NAME: ${ACCOUNT_TOPIC_NAME}
       KAFKA_TOPIC_RETENTION_DURATION: ${KAFKA_TOPIC_RETENTION_DURATION}
       KAFKA_TOPIC_RETENTION_SIZE: ${KAFKA_TOPIC_RETENTION_SIZE}
       KAFKA_TOPIC_RETENTION_CLEANUP_POLICY: ${KAFKA_TOPIC_RETENTION_CLEANUP_POLICY}
+      BANK_ACCOUNT_API_SERVER_PORT: ${BANK_ACCOUNT_API_SERVER_PORT}
+      SERVICE_REGISTRY_API_APP_NAME: ${SERVICE_REGISTRY_API_APP_NAME}
+      SERVICE_REGISTRY_API_SERVER_PORT: ${SERVICE_REGISTRY_API_SERVER_PORT}
+      ROUTE2_ID: ${ROUTE2_ID}
+      ROUTE2_URI: ${ROUTE2_URI}
+      ROUTE2_PREDICATE: ${ROUTE2_PREDICATE}
     depends_on:
       bank-account-app-db-server:
         condition: service_healthy
-      exalt-hexagonal-archi-kafka-keycloak-eureka-server:
+      exalt-hexagonal-archi-kafka-keycloak-registry-eureka-server:
         condition: service_healthy
       kafka-server-1:
         condition: service_healthy
@@ -273,25 +278,24 @@ services:
       - ${CUSTOMER_API_SERVER_PORT}:${CUSTOMER_API_SERVER_PORT}
     environment:
       CUSTOMER_API_APP_NAME: ${CUSTOMER_API_APP_NAME}
-      CUSTOMER_API_SERVER_PORT: ${CUSTOMER_API_SERVER_PORT}
       DATABASE_HOSTNAME: ${DATABASE_HOSTNAME}
       DATABASE_HOST_PORT: ${DATABASE_HOST_PORT}
       CUSTOMER_API_DB: ${CUSTOMER_API_DB}
       DATABASE_ROOT_USER: ${DATABASE_ROOT_USER}
       DATABASE_ROOT_PWD: ${DATABASE_ROOT_PWD}
-      SERVICE_REGISTRY_API_APP_NAME: ${SERVICE_REGISTRY_API_APP_NAME}
-      SERVICE_REGISTRY_API_SERVER_PORT: ${SERVICE_REGISTRY_API_SERVER_PORT}
+      JWT_ISSUER: ${JWT_ISSUER}
+      KEYCLOAK_BACKEND_GATEWAY_CLIENT_ID: ${KEYCLOAK_BACKEND_GATEWAY_CLIENT_ID}
       CUSTOMER_TOPIC_NAME: ${CUSTOMER_TOPIC_NAME}
       KAFKA_TOPIC_RETENTION_DURATION: ${KAFKA_TOPIC_RETENTION_DURATION}
       KAFKA_TOPIC_RETENTION_SIZE: ${KAFKA_TOPIC_RETENTION_SIZE}
       KAFKA_TOPIC_RETENTION_CLEANUP_POLICY: ${KAFKA_TOPIC_RETENTION_CLEANUP_POLICY}
-      JWT_ISSUER: ${JWT_ISSUER}
-      KEYCLOAK_BACKEND_GATEWAY_CLIENT_ID: ${KEYCLOAK_BACKEND_GATEWAY_CLIENT_ID}
-      KEYCLOAK_CLIENT_SECRET: ${KEYCLOAK_CLIENT_SECRET}
+      CUSTOMER_API_SERVER_PORT: ${CUSTOMER_API_SERVER_PORT}
+      SERVICE_REGISTRY_API_APP_NAME: ${SERVICE_REGISTRY_API_APP_NAME}
+      SERVICE_REGISTRY_API_SERVER_PORT: ${SERVICE_REGISTRY_API_SERVER_PORT}
     depends_on:
       bank-account-app-db-server:
         condition: service_healthy
-      exalt-hexagonal-archi-kafka-keycloak-eureka-server:
+      exalt-hexagonal-archi-kafka-keycloak-registry-eureka-server:
         condition: service_healthy
       kafka-server-1:
         condition: service_healthy
@@ -311,14 +315,11 @@ services:
       - ${OPERATION_API_SERVER_PORT}:${OPERATION_API_SERVER_PORT}
     environment:
       OPERATION_API_APP_NAME: ${OPERATION_API_APP_NAME}
-      OPERATION_API_SERVER_PORT: ${OPERATION_API_SERVER_PORT}
       DATABASE_HOSTNAME: ${DATABASE_HOSTNAME}
       DATABASE_HOST_PORT: ${DATABASE_HOST_PORT}
       OPERATION_API_DB: ${OPERATION_API_DB}
       DATABASE_ROOT_USER: ${DATABASE_ROOT_USER}
       DATABASE_ROOT_PWD: ${DATABASE_ROOT_PWD}
-      SERVICE_REGISTRY_APPLICATION_NAME: ${SERVICE_REGISTRY_APPLICATION_NAME}
-      SERVICE_REGISTRY_SERVER_PORT: ${SERVICE_REGISTRY_SERVER_PORT}
       JWT_ISSUER: ${JWT_ISSUER}
       KEYCLOAK_BACKEND_GATEWAY_CLIENT_ID: ${KEYCLOAK_BACKEND_GATEWAY_CLIENT_ID}
       OPERATION_TOPIC1_NAME: ${OPERATION_TOPIC1_NAME}
@@ -326,10 +327,19 @@ services:
       KAFKA_TOPIC_RETENTION_DURATION: ${KAFKA_TOPIC_RETENTION_DURATION}
       KAFKA_TOPIC_RETENTION_SIZE: ${KAFKA_TOPIC_RETENTION_SIZE}
       KAFKA_TOPIC_RETENTION_CLEANUP_POLICY: ${KAFKA_TOPIC_RETENTION_CLEANUP_POLICY}
+      OPERATION_API_SERVER_PORT: ${OPERATION_API_SERVER_PORT}
+      SERVICE_REGISTRY_API_APP_NAME: ${SERVICE_REGISTRY_API_APP_NAME}
+      SERVICE_REGISTRY_API_SERVER_PORT: ${SERVICE_REGISTRY_API_SERVER_PORT}
+      ROUTE1_ID: ${ROUTE1_ID}
+      ROUTE1_URI: ${ROUTE1_URI}
+      ROUTE1_PREDICATE: ${ROUTE1_PREDICATE}
+      ROUTE2_ID: ${ROUTE2_ID}
+      ROUTE2_URI: ${ROUTE2_URI}
+      ROUTE2_PREDICATE: ${ROUTE2_PREDICATE}
     depends_on:
       bank-account-app-db-server:
         condition: service_healthy
-      exalt-hexagonal-archi-kafka-keycloak-eureka-server:
+      exalt-hexagonal-archi-kafka-keycloak-registry-eureka-server:
         condition: service_healthy
       kafka-server-1:
         condition: service_healthy
@@ -338,6 +348,17 @@ services:
     networks:
       - bank-account-app-net
     restart: no
+
+  # email server that is used by notification-api
+  notification-email-server:
+    container_name: ${MAIL_SERVER_HOST_NAME}
+    image: mailhog/mailhog
+    ports:
+      - ${MAIL_SERVER_HOST_PORT1}:${MAIL_SERVER_HOST_PORT1}
+      - ${MAIL_SERVER_HOST_PORT2}:${MAIL_SERVER_HOST_PORT2}
+    restart: no
+    networks:
+      - bank-account-app-net
 
   exalt-hexagonal-archi-kafka-keycloak-bs-ms-notification-api:
     container_name: ${NOTIFICATION_API_APP_NAME}
@@ -350,7 +371,7 @@ services:
     networks:
       - bank-account-app-net
     depends_on:
-      exalt-hexagonal-archi-kafka-keycloak-eureka-server:
+      exalt-hexagonal-archi-kafka-keycloak-registry-eureka-server:
         condition: service_healthy
       kafka-server-1:
         condition: service_healthy
@@ -362,10 +383,11 @@ services:
       NOTIFICATION_API_SERVER_PORT: ${NOTIFICATION_API_SERVER_PORT}
       SERVICE_REGISTRY_API_APP_NAME: ${SERVICE_REGISTRY_API_APP_NAME}
       SERVICE_REGISTRY_API_SERVER_PORT: ${SERVICE_REGISTRY_API_SERVER_PORT}
-      SMTP_MAIL_HOSTNAME: ${SMTP_MAIL_HOSTNAME}
-      SMTP_MAIL_HOST_PORT: ${SMTP_MAIL_HOST_PORT}
-      SMP_MAIL_USERNAME: ${SMP_MAIL_USERNAME}
-      SMTP_MAIL_PASSWORD: ${SMTP_MAIL_PASSWORD}
+      MAIL_SERVER_HOST_NAME: ${MAIL_SERVER_HOST_NAME}
+      MAIL_SERVER_HOST_PORT1: ${MAIL_SERVER_HOST_PORT1}
+      MAIL_SERVER_USERNAME: ${MAIL_SERVER_USERNAME}
+      MAIL_SERVER_PASSWORD: ${MAIL_SERVER_PASSWORD}
+      MAIL_SENDER_PROTOCOL: ${MAIL_SENDER_PROTOCOL}
       CUSTOMER_TOPIC_NAME: ${CUSTOMER_TOPIC_NAME}
       ACCOUNT_TOPIC_NAME: ${ACCOUNT_TOPIC_NAME}
       OPERATION_TOPIC1_NAME: ${OPERATION_TOPIC1_NAME}

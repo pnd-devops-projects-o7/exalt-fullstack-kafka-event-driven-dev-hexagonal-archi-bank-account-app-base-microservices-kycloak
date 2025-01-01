@@ -39,8 +39,14 @@ public class ValidatorTools {
         return operationType.equals("DEPOSIT") || operationType.equals("WITHDRAW");
     }
 
-    public static boolean accountBalanceInsufficient(BigDecimal balance,BigDecimal bigDecimal) {
-        return balance.compareTo(bigDecimal) < 0;
+    public static boolean accountBalanceInsufficient(AccountResponseDto accountResponseDto,BigDecimal operationAmount) {
+        int result = accountResponseDto.balance()
+                .add(BigDecimal.valueOf(accountResponseDto.overdraft()))
+                .compareTo(operationAmount);
+        return result < 0;
+    }
+    public static boolean accountBalanceInsufficient(BigDecimal balance, BigDecimal transferAmount){
+        return balance.compareTo(transferAmount)<0;
     }
 
     //transfer validators

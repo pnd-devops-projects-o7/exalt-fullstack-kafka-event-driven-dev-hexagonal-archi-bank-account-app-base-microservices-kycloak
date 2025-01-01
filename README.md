@@ -48,6 +48,7 @@ La partie backend de comprend:
     - ```exalt-hexagonal-archi-kafka-keycloak-bs-ms-notification-api```
         - envoie un email de notification lorsqu'un des microservices métiers: customer-api, bank-account-api, ou operation-api produit un événement dans un topic kafka
         - cette apin'expose donc pas d'endpoint
+        - Cette api de notification utilise un docker container de **Mailhog** comme mail server pour notifier la diffusion d'un event danks un topic kafka
 
 - chaque microservice métier utilse sa propre base de données MySql pour la persistance les data
 
