@@ -21,8 +21,8 @@ import java.util.Properties;
 @Service
 public class EmailServiceImpl implements EmailService {
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailServiceImpl.class.getName());
-    @Value("${notification.mail.sender.host}")
-    private String mailServerHost;
+    @Value("${notification.mail.sender.ip-address}")
+    private String mailServerHostIpAddress;
     @Value("${notification.mail.sender.port1}")
     private int mailServerPort;
     @Value("${notification.mail.sender.user}")
@@ -101,7 +101,7 @@ public class EmailServiceImpl implements EmailService {
 
     private JavaMailSenderImpl javaMailSender() {
         JavaMailSenderImpl javaMailSenderImpl = new JavaMailSenderImpl();
-        javaMailSenderImpl.setHost(mailServerHost);
+        javaMailSenderImpl.setHost(mailServerHostIpAddress);
         javaMailSenderImpl.setPort(mailServerPort);
         javaMailSenderImpl.setUsername(username);
         javaMailSenderImpl.setPassword(pwd);

@@ -146,7 +146,7 @@ services:
       KC_DB_PASSWORD: ${KEYCLOAK_DATABASE_PWD}
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME}
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD}
-      KC_HOSTNAME: localhost #${KC_HOSTNAME} # keycloak hostname in production, (localhost in development)
+      KC_HOSTNAME: ${KC_HOSTNAME} # keycloak hostname in production, (localhost in development)
       KC_HTTP_PORT: ${KC_HTTP_PORT}
       KC_HTTPS_PORT: ${KC_HTTPS_PORT}
       KC_HTTP_ENABLED: true
@@ -158,8 +158,8 @@ services:
       - ../keycloak-auth-keys/self-signed-certif.crt:/opt/keycloak/conf/self-signed-certif.crt
       - ../keycloak-auth-keys/signing-key.key:/opt/keycloak/conf/signing-key.key
     command:
-      - start-dev # development mode
-      #- start #production mode
+     # - start-dev # development mode
+      - start #production mode
       - --verbose
     depends_on:
       bank-account-app-db-server:
@@ -246,6 +246,7 @@ services:
       JWT_ISSUER: ${JWT_ISSUER}
       KEYCLOAK_BACKEND_GATEWAY_CLIENT_ID: ${KEYCLOAK_BACKEND_GATEWAY_CLIENT_ID}
       ACCOUNT_TOPIC_NAME: ${ACCOUNT_TOPIC_NAME}
+      ACCOUNT_TOPIC_PARTITIONS: ${ACCOUNT_TOPIC_PARTITIONS}
       KAFKA_TOPIC_RETENTION_DURATION: ${KAFKA_TOPIC_RETENTION_DURATION}
       KAFKA_TOPIC_RETENTION_SIZE: ${KAFKA_TOPIC_RETENTION_SIZE}
       KAFKA_TOPIC_RETENTION_CLEANUP_POLICY: ${KAFKA_TOPIC_RETENTION_CLEANUP_POLICY}
@@ -286,6 +287,7 @@ services:
       JWT_ISSUER: ${JWT_ISSUER}
       KEYCLOAK_BACKEND_GATEWAY_CLIENT_ID: ${KEYCLOAK_BACKEND_GATEWAY_CLIENT_ID}
       CUSTOMER_TOPIC_NAME: ${CUSTOMER_TOPIC_NAME}
+      CUSTOMER_TOPIC_PARTITIONS: ${CUSTOMER_TOPIC_PARTITIONS}
       KAFKA_TOPIC_RETENTION_DURATION: ${KAFKA_TOPIC_RETENTION_DURATION}
       KAFKA_TOPIC_RETENTION_SIZE: ${KAFKA_TOPIC_RETENTION_SIZE}
       KAFKA_TOPIC_RETENTION_CLEANUP_POLICY: ${KAFKA_TOPIC_RETENTION_CLEANUP_POLICY}
@@ -349,8 +351,8 @@ services:
       - bank-account-app-net
     restart: no
 
-  # email server that is used by notification-api
-  notification-email-server:
+  # email server that is used by notification-api to send email
+  smtp-mail-notification-server:
     container_name: ${MAIL_SERVER_HOST_NAME}
     image: mailhog/mailhog
     ports:
@@ -383,7 +385,7 @@ services:
       NOTIFICATION_API_SERVER_PORT: ${NOTIFICATION_API_SERVER_PORT}
       SERVICE_REGISTRY_API_APP_NAME: ${SERVICE_REGISTRY_API_APP_NAME}
       SERVICE_REGISTRY_API_SERVER_PORT: ${SERVICE_REGISTRY_API_SERVER_PORT}
-      MAIL_SERVER_HOST_NAME: ${MAIL_SERVER_HOST_NAME}
+      MAIL_SERVER_HOST_IP_ADDRESS: ${MAIL_SERVER_HOST_IP_ADDRESS}
       MAIL_SERVER_HOST_PORT1: ${MAIL_SERVER_HOST_PORT1}
       MAIL_SERVER_USERNAME: ${MAIL_SERVER_USERNAME}
       MAIL_SERVER_PASSWORD: ${MAIL_SERVER_PASSWORD}

@@ -57,6 +57,7 @@ security:
 kafka:
   topic-config:
     name: ${ACCOUNT_TOPIC_NAME}
+    partitions: ${ACCOUNT_TOPIC_PARTITIONS}
     retention:
       duration: ${KAFKA_TOPIC_RETENTION_DURATION}
       size: ${KAFKA_TOPIC_RETENTION_SIZE}

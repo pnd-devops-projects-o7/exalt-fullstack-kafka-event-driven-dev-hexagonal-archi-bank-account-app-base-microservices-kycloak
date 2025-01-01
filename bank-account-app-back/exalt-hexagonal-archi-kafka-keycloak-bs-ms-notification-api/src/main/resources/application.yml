@@ -23,7 +23,7 @@ spring:
 notification:
   mail:
     sender:
-      host: ${MAIL_SERVER_HOST_NAME}
+      ip-address: ${MAIL_SERVER_HOST_IP_ADDRESS}
       port1: ${MAIL_SERVER_HOST_PORT1}
       port2: ${MAIL_SERVER_HOST_PORT2}
       user: ${MAIL_SERVER_USERNAME}
