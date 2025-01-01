@@ -2,12 +2,13 @@
 - **Bank-Account-App** est application fullstack orientée microservices: 
     - des**business** microservices  et des **transverses** microservices.
     - la communication entre les business microservices est **synchrone** avec **OpenFeign** de Spring Cloud.
-- Chaque business microservice implémente une **architecture hexagonale**, des tests unitaires et d'intération pour garantir la qualité du code source.
+- Chaque business microservice implémente une **architecture hexagonale**.
+- Des tests unitaires et d'intération pour garantir la qualité du code source.
     - **SonarQube** check les vulnérabilités, le code smell, la couverture de code et la sécurité
 - Mise en place d'une **infrastructure Kafka**:
     - pour persister et distribuer les événements liés à la modification des données dans les BDD.
-- **KeyCloak** Identity Provider (IDP) est utilisé pour authifier et autoriser l'accès au resources server (Backend microservice)
-    - utilisation d'un **JWT** géré par **KeyCloak**
+- **KeyCloak** Identity Provider (IDP) est utilisé pour authenifier et autoriser l'accès aux Backend business microservices
+    - Les **users**, les **roles** et les **JWT** sont géré par **KeyCloak**
 - Une **application frontend** en Angular 16.
 - Un workflow avec Jenkins pour automatiser les jobs: 
     - builder chaque microservice ***mvn clean install***,
