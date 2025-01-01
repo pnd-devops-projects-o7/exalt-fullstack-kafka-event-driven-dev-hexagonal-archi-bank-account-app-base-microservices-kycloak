@@ -9,10 +9,10 @@ services:
       - bank-account-app-net
     healthcheck:
       test: nc -z localhost 2181 || exit -1
-      interval: 10s
-      timeout: 5s
+      start_period: 30s
+      interval: 15s
+      timeout: 10s
       retries: 3
-      start_period: 10s
     restart: no
 
   kafka-server-1:
@@ -35,10 +35,10 @@ services:
         condition: service_healthy
     healthcheck:
       test: nc -z localhost 9092 || exit -1
-      start_period: 15s
-      interval: 5s
+      start_period: 30s
+      interval: 15s
       timeout: 10s
-      retries: 10
+      retries: 3
     restart: no
 
   kafka-server-2:
@@ -61,10 +61,10 @@ services:
         condition: service_healthy
     healthcheck:
       test: nc -z localhost 9093 || exit -1
-      start_period: 15s
-      interval: 5s
+      start_period: 30s
+      interval: 15s
       timeout: 10s
-      retries: 10
+      retries: 3
     restart: no
 
   schema-registry-service:
@@ -128,10 +128,10 @@ services:
       - bank-account-app-net
     healthcheck:
       test: [ "CMD", "mysqladmin" ,"ping", "-h", "${SERVER_ADDRESS}", "-u${DATABASE_ROOT_USER}", "-p${DATABASE_ROOT_PWD}" ]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-      start_period: 20s
+      start_period: 30s
+      interval: 15s
+      timeout: 10s
+      retries: 3
     restart: no
   # keycloak IDP
   keycloak-authentication-provider-bank-account-app:
@@ -141,7 +141,7 @@ services:
       - bank-account-app-net
     environment:
       KC_DB: mysql
-      KC_DB_URL: jdbc:mysql://bank-account-app-db-server/${KEYCLOAK_DB}
+      KC_DB_URL: jdbc:mysql://${DATABASE_HOSTNAME}/${KEYCLOAK_DB}
       KC_DB_USERNAME: ${KEYCLOAK_DATABASE_USER}
       KC_DB_PASSWORD: ${KEYCLOAK_DATABASE_PWD}
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME}
@@ -151,6 +151,7 @@ services:
       KC_HTTPS_PORT: ${KC_HTTPS_PORT}
       KC_HTTP_ENABLED: true
       KC_HTTPS_ENABLED: false
+      KC_HEALTH_ENABLED: true
       #keycloak in production configuration must have a certificate configured
       KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/conf/self-signed-certif.crt
       KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/conf/signing-key.key
@@ -168,6 +169,12 @@ services:
       - ${KC_HTTP_PORT}:${KC_HTTP_PORT}
       - ${KC_HTTPS_PORT}:${KC_HTTPS_PORT}
     restart: no
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://${KC_HOSTNAME}/health/ready"]
+      start_period: 30s
+      interval: 15s
+      timeout: 10s
+      retries: 3
 
   exalt-hexagonal-archi-kafka-keycloak-registry-eureka-server:
     container_name: ${SERVICE_REGISTRY_API_APP_NAME}
@@ -225,6 +232,8 @@ services:
       - bank-account-app-net
     depends_on:
       exalt-hexagonal-archi-kafka-keycloak-registry-eureka-server:
+        condition: service_healthy
+      keycloak-authentication-provider-bank-account-app:
         condition: service_healthy
     restart: no
     #------------ business microservices-----------------
