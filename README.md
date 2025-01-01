@@ -1,5 +1,4 @@
 # Bank-Account-App [Archi hexagonale | Microservices | Spring boot 3 | Spring Security | Kafka |  KeyCloak]
-## summary
 - **Bank-Account-App** est application fullstack orientée microservices: 
     - des**business** microservices  et des **transverses** microservices.
     - la communication entre les business microservices est **synchrone** avec **OpenFeign** de Spring Cloud.
@@ -27,14 +26,13 @@ Modèle conceptuel de l'application **Bank-Account-App**
 ![conceptual-model](diagrams/exalt-account-conception.jpg)
 
 ## Authentication & authorization flows to backend resources
-Before connecting the frontend application (Angular App), a **Backend-Gateway-OAuth2-Client** is configured as **trusted client** in KeyCloak.  
-Refering the flow below
+Before connecting the frontend application (Angular App), a **Backend-Gateway-OAuth2-Client** is configured as **trusted client** in KeyCloak. Refering the flow below
 - Backend-Gateway-OAuth2-Client serves as **TokenRelay** between **KeyCloak** IDP and **Backend resources servers**
--  and routes authenticated user's requests (postman) to Backend resources servers. 
+- and routes authenticated user's requests (postman) to Backend resources servers. 
 ![flows1](diagrams/exalt-bank-account-app-flows-1.gif)
 
 After connecting the **frontend-App** to the **Backend Microservices**, refering the flow below: 
-- all the configurations are moved on frontend side and are removed on Backend-Gateway-OAuth2-Client side
+- all configurations are moved on frontend side and removed on Backend-Gateway-OAuth2-Client side
 - The Backend-Gateway-OAuth2-Client becomes a simple gateway to route any request without any check
     - it is no longer a TokenRelay
 - Frontend App is configured as **trusted** in KeyCloak, refer to flow below:
@@ -44,24 +42,24 @@ After connecting the **frontend-App** to the **Backend Microservices**, refering
 La partie backend comprend:
 
 ## 4 applications microservices business:
- chaque business microservice implémentent une architecture hexagonale
+ chaque business microservice implémente une architecture hexagonale
 - ```exalt-hexagonal-archi-kafka-keycloak-bs-ms-customer-api```
     - managing customers, 
-    - oauth2 authentication & authorization est implémenté pour authentifier toutes les requêtes vers ce backend
+    - oauth2 authentication & authorization est implémenté pour authentifier toutes les requêtes vers ```exalt-hexagonal-archi-kafka-keycloak-bs-ms-customer-api```
 - ```exalt-hexagonal-archi-kafka-keycloak-bs-ms-bank-account-api```
     - managingg bank-accounts
-    - oauth2 authentication & authorization est implémenté pour authentifier toutes les requêtes vers ce backend
+    - oauth2 authentication & authorization est implémenté pour authentifier toutes les requêtes vers ```exalt-hexagonal-archi-kafka-keycloak-bs-ms-bank-account-api```
 - ```exalt-hexagonal-archi-kafka-keycloak-bs-ms-operation-api```,
     - managing operations on bank-accounts
-    - oauth2 authentication & authorization est implémenté pour authentifier toutes les requêtes vers ce backend
-- ```exalt-hexagonal-archi-kafka-keycloak-bs-ms-notification-api```
+    - oauth2 authentication & authorization est implémenté pour authentifier toutes les requêtes vers ```exalt-hexagonal-archi-kafka-keycloak-bs-ms-operation-api```
+- ```exalt-hexagonal-archi-kafka-keycloak-bs-ms-notification-api```  
     lorsqu'un business microservice: customer-api, bank-account-api, ou operation-api produit un événement dans un kafka topic:  
     - ```exalt-hexagonal-archi-kafka-keycloak-bs-ms-notification-api``` envoi un email de notification vers un **smtp-mail-notification-server** (MailHog docker container)
     - cette api n'expose donc pas d'endpoint
 
-- Bank-Account-App étant orientée microservices, chaque business microservice utilse sa propre base de données **MySql** pour la persister les données
+Bank-Account-App étant orientée microservices, chaque business microservice utilse sa propre base de données **MySql** pour la persister les données
 
-## 1 api microservice transverse**: 
+## 1 api microservice transverse 
 - ```exalt-hexagonal-archi-kafka-keycloak-backend-gateway-oauth2-client```   route users' requests to backend microservices
 
 ## infrastructure kafka
