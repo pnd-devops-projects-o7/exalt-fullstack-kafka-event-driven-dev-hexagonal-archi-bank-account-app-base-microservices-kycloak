@@ -45,31 +45,31 @@ La partie backend comprend:
  chaque business microservice implémente une architecture hexagonale
 - ```exalt-hexagonal-archi-kafka-keycloak-bs-ms-customer-api```
     - managing customers, 
-    - oauth2 authentication & authorization est implémenté pour authentifier toutes les requêtes vers ```exalt-hexagonal-archi-kafka-keycloak-bs-ms-customer-api```
+    - oauth2 authentication & authorization are implemented to filter all requests towards this api
 - ```exalt-hexagonal-archi-kafka-keycloak-bs-ms-bank-account-api```
     - managingg bank-accounts
-    - oauth2 authentication & authorization est implémenté pour authentifier toutes les requêtes vers ```exalt-hexagonal-archi-kafka-keycloak-bs-ms-bank-account-api```
+    - oauth2 authentication & authorization are implemented to filter all requests towards this api
 - ```exalt-hexagonal-archi-kafka-keycloak-bs-ms-operation-api```,
     - managing operations on bank-accounts
-    - oauth2 authentication & authorization est implémenté pour authentifier toutes les requêtes vers ```exalt-hexagonal-archi-kafka-keycloak-bs-ms-operation-api```
+    - oauth2 authentication & authorization are implemented to filter all requests towards this api
 - ```exalt-hexagonal-archi-kafka-keycloak-bs-ms-notification-api```  
-    lorsqu'un business microservice: customer-api, bank-account-api, ou operation-api produit un événement dans un kafka topic:  
-    - ```exalt-hexagonal-archi-kafka-keycloak-bs-ms-notification-api``` envoi un email de notification vers un **smtp-mail-notification-server** (MailHog docker container)
-    - cette api n'expose donc pas d'endpoint
+    when a business microservice: customer-api, bank-account-api or operation-api produce an event into kafka topic:  
+    - ```exalt-hexagonal-archi-kafka-keycloak-bs-ms-notification-api``` send an email notification on **smtp-mail-notification-server**: MailHog docker container
+    - this api has no exposed endpoint
 
-Bank-Account-App étant orientée microservices, chaque business microservice utilse sa propre base de données **MySql** pour la persister les données
+Bank-Account-App being a microservices based, each business microservice uses its own **MySql** db to persist is data.
 
 ## 1 api microservice transverse 
 - ```exalt-hexagonal-archi-kafka-keycloak-backend-gateway-oauth2-client```   route users' requests to backend microservices
 
 ## infrastructure kafka
-infrastructure kafka pour la persistance et la distribution des événements
-- un zookeeper-server 
+infrastructure kafka for persisting and distributing kafka events
+- a zookeeper-server 
 - 2 kafka-servers
-- un schema-registry-service
-    - pour definir le modèle commun de message pour le **producer** et le **consumer**
-    - utilise **avro** pour définir ce modèle
-- un kafka-ui pour interface graphique d'observabilité des flows dans kafka infrastructure
+- a schema-registry-service
+    - to register a common model schema for **producer** and **consumer**
+    - we use **avro** to define the model schema
+- a kafka-ui for graphic user interface to follow flows into kafka infrastructure
 
 ## Bank-Account-App deployment
 Tout l'ecosystème des applications de **Bank-Account-App** est containeurisé avec **docker** et déployés ensuite dans un cluster locale **Minikuke** avec **Kubernetes**
