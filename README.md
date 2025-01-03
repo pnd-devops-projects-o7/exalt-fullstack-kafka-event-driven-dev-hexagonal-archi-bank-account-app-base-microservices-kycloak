@@ -37,8 +37,9 @@ After connecting the **frontend-App** to the **Backend Microservices**, refering
 - Frontend App is configured as **trusted** in KeyCloak, refer to flow below:
 ![flows2](diagrams/exalt-bank-account-app-flows-2.gif)
 
+## Bank-Account-App architecture Backend & Frontend connected
+![architecture](diagrams/exalt-bank-account-app-archi_.gif)
 # Backend
-
 ## 4 applications microservices business:
  chaque business microservice implémente une architecture hexagonale
 - ```exalt-hexagonal-archi-kafka-keycloak-bs-ms-customer-api```
