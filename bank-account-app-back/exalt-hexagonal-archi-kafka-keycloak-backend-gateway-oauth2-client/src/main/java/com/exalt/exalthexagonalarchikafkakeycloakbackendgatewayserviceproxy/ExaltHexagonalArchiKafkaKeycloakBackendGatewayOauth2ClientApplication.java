@@ -1,4 +1,4 @@
-package com.exalt.exalthexagonalarchikafkakeycloakbackendgatewayoauth2client;
+package com.exalt.exalthexagonalarchikafkakeycloakbackendgatewayserviceproxy;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -131,7 +131,7 @@ public class InputServiceImpl implements InputService {
             bankAccountEvent.setAccountType("CURRENT ACCOUNT");
         } else if (bankAccountEntity instanceof SavingAccount savingAccount) {
             outputService.createSavingAccount(savingAccount);
-            bankAccountEvent.setAccountType("SAVING BANK ACCOUNT");
+            bankAccountEvent.setAccountType("SAVING ACCOUNT");
         }
         //build kafka bank account event
         bankAccountEvent.setMessage("account is activated, ready for operations");
@@ -144,7 +144,6 @@ public class InputServiceImpl implements InputService {
         eventProducer.activateAccountEvent(bankAccountEvent);
         return MapperService.mapToAccountResponseDto(bankAccountEntity, customerResponseDto);
     }
-
     @Override
     public AccountResponseDto suspendAccount(String accountId) {
         BankAccountEntity bankAccountEntity = outputService.getAccountById(accountId);
@@ -190,12 +189,12 @@ public class InputServiceImpl implements InputService {
         BankAccountEvent bankAccountEvent = new BankAccountEvent();
         bankAccountEntity.setBalance(bankAccountEntity.getBalance().add(amount));
         //call output connector to persist account
-        switch (bankAccountEntity){
-            case CurrentAccount currentAccount ->{
+        switch (bankAccountEntity) {
+            case CurrentAccount currentAccount -> {
                 outputService.createCurrentAccount(currentAccount);
                 bankAccountEvent.setAccountType("CURRENT ACCOUNT");
             }
-            case SavingAccount savingAccount ->{
+            case SavingAccount savingAccount -> {
                 outputService.createSavingAccount(savingAccount);
                 bankAccountEvent.setAccountType("SAVING ACCOUNT");
             }
@@ -216,12 +215,12 @@ public class InputServiceImpl implements InputService {
     @Override
     public AccountResponseDto updateAccountInterestRate(String accountId, Double interestRate) {
         BankAccountEntity bankAccountEntity = outputService.getAccountById(accountId);
-        if(bankAccountEntity==null){
-            LOGGER.log(Level.INFO,"account not found");
+        if (bankAccountEntity == null) {
+            LOGGER.log(Level.INFO, "account not found");
             throw new AccountNotFoundException(String.format("account with id %s not found", accountId));
         }
-        if(bankAccountEntity instanceof CurrentAccount){
-            LOGGER.log(Level.INFO,"invalid account");
+        if (bankAccountEntity instanceof CurrentAccount) {
+            LOGGER.log(Level.INFO, "invalid account");
             throw new BankAccountApiBusinessException("invalid account");
         }
         SavingAccount savingAccount = (SavingAccount) bankAccountEntity;
@@ -238,18 +237,18 @@ public class InputServiceImpl implements InputService {
         bankAccount.setCustomer(MapperService.mapFromCustomerResponseDto(customerResponseDto));
         bankAccountEvent.setBankAccount(bankAccount);
         //call output connector to send event in kafka infra
-         eventProducer.updateAccountInterestRateEvent(bankAccountEvent);
-         return MapperService.mapToAccountResponseDto(savingAccount,customerResponseDto);
+        eventProducer.updateAccountInterestRateEvent(bankAccountEvent);
+        return MapperService.mapToAccountResponseDto(savingAccount, customerResponseDto);
     }
 
     @Override
     public AccountResponseDto updateAccountOverdraft(String accountId, Double overdraft) {
         BankAccountEntity bankAccountEntity = outputService.getAccountById(accountId);
-        if(bankAccountEntity==null){
+        if (bankAccountEntity == null) {
             throw new AccountNotFoundException(String.format("account with id %s not found", accountId));
         }
-        if(bankAccountEntity instanceof SavingAccount){
-            LOGGER.log(Level.INFO,"invalid account");
+        if (bankAccountEntity instanceof SavingAccount) {
+            LOGGER.log(Level.INFO, "invalid account");
             throw new BankAccountApiBusinessException("invalid account");
         }
         CurrentAccount currentAccount = (CurrentAccount) bankAccountEntity;
@@ -267,6 +266,6 @@ public class InputServiceImpl implements InputService {
         bankAccountEvent.setBankAccount(bankAccount);
         //call output connector to send event in kafka infra
         eventProducer.updateAccountOverdraftEvent(bankAccountEvent);
-        return MapperService.mapToAccountResponseDto(currentAccount,customerResponseDto);
+        return MapperService.mapToAccountResponseDto(currentAccount, customerResponseDto);
     }
 }

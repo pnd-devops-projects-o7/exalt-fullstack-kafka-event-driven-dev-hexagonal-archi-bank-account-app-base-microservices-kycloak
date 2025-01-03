@@ -38,7 +38,6 @@ public class MapperService {
     }
 
     public static BankAccountEntity mapToBankAccountEntity(BankAccount bankAccount) {
-
         if (bankAccount.getType().equals(CURRENT_ACCOUNT)) {
             CurrentAccount currentAccount = new CurrentAccount();
             currentAccount.setAccountId(bankAccount.getAccountId());

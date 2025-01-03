@@ -17,8 +17,7 @@
     - builder l'image docker de chaque microservice ***docker compose -f stak.yml build***, 
     - publier les images into dockerhub ***docker compose -f stack.yml push***.
 
-## Bank-Account-App architecture
-L'architecture de **Bank-Account-App**
+## Backend architecture of Bank-Account-App
 ![application-architecture](diagrams/exalt-bank-account-app-archi.gif)
 
 ## Bank-Account-App conceptual model
@@ -39,7 +38,6 @@ After connecting the **frontend-App** to the **Backend Microservices**, refering
 ![flows2](diagrams/exalt-bank-account-app-flows-2.gif)
 
 # Backend
-La partie backend comprend:
 
 ## 4 applications microservices business:
  chaque business microservice implémente une architecture hexagonale
@@ -60,7 +58,10 @@ La partie backend comprend:
 Bank-Account-App being a microservices based, each business microservice uses its own **MySql** db to persist is data.
 
 ## 1 api microservice transverse 
-- ```exalt-hexagonal-archi-kafka-keycloak-backend-gateway-oauth2-client```   route users' requests to backend microservices
+- ```exalt-hexagonal-archi-kafka-keycloak-backend-gateway-oauth2-client``` working as **TokenRelay**
+    - this token relay is used before fronted is connected to backend
+- ```exalt-hexagonal-archi-kafka-keycloak-backend-gateway-service-proxy```:
+    - after frontend is connected to backend, we use this simple gateway-service-proxy just to route users' requests without security check
 
 ## infrastructure kafka
 infrastructure kafka for persisting and distributing kafka events
@@ -78,7 +79,8 @@ Tout l'ecosystème des applications de **Bank-Account-App** est containeurisé a
 - cluster local **Minikuke** ensuite dans le cluster GCP avec **GKE**: Google Kubernetes engine
 
 # Partie Frontend
-La partie frontend de **Bank-Account-App**: une application développée en angular 16:
-- Pattern observable avec **RxJs**
-- Gestion observable liés aux événements
-- Design graphique avec **PrimeNG**
+The frontend part of **Bank-Account-App** is an angular (v16) application
+- pattern observable with **RxJs**
+- managing Observable related to user events like click on button
+- graphic design with **PrimeNG**
+- integrate Keycloak as identity provider

@@ -1,4 +1,4 @@
-package com.exalt.exalthexagonalarchikafkakeycloakbackendgatewayoauth2client.token;
+package com.exalt.exalthexagonalarchikafkakeycloakbackendgatewayserviceproxy.token;
 
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;

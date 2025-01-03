@@ -1,4 +1,4 @@
-package com.exalt.exalthexagonalarchikafkakeycloakbackendgatewayoauth2client.security_config;
+package com.exalt.exalthexagonalarchikafkakeycloakbackendgatewayserviceproxy.security_config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +15,7 @@ public class BackendGatewayOAuth2SecurityConfig {
         httpSecurity
                 .authorizeExchange(auth-> auth.anyExchange().authenticated())
                 .oauth2Login(Customizer.withDefaults())
-                .oauth2ResourceServer((oauth2)->
+                .oauth2ResourceServer(oauth2->
                         oauth2.opaqueToken(Customizer.withDefaults()));
         httpSecurity.csrf(ServerHttpSecurity.CsrfSpec::disable);
 

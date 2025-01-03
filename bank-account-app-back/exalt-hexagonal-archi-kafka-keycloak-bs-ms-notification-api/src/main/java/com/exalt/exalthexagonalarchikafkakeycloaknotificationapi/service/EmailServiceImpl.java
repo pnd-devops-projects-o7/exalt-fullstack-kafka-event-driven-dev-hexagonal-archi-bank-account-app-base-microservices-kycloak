@@ -90,11 +90,11 @@ public class EmailServiceImpl implements EmailService {
         LOGGER.debug("consuming operation and transfer event {}, {}", operationEvent, transferEvent);
         JavaMailSenderImpl javaMailSender = javaMailSender();
         MimeMessage operationMimeMessage = prepareMimeMessage(javaMailSender, operationEvent.getOperation()
-                .getBankAccount().getCustomer().getEmail(), operationEvent, operationEvent.getStatus());
+                .getBankAccount().getCustomer().getEmail(),operationEvent, operationEvent.getStatus());
         javaMailSender.send(operationMimeMessage);
         MimeMessage transferMimeMessage = prepareMimeMessage(javaMailSender,
                 transferEvent.getTransfer().getOriginAccount()
-                        .getOriginCustomer().getEmail(), transferEvent, transferEvent.getStatus());
+                        .getOriginCustomer().getEmail(),transferEvent, transferEvent.getStatus());
         javaMailSender.send(transferMimeMessage);
 
     }
