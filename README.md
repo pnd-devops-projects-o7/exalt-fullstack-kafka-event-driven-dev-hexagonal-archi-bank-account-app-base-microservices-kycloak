@@ -38,8 +38,8 @@ After connecting the **frontend-App** to the **Backend Microservices**, refering
 ![flows2](diagrams/exalt-bank-account-app-flows-2.gif)
 
 ## Bank-Account-App architecture Backend & Frontend connected
+![exalt-bank-account-app-archi_](https://github.com/user-attachments/assets/e7db8410-8d28-4fe7-bc68-55664aa9b66b)
 
-![exalt-bank-account-app-archi_](https://github.com/user-attachments/assets/d2cc3935-b1b4-407a-8b19-8948e5d6cc01)
 
 
 # Backend
