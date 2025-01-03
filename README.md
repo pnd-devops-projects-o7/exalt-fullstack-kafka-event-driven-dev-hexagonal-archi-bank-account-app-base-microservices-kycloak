@@ -18,7 +18,7 @@
     - publier les images into dockerhub ***docker compose -f stack.yml push***.
 
 ## Backend architecture of Bank-Account-App
-![application-architecture](diagrams/exalt-bank-account-app-archi.gif)
+![application-architecture](diagrams/exalt-bank-account-app-archi_.gif)
 
 ## Bank-Account-App conceptual model
 Modèle conceptuel de l'application **Bank-Account-App**
