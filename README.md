@@ -82,11 +82,8 @@ all **Bank-Account-App** services: business microservices, transverse microservi
 - **docker compose** to prepare deployment of the stack of docker images into docker containers
 
 ## exposed apis by business microservices
-[customer-apis](diagrams/customer-apis.png)
-[account-apis](diagrams/account-apis.png)
-[operation-apis](diagrams/operation-apis.png)
-
-
+![customer-apis](https://github.com/user-attachments/assets/4358e053-2435-4dca-b158-7bd6878c5bd7) ![account-apis](https://github.com/user-attachments/assets/4093aebc-3f9f-4bf6-a0bc-c3a61917f54d)
+![operation-apis](https://github.com/user-attachments/assets/25516a62-2259-4738-b537-54859c883c2c)
 
 ## Cloud deployment
 - all docker containers of the stack **bank-account-app-compose.yml** are deployed in **kubernetes** cluster (minikube cluster) and then in GCP cluster using **GKE**: Google Kubernetes Engine
