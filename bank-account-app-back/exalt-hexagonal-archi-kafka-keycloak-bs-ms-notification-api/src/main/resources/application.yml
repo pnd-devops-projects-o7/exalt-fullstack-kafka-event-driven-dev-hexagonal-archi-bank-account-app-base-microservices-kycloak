@@ -57,6 +57,7 @@ management:
 kafka:
   topics:
     topic1: ${CUSTOMER_TOPIC_NAME}
-    topic2: ${ACCOUNT_TOPIC_NAME}
-    topic3: ${OPERATION_TOPIC1_NAME}
-    topic4: ${OPERATION_TOPIC2_NAME}
+    topic2: ${ACCOUNT_TOPIC_NAME1}
+    topic3: ${ACCOUNT_TOPIC_NAME2}
+    topic4: ${OPERATION_TOPIC1_NAME}
+    topic5: ${OPERATION_TOPIC2_NAME}

@@ -1,4 +1,4 @@
-package com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.input.exceptions_handler;
+package com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.exceptions_handler;
 
 import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.domain.exceptions.*;
 import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.output.dtos.ErrorResponse;

@@ -1,6 +1,7 @@
 package com.exalt.exalthexagonalarchikafkakeycloaknotificationapi.service;
 
-import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.domain.avro_beans.BankAccountEvent;
+import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.domain.avro_beans.account.BankAccountEvent;
+import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.domain.avro_beans.account_activated.ActiveAccountEvent;
 import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.domain.avro_beans.operations.OperationEvent;
 import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.domain.avro_beans.transfers.TransferEvent;
 import com.exalt.exalthexagonalarchikafkakeycloakcustomerapi.domain.avro_beans.CustomerEvent;
@@ -20,7 +21,7 @@ import java.util.Properties;
 
 @Service
 public class EmailServiceImpl implements EmailService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(EmailServiceImpl.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(EmailServiceImpl.class.getName());
     @Value("${notification.mail.sender.ip-address}")
     private String mailServerHostIpAddress;
     @Value("${notification.mail.sender.port1}")
@@ -45,7 +46,7 @@ public class EmailServiceImpl implements EmailService {
                                     })
             })
     public void sendCustomerNotificationEmail(CustomerEvent customerEvent) throws MessagingException {
-        LOGGER.debug("consuming customer event: {}", customerEvent);
+        log.debug("consuming customer event: {}", customerEvent);
         JavaMailSenderImpl javaMailSender = javaMailSender();
         MimeMessage mimeMessage = prepareMimeMessage(javaMailSender, customerEvent.getCustomer().getEmail(),
                 customerEvent, customerEvent.getStatus());
@@ -63,38 +64,49 @@ public class EmailServiceImpl implements EmailService {
                                             @PartitionOffset(partition = "2", initialOffset = "0"),
                                             @PartitionOffset(partition = "3", initialOffset = "0"),
                                             @PartitionOffset(partition = "4", initialOffset = "0"),
-                                            @PartitionOffset(partition = "5", initialOffset = "0")
                                     })
             })
     public void sendAccountNotificationEmail(BankAccountEvent bankAccountEvent) throws MessagingException {
-        LOGGER.error("consuming account event {}", bankAccountEvent);
+        log.error("consuming account event {}", bankAccountEvent);
         JavaMailSenderImpl javaMailSender = javaMailSender();
         MimeMessage mimeMessage = prepareMimeMessage(javaMailSender, bankAccountEvent.getBankAccount().getCustomer().getEmail()
-                ,bankAccountEvent, bankAccountEvent.getStatus());
+                , bankAccountEvent, bankAccountEvent.getStatus());
+        javaMailSender.send(mimeMessage);
+    }
+
+    @Override
+    @KafkaListener(groupId = "group1", topicPartitions =
+            {@TopicPartition(topic = "${kafka.topics.topic3}",
+                    partitionOffsets =@PartitionOffset(partition = "0", initialOffset = "0"))})
+    public void sendActivateAccountNotificationEmail(ActiveAccountEvent activeAccountEvent) throws MessagingException {
+        log.debug("consuming activate account event: {}", activeAccountEvent);
+        JavaMailSenderImpl javaMailSender = javaMailSender();
+        MimeMessage mimeMessage = prepareMimeMessage(
+                javaMailSender,"activated.account@test.fr",activeAccountEvent,activeAccountEvent.getStatus());
         javaMailSender.send(mimeMessage);
     }
 
     @Override
     @KafkaListener(groupId = "group1", topicPartitions =
             {
-                    @TopicPartition(topic = "${kafka.topics.topic3}",
+                    @TopicPartition(topic = "${kafka.topics.topic4}",
                             partitionOffsets =
                                     {
                                             @PartitionOffset(partition = "0", initialOffset = "0")
                                     }),
-                    @TopicPartition(topic = "${kafka.topics.topic4}", partitionOffsets = {
+                    @TopicPartition(topic = "${kafka.topics.topic5}", partitionOffsets = {
                             @PartitionOffset(partition = "0", initialOffset = "0")
                     })
             })
     public void sendOperationNotificationEmail(OperationEvent operationEvent, TransferEvent transferEvent) throws MessagingException {
-        LOGGER.debug("consuming operation and transfer event {}, {}", operationEvent, transferEvent);
+        log.debug("consuming operation and transfer event {}, {}", operationEvent, transferEvent);
         JavaMailSenderImpl javaMailSender = javaMailSender();
         MimeMessage operationMimeMessage = prepareMimeMessage(javaMailSender, operationEvent.getOperation()
-                .getBankAccount().getCustomer().getEmail(),operationEvent, operationEvent.getStatus());
+                .getBankAccount().getCustomer().getEmail(), operationEvent, operationEvent.getStatus());
         javaMailSender.send(operationMimeMessage);
         MimeMessage transferMimeMessage = prepareMimeMessage(javaMailSender,
                 transferEvent.getTransfer().getOriginAccount()
-                        .getOriginCustomer().getEmail(),transferEvent, transferEvent.getStatus());
+                        .getOriginCustomer().getEmail(), transferEvent, transferEvent.getStatus());
         javaMailSender.send(transferMimeMessage);
 
     }
@@ -115,7 +127,7 @@ public class EmailServiceImpl implements EmailService {
 
     private MimeMessage prepareMimeMessage(JavaMailSenderImpl javaMailSender, final String toEmail,
                                            Object event, final String status) throws MessagingException {
-        LOGGER.info("prepare notification message to send");
+        log.info("prepare notification message to send");
 
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 

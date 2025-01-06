@@ -32,11 +32,16 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class OperationApiSecurityConfig {
     private final CustomJwtAuthenticationConverter customJwtAuthenticationConverter;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorization ->
-                        authorization.anyRequest().authenticated()
+                .authorizeHttpRequests(authorization -> {
+                            authorization.requestMatchers("/swagger-ui/**", "/api-docs/**")
+                                    .permitAll();
+                            authorization.anyRequest().authenticated();
+                        }
+
                 );
         httpSecurity.oauth2ResourceServer(authorization ->
                 authorization.jwt(jwtConfigurer ->
@@ -74,19 +79,19 @@ public class OperationApiSecurityConfig {
         }
 
         @SuppressWarnings("unchecked")
-        private Collection<GrantedAuthority> extractAuthorities(Jwt jwt){
+        private Collection<GrantedAuthority> extractAuthorities(Jwt jwt) {
             Map<String, Object> resourceAccess = jwt.getClaim("resource_access");
-            if(resourceAccess==null){
+            if (resourceAccess == null) {
                 return Set.of();
             }
             Map<String, Object> clientIdRoles = (Map<String, Object>) resourceAccess.get(keyCloakClientId);
-            if(clientIdRoles==null){
+            if (clientIdRoles == null) {
                 return Set.of();
             }
             Collection<String> keycloakRoles = (Collection<String>) clientIdRoles.get("roles");
             //spring security roles from keycloak roles
             return keycloakRoles.stream()
-                    .map(keycloakRole -> new SimpleGrantedAuthority("ROLE_"+keycloakRole))
+                    .map(keycloakRole -> new SimpleGrantedAuthority("ROLE_" + keycloakRole))
                     .collect(Collectors.toSet());
         }
     }

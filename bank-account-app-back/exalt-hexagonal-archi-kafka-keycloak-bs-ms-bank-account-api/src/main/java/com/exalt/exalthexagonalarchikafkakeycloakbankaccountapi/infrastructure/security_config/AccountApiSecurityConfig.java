@@ -1,7 +1,6 @@
 package com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.infrastructure.security_config;
 
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,15 +28,22 @@ import java.util.stream.Stream;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@RequiredArgsConstructor
 public class AccountApiSecurityConfig {
     private final CustomKeycloakAUthenticationConverter keycloakAuthenticationConverter;
+
+    public AccountApiSecurityConfig(CustomKeycloakAUthenticationConverter keycloakAuthenticationConverter) {
+        this.keycloakAuthenticationConverter = keycloakAuthenticationConverter;
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorization ->
-                        authorization.anyRequest().authenticated());
+                .authorizeHttpRequests(authorization ->{
+                    authorization.requestMatchers("/swagger-ui/**","/api-docs/**")
+                            .permitAll();
+                    authorization.anyRequest().authenticated();
+                });
         httpSecurity.oauth2ResourceServer(authorization ->
             /* instead JWT default converter we define a custom JWT converter to convert Keycloak roles to Spring security roles*/
             authorization.jwt(configurer ->
@@ -48,7 +54,7 @@ public class AccountApiSecurityConfig {
         return httpSecurity.build();
     }
     @Component
-    protected static class CustomKeycloakAUthenticationConverter implements Converter<Jwt, AbstractAuthenticationToken>{
+    public static class CustomKeycloakAUthenticationConverter implements Converter<Jwt, AbstractAuthenticationToken>{
         @Value("${security.oauth2.converter.keycloak.client-id}")
         String keycloakClientId;
         @Value("${security.oauth2.converter.jwt.preferred-username}")

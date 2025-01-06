@@ -9,8 +9,10 @@ import org.springframework.kafka.config.TopicBuilder;
 
 @Configuration
 public class TopicConfiguration {
-    @Value("${kafka.topic-config.name}")
-    private String topicName;
+    @Value("${kafka.topic-config.topic1}")
+    private String topicName1;
+    @Value("${kafka.topic-config.topic2}")
+    private String topicName2;
     @Value("${kafka.topic-config.partitions}")
     private int partitions;
     @Value("${kafka.topic-config.retention.duration}")
@@ -21,9 +23,19 @@ public class TopicConfiguration {
     private String cleanUpPolicy;
 
     @Bean
-    public NewTopic createTopic(){
-        return TopicBuilder.name(topicName)
+    public NewTopic operationAccountTopic(){
+        return TopicBuilder.name(topicName1)
                 .partitions(partitions)
+                .replicas(1)
+                .config(TopicConfig.RETENTION_MS_CONFIG, retentionDuration)
+                .config(TopicConfig.RETENTION_BYTES_CONFIG, retentionSize)
+                .config(TopicConfig.CLEANUP_POLICY_CONFIG,cleanUpPolicy)
+                .build();
+    }
+    @Bean
+    public NewTopic activeAccountTopic(){
+        return TopicBuilder.name(topicName2)
+                .partitions(1)
                 .replicas(1)
                 .config(TopicConfig.RETENTION_MS_CONFIG, retentionDuration)
                 .config(TopicConfig.RETENTION_BYTES_CONFIG, retentionSize)

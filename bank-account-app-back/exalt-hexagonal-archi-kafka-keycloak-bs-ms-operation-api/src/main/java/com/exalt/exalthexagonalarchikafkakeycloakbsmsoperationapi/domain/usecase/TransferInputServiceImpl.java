@@ -8,10 +8,10 @@ import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.domain.excepti
 import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.domain.ports.input.TransferInputService;
 import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.domain.ports.output.EventProducer;
 import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.domain.ports.output.TransferOutputService;
-import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.input.feign_clients.domain.AccountResponseDto;
-import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.input.feign_clients.domain.CustomerResponseDto;
-import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.input.feign_clients.services.RemoteAccountService;
-import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.input.feign_clients.services.RemoteCustomerService;
+import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.feign_clients.domain.AccountResponseDto;
+import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.feign_clients.domain.CustomerResponseDto;
+import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.feign_clients.services.RemoteAccountService;
+import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.feign_clients.services.RemoteCustomerService;
 import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.output.dtos.TransferRequestDto;
 import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.output.dtos.TransferResponseDto;
 import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.output.entities.TransferEntity;
@@ -28,8 +28,8 @@ public class TransferInputServiceImpl implements TransferInputService {
     private static final String SAVING = "SAVING";
     private static final String CURRENT = "CURRENT";
 
-    public TransferInputServiceImpl(RemoteAccountService remoteAccountService, RemoteCustomerService remoteCustomerService,
-                                    TransferOutputService transferOutputService, EventProducer eventProducer) {
+    public TransferInputServiceImpl(final RemoteAccountService remoteAccountService, final RemoteCustomerService remoteCustomerService,
+                                    final TransferOutputService transferOutputService, final EventProducer eventProducer) {
         this.remoteAccountService = remoteAccountService;
         this.remoteCustomerService = remoteCustomerService;
         this.transferOutputService = transferOutputService;
@@ -95,6 +95,18 @@ public class TransferInputServiceImpl implements TransferInputService {
                     return mapToTransferResponseDTo(transferEntity, origin, destination);
                 })
                 .toList();
+    }
+
+    @Override
+    public TransferResponseDto getTransfer(String transferId) {
+        TransferEntity transferEntity = transferOutputService.getTransfer(transferId);
+        if(transferEntity!=null){
+            AccountResponseDto origin = remoteAccountService.getRemoteAccountById(transferEntity.getOriginAccountId());
+            AccountResponseDto destination = remoteAccountService.getRemoteAccountById(transferEntity.getDestinationAccountId());
+
+            return mapToTransferResponseDTo(transferEntity,origin,destination);
+        }
+        return null;
     }
 
     //this private method builds user readable response

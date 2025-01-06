@@ -1,0 +1,60 @@
+{
+  "namespace": "com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.domain.avro_beans.account_activated",
+  "name": "ActiveAccountEvent",
+  "type": "record",
+  "fields": [
+    {
+      "name": "status",
+      "type": "string"
+    },
+    {
+      "name": "message",
+      "type": "string"
+    },
+    {
+      "name": "activeAccount",
+      "type": {
+        "type": "record",
+        "name": "ActiveAccount",
+        "fields": [
+          {
+            "name": "accountId",
+            "type": "string"
+          },
+          {
+            "name": "type",
+            "type": "string"
+          },
+          {
+            "name": "accountState",
+            "type": "string"
+          },
+          {
+            "name": "balance",
+            "type": {
+              "type": "string",
+              "java-class":"java.math.BigDecimal",
+              "precision": 7,
+              "scale": 3
+            }
+          },
+          {
+            "name": "createdAt",
+            "type": {
+              "type": "long",
+              "logicalType": "timestamp-millis"
+            }
+          },
+          {
+            "name": "overdraft",
+            "type": "double"
+          },
+          {
+            "name": "interestRate",
+            "type": "double"
+          }
+        ]
+      }
+    }
+  ]
+}

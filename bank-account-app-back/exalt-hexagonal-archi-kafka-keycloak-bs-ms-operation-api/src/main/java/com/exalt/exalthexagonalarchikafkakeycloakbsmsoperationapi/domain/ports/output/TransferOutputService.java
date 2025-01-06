@@ -8,4 +8,6 @@ public interface TransferOutputService {
     void createTransfer(TransferEntity transferEntity);
 
     Collection<TransferEntity> getAllTransfers();
+
+    TransferEntity getTransfer(String transferId);
 }

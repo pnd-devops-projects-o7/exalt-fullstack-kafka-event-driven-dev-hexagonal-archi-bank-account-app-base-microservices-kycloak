@@ -9,4 +9,6 @@ public interface TransferInputService {
     TransferResponseDto createTransfer(TransferRequestDto transferRequestDto);
 
     Collection<TransferResponseDto> getAllTransfers();
+
+    TransferResponseDto getTransfer(String transferId);
 }

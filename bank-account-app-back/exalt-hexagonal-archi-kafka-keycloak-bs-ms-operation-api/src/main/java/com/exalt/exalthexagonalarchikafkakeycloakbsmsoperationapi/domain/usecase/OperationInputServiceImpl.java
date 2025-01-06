@@ -7,10 +7,10 @@ import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.domain.excepti
 import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.domain.ports.input.OperationInputService;
 import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.domain.ports.output.EventProducer;
 import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.domain.ports.output.OperationOutputService;
-import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.input.feign_clients.domain.AccountResponseDto;
-import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.input.feign_clients.domain.CustomerResponseDto;
-import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.input.feign_clients.services.RemoteAccountService;
-import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.input.feign_clients.services.RemoteCustomerService;
+import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.feign_clients.domain.AccountResponseDto;
+import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.feign_clients.domain.CustomerResponseDto;
+import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.feign_clients.services.RemoteAccountService;
+import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.feign_clients.services.RemoteCustomerService;
 import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.output.dtos.OperationRequestDto;
 import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.output.dtos.OperationResponseDto;
 import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.output.entities.OperationEntity;
@@ -27,10 +27,10 @@ public class OperationInputServiceImpl implements OperationInputService {
     private final EventProducer eventProducer;
     private static final String WITHDRAW = "WITHDRAW";
     private static final String DEPOSIT = "DEPOSIT";
-    private static final Logger LOGGER = Logger.getLogger(OperationInputServiceImpl.class.getSimpleName());
+    private static final Logger log = Logger.getLogger(OperationInputServiceImpl.class.getSimpleName());
 
-    public OperationInputServiceImpl(RemoteAccountService remoteAccountService, RemoteCustomerService remoteCustomerService,
-                                     OperationOutputService operationOutputService, EventProducer eventProducer) {
+    public OperationInputServiceImpl(final RemoteAccountService remoteAccountService, final RemoteCustomerService remoteCustomerService,
+                                     final OperationOutputService operationOutputService, final EventProducer eventProducer) {
         this.remoteAccountService = remoteAccountService;
         this.remoteCustomerService = remoteCustomerService;
         this.operationOutputService = operationOutputService;
@@ -56,7 +56,7 @@ public class OperationInputServiceImpl implements OperationInputService {
             }
             case DEPOSIT -> remoteAccountService
                     .updateAccountBalance(accountResponseDto.accountId(), operationRequestDto.transactionAmount());
-            default -> LOGGER.log(Level.INFO, "do nothing");
+            default -> log.log(Level.INFO, "do nothing");
         }
 
         CustomerResponseDto customerResponseDto = remoteCustomerService

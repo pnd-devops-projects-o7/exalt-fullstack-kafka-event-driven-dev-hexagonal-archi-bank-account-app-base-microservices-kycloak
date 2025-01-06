@@ -12,4 +12,5 @@ public interface OutputService {
     Collection<BankAccountEntity> getAllBankAccounts();
 
     BankAccountEntity getAccountById(String accountId);
+    Collection<BankAccountEntity> getAllAccountsByStateCreated();
 }

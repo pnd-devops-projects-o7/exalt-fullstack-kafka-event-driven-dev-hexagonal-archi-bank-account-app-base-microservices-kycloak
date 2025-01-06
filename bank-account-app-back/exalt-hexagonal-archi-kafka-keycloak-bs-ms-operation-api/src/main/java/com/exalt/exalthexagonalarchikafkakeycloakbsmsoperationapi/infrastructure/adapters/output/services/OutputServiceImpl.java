@@ -6,16 +6,20 @@ import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure
 import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.output.entities.TransferEntity;
 import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.output.repositories.OperationRepository;
 import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.output.repositories.TransferRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 
 @Service
-@RequiredArgsConstructor
 public class OutputServiceImpl implements OperationOutputService, TransferOutputService {
     private final OperationRepository operationRepository;
     private final TransferRepository transferRepository;
+
+    public OutputServiceImpl(final OperationRepository operationRepository, final TransferRepository transferRepository) {
+        this.operationRepository = operationRepository;
+        this.transferRepository = transferRepository;
+    }
+
     @Override
     public void createOperation(OperationEntity operationEntity) {
         operationRepository.save(operationEntity);
@@ -39,5 +43,10 @@ public class OutputServiceImpl implements OperationOutputService, TransferOutput
     @Override
     public Collection<TransferEntity> getAllTransfers() {
         return transferRepository.findAll();
+    }
+
+    @Override
+    public TransferEntity getTransfer(String transferId) {
+        return transferRepository.findTransfer(transferId);
     }
 }

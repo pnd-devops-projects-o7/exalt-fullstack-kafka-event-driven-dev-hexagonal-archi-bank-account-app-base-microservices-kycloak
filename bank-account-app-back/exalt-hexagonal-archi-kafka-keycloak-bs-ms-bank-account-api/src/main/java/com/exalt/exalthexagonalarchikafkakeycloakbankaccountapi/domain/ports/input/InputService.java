@@ -10,7 +10,6 @@ public interface InputService {
     AccountResponseDto createAccount(AccountRequestDto accountRequestDto);
     Collection<AccountResponseDto> getAllBankAccounts();
     AccountResponseDto getAccountById(String accountId);
-    AccountResponseDto activateAccount(String accountId);
     AccountResponseDto suspendAccount(String accountId);
     AccountResponseDto updateAccountBalance(String accountId, BigDecimal amount);
     AccountResponseDto updateAccountInterestRate(String accountId, Double interestRate);

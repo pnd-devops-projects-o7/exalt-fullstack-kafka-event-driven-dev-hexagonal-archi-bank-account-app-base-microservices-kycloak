@@ -76,11 +76,20 @@ infrastructure kafka for persisting and distributing kafka events
     - we use **avro** to define the model schema
 - a kafka-ui for graphic user interface to follow flows into kafka infrastructure
 
-## Bank-Account-App deployment
-Tout l'ecosystème des applications de **Bank-Account-App** est containeurisé avec **docker** et déployés ensuite dans un cluster locale **Minikuke** avec **Kubernetes**
-- **docker engine** pour construire les images docker de chaque business microservice et transverse microservice
-- **docker compose** pour prépaper la stack de déploiement dans des docker containers 
-- cluster local **Minikuke** ensuite dans le cluster GCP avec **GKE**: Google Kubernetes engine
+## docker deployment
+all **Bank-Account-App** services: business microservices, transverse microservices, infrastructure service are deployed in docker containers using: **docker engine** and **docker compose**:
+- **docker engine** to build business microservices and transverse microservices into docker images
+- **docker compose** to prepare deployment of the stack of docker images into docker containers
+
+## exposed apis by business microservices
+[customer-apis](diagrams/customer-apis.png)
+[account-apis](diagrams/account-apis.png)
+[operation-apis](diagrams/operation-apis.png)
+
+
+
+## Cloud deployment
+- all docker containers of the stack **bank-account-app-compose.yml** are deployed in **kubernetes** cluster (minikube cluster) and then in GCP cluster using **GKE**: Google Kubernetes Engine
 
 # Partie Frontend
 The frontend part of **Bank-Account-App** is an angular (v16) application

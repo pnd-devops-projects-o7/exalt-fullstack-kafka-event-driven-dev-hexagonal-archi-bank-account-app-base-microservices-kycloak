@@ -1,4 +1,4 @@
-package com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.input.feign_clients.services;
+package com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.feign_clients.services;
 
 import feign.RequestInterceptor;
 import feign.RequestTemplate;

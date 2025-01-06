@@ -1,4 +1,4 @@
-package com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.infrastructure.adapters.input.exceptions_handler;
+package com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.infrastructure.exceptions_handler;
 
 import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.domain.exceptions.*;
 import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.infrastructure.adapters.output.domain.dtos.ErrorResponse;

@@ -6,8 +6,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
+
 @Repository
 public interface BankAccountRepository extends JpaRepository<BankAccountEntity, String> {
     @Query(value = "select * from bank_account_api_db.bank_accounts bc where bc.account_id=:accountId", nativeQuery = true)
-    BankAccountEntity getAccountById(@Param("accountId") String accountId);
+    BankAccountEntity findAccountById(@Param("accountId") String accountId);
+    @Query(nativeQuery = true, value = "select * from bank_account_api_db.bank_accounts bc where bc.account_state='CREATED'")
+    Collection<BankAccountEntity> findAllAccountsByStateCreated();
 }

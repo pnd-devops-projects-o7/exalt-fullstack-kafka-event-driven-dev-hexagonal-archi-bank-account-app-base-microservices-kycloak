@@ -1,5 +1,5 @@
 {
-  "namespace": "com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.domain.avro_beans",
+  "namespace": "com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.domain.avro_beans.account",
   "name": "BankAccountEvent",
   "type": "record",
   "fields": [

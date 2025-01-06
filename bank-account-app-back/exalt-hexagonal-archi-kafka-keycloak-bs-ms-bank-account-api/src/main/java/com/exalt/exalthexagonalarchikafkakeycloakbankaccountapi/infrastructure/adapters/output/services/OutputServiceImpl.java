@@ -5,15 +5,18 @@ import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.infrastructure.a
 import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.infrastructure.adapters.output.domain.entity.CurrentAccount;
 import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.infrastructure.adapters.output.domain.entity.SavingAccount;
 import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.infrastructure.adapters.output.repositories.BankAccountRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 
 @Service
-@RequiredArgsConstructor
 public class OutputServiceImpl implements OutputService {
     private final BankAccountRepository bankAccountRepository;
+
+    public OutputServiceImpl(final BankAccountRepository bankAccountRepository) {
+        this.bankAccountRepository = bankAccountRepository;
+    }
+
     @Override
     public void createCurrentAccount(CurrentAccount currentAccount) {
         bankAccountRepository.save(currentAccount);
@@ -31,6 +34,12 @@ public class OutputServiceImpl implements OutputService {
 
     @Override
     public BankAccountEntity getAccountById(String accountId) {
-        return bankAccountRepository.getAccountById(accountId);
+        return bankAccountRepository.findAccountById(accountId);
     }
+
+    @Override
+    public Collection<BankAccountEntity> getAllAccountsByStateCreated() {
+        return bankAccountRepository.findAllAccountsByStateCreated();
+    }
+
 }

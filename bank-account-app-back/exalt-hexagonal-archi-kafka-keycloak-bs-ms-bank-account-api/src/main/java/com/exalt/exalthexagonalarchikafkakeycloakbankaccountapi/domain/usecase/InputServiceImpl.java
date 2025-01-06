@@ -1,13 +1,14 @@
 package com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.domain.usecase;
 
-import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.domain.avro_beans.BankAccount;
-import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.domain.avro_beans.BankAccountEvent;
-import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.domain.exceptions.*;
+import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.domain.avro_beans.account.BankAccount;
+import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.domain.avro_beans.account.BankAccountEvent;
+import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.domain.exceptions.AccountNotFoundException;
+import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.domain.exceptions.BankAccountApiBusinessException;
 import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.domain.ports.input.InputService;
 import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.domain.ports.output.EventProducer;
 import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.domain.ports.output.OutputService;
-import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.infrastructure.adapters.input.feign_client.domain.CustomerResponseDto;
-import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.infrastructure.adapters.input.feign_client.services.RemoteClientService;
+import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.infrastructure.adapters.feign_client.domain.CustomerResponseDto;
+import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.infrastructure.adapters.feign_client.services.RemoteClientService;
 import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.infrastructure.adapters.output.domain.dtos.AccountRequestDto;
 import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.infrastructure.adapters.output.domain.dtos.AccountResponseDto;
 import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.infrastructure.adapters.output.domain.entity.BankAccountEntity;
@@ -26,7 +27,7 @@ public class InputServiceImpl implements InputService {
     private static final Logger LOGGER = Logger.getLogger(InputServiceImpl.class.getName());
     private static final String SUSPENDED = "SUSPENDED";
 
-    public InputServiceImpl(OutputService outputService, RemoteClientService remoteClientService, EventProducer eventProducer) {
+    public InputServiceImpl(final OutputService outputService, final RemoteClientService remoteClientService, final EventProducer eventProducer) {
         this.outputService = outputService;
         this.remoteClientService = remoteClientService;
         this.eventProducer = eventProducer;
@@ -112,38 +113,7 @@ public class InputServiceImpl implements InputService {
         return MapperService.mapToAccountResponseDto(bankAccountEntity, customerResponseDto);
     }
 
-    @Override
-    public AccountResponseDto activateAccount(String accountId) {
-        BankAccountEntity bankAccountEntity = outputService.getAccountById(accountId);
-        if (bankAccountEntity == null) {
-            LOGGER.log(Level.WARNING, "account not found for id {0}", accountId);
-            throw new AccountNotFoundException("account not found");
-        }
 
-        if (bankAccountEntity.getAccountState().equals("ACTIVE")) {
-            throw new BankAccountApiBusinessException("account already ACTIVATED");
-        }
-        bankAccountEntity.setAccountState("ACTIVE");
-        BankAccount bankAccount = MapperService.mapFromAccountEntity(bankAccountEntity);
-        BankAccountEvent bankAccountEvent = new BankAccountEvent();
-        if (bankAccountEntity instanceof CurrentAccount currentAccount) {
-            outputService.createCurrentAccount(currentAccount);
-            bankAccountEvent.setAccountType("CURRENT ACCOUNT");
-        } else if (bankAccountEntity instanceof SavingAccount savingAccount) {
-            outputService.createSavingAccount(savingAccount);
-            bankAccountEvent.setAccountType("SAVING ACCOUNT");
-        }
-        //build kafka bank account event
-        bankAccountEvent.setMessage("account is activated, ready for operations");
-        bankAccountEvent.setStatus("ACTIVE ACCOUNT");
-        CustomerResponseDto customerResponseDto = remoteClientService.getRemoteCustomerById(bankAccountEntity.getCustomerId());
-        bankAccount.setCustomer(MapperService.mapFromCustomerResponseDto(customerResponseDto));
-        bankAccountEvent.setBankAccount(bankAccount);
-
-        //call kafka connector to send kafka event into kafka infra
-        eventProducer.activateAccountEvent(bankAccountEvent);
-        return MapperService.mapToAccountResponseDto(bankAccountEntity, customerResponseDto);
-    }
     @Override
     public AccountResponseDto suspendAccount(String accountId) {
         BankAccountEntity bankAccountEntity = outputService.getAccountById(accountId);
