@@ -18,7 +18,7 @@
     - publier les images into dockerhub ***docker compose -f stack.yml push***.
 
 ## Backend architecture of Bank-Account-App
-![application-architecture](diagrams/exalt-bank-account-app-archi.gif)
+![application-architecture](diagrams/exalt-bank-account-app-archi-backend.gif)
 
 ## Bank-Account-App conceptual model
 Modèle conceptuel de l'application **Bank-Account-App**
@@ -38,9 +38,7 @@ After connecting the **frontend-App** to the **Backend Microservices**, refering
 ![flows2](diagrams/exalt-bank-account-app-flows-2.gif)
 
 ## Bank-Account-App architecture Backend & Frontend connected
-![exalt-bank-account-app-archi_](https://github.com/user-attachments/assets/e7db8410-8d28-4fe7-bc68-55664aa9b66b)
-
-
+![exalt-bank-account-app-archi_](./diagrams/exalt-bank-account-app-archi-fullstack.gif)
 
 # Backend
 ## 4 applications microservices business:
