@@ -1,0 +1,20 @@
+<div style="width:80%">
+    <h1 style="color: green; text-align: center;">
+        Bank Account App base microservices
+    </h1>
+</div>
+
+<p-menubar [model]="accueilMenu">
+    <ng-template pTemplate="end">
+        <span *ngIf="userProfile; else login_template"> <span style="font-weight: bold;"> {{userProfile.firstName}}
+                {{userProfile.lastName}} </span> &nbsp;
+            <i class="pi pi-power-off" style="font-size: 1rem; color: brown;" (click)="handleLogout()" pTooltip="logout"
+                [tooltipPosition]="tooltipPosition"></i>
+        </span>
+    </ng-template>
+</p-menubar>
+
+<ng-template pTemplate="end" #login_template>
+    <p-button icon="pi pi-user" (onClick)="handleLogin()" [rounded]="true" [text]="true" pTooltip="login" />
+</ng-template>
+<router-outlet />

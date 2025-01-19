@@ -1,0 +1,184 @@
+<h1 style="font-size:large; color: green; text-align: center;">
+    list of customers
+</h1>
+<p-messages key="key1" /><p-messages key="key2" />
+<p-confirmDialog [style]="{width: '20vw'}" />
+<div class="card">
+    <p-table #data [value]="customers" [tableStyle]="{ 'min-width': '50rem' }" [paginator]="true" [rows]="5"
+        [rowsPerPageOptions]="[5, 20, 50]" (onPage)="onTablePageChange($event)" [first]="first"
+        [globalFilterFields]="['customerDto.lastname','customerDto.firstname']">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>ID</th>
+                <th>name <span class="p-input-icon-left ml-auto">
+                        <i class="pi pi-search"></i>
+                        <input pInputText (input)="data.filterGlobal($any($event.target).value, 'contains')"
+                            placeholder="firstname or lastname" size="10" />
+                    </span></th>
+                <th>email</th>
+                <th>state</th>
+                <th>created At</th>
+                <th>live At</th>
+                <th>Operations</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-customer>
+            <tr>
+                <td style="font-size: small; width: 5%;">{{ customer.customerDto.customerId }}</td>
+                <td> {{
+                    customer.customerDto.firstname }} {{ customer.customerDto.lastname }}</td>
+                <td>{{
+                    customer.customerDto.email }}</td>
+                <td> <span [style]="onCustomerStateServerity(customer.customerDto.customerState)">
+                        {{customer.customerDto.customerState}} </span> </td>
+                <td>{{
+                    customer.customerDto.createdAt | date:'yyy-MM-dd hh:mm:ss'}}</td>
+                <td>
+                    <p>{{customer.addressDto.streetNum}} {{customer.addressDto.streetName}}</p>
+                    <p>{{customer.addressDto.postalCode}} {{customer.addressDto.city}}, {{customer.addressDto.country}}
+                    </p>
+                    <p><span style="font-weight: bold;">Birth Country</span>: {{customer.addressDto.birthCountry}}</p>
+                </td>
+                <td>
+                    <p-button icon="pi pi-window-maximize" size="small" [rounded]="true" [text]="true"
+                        severity="success" pTooltip="create account" [tooltipPosition]="tooltipPosition"
+                        (onClick)="onOpenAccountUISidebar(customer)"
+                        *ngIf="customer.customerDto.customerState==='ACTIVE'" />
+
+                    <p-button icon="pi pi-window-maximize" size="small" [rounded]="true" [text]="true" severity="info"
+                        pTooltip="edit customer" [tooltipPosition]="tooltipPosition"
+                        *ngIf="customer.customerDto.customerState==='ACTIVE'"
+                        (onClick)="onOpenCustomerUpdateUIEvent(customer)" />
+
+                    <p-button icon="pi pi-pencil" size="small" [rounded]="false" [text]="true" severity="danger"
+                        [pTooltip]="onGetCustomerState(customer.customerDto.customerState)"
+                        [tooltipPosition]="tooltipPosition" (onClick)="onSwitchStateCustomerEvent(customer)"
+                        *ngIf="customer.customerDto.customerState!=='ARCHIVE'" />
+
+                    <p-button icon="pi pi-ban" size="small" [rounded]="false" [text]="true" severity="danger"
+                        pTooltip="archive" [tooltipPosition]="tooltipPosition"
+                        (onClick)="onArchiveCustomerEvent(customer)"
+                        *ngIf="customer.customerDto.customerState==='SUSPENDED'" />
+                    <span *ngIf="customer.customerDto.customerState==='ARCHIVE'" style="font-weight: bold; color: #f00;">
+                        ARCHIVED
+                    </span>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="footer">
+            <span style="color: #00f;"> {{customers.length}} customers</span>
+        </ng-template>
+    </p-table>
+</div>
+
+<!--create an account for a given customer id sidebar-->
+<p-sidebar [(visible)]="accountSidebarVisible" [position]="sidebarPosition" *ngIf="selectedCustomer"
+    [style]="{width:'fit-content'}">
+    <p-card header="Create Bank Account" *ngIf="selectedCustomer">
+        <form [formGroup]="accountFormGroup">
+            <div>
+                <label for="type">Customer ID</label><br>
+                <input type="text" pInputText formControlName="customerId" id="customerId"
+                    [(ngModel)]="selectedCustomer.customerDto.customerId" />
+            </div>
+            <br>
+            <div class="p-float-label">
+                <p-dropdown [options]="accountTypes" optionLabel="type" placeholder="Select an account type"
+                    formControlName="type" />
+                <label for="type">account type</label>
+            </div>
+            <br />
+            <div class="p-float-label">
+                <input type="number" formControlName="balance" id="balance" pInputText>
+                <label for="balance">account init mount</label>
+            </div>
+            <br><br>
+            <div class="buttons">
+                <p-button label="Create" [text]="true" [raised]="true" [disabled]="accountFormGroup.invalid"
+                    (onClick)="onCreateAccountEvent()" />&nbsp;
+                <p-button label="Cancel" [text]="true" [raised]="true" severity="danger" />
+            </div>
+        </form>
+    </p-card>
+</p-sidebar>
+<!--end account for a given customer id sidebar-->
+
+<!-- side bar for editing a customer -->
+<p-sidebar [(visible)]="customerSidebarVisible" [style]="{width:'fit-content'}" [position]="sidebarPosition"
+    *ngIf="selectedCustomer">
+    <p-card header="Update customer informations UI">
+        <form [formGroup]="customerRequestDtoFormGroup">
+            <p-splitter [style]="{ height: 'fit-content' }" styleClass="mb-5">
+                <ng-template pTemplate>
+                    <p-card header="customer">
+                        <div class="col flex align-items-center justify-content-center">
+                            <div formGroupName="customer">
+                                <div>
+                                    <label for="customerId">customer ID</label><br>
+                                    <input pInputText type="text" id="customerId" class="form-control"
+                                        formControlName="customerId"
+                                        [(ngModel)]="selectedCustomer.customerDto.customerId">
+                                </div>
+                                <div>
+                                    <label for="firstname">Firstname</label><br>
+                                    <input pInputText type="text" id="firstname" class="form-control"
+                                        formControlName="firstname"
+                                        [(ngModel)]="selectedCustomer.customerDto.firstname">
+                                </div>
+                                <div>
+                                    <label for="lastname">Lastname</label><br>
+                                    <input pInputText type="text" id="lastname" class="form-control"
+                                        formControlName="lastname" [(ngModel)]="selectedCustomer.customerDto.lastname">
+                                </div>
+                                <div>
+                                    <label for="email">Email</label><br>
+                                    <input pInputText type="text" id="email" class="form-control"
+                                        formControlName="email" [(ngModel)]="selectedCustomer.customerDto.email">
+
+                                </div>
+                            </div>
+                        </div>
+                    </p-card>
+                </ng-template>
+                <ng-template pTemplate>
+                    <p-card header="address">
+                        <div class="col flex align-items-center justify-content-center">
+                            <div formGroupName="address">
+                                <div>
+                                    <label for="streetNum">street number</label><br>
+                                    <input pInputText type="number" class="form-control" id="streetNum"
+                                        formControlName="streetNum" [(ngModel)]="selectedCustomer.addressDto.streetNum">
+                                </div>
+
+                                <div>
+                                    <label for="streetName">street name</label><br>
+                                    <input pInputText type="text" class="form-control" id="streetName"
+                                        formControlName="streetName"
+                                        [(ngModel)]="selectedCustomer.addressDto.streetName">
+                                </div>
+                                <div>
+                                    <label for="postalCode">postal code</label><br>
+                                    <input pInputText type="number" class="form-control" id="postalCode"
+                                        formControlName="postalCode"
+                                        [(ngModel)]="selectedCustomer.addressDto.postalCode">
+                                </div>
+
+                                <div>
+                                    <label for="city">city name</label><br>
+                                    <input pInputText type="text" class="form-control" id="city" formControlName="city"
+                                        [(ngModel)]="selectedCustomer.addressDto.city">
+                                </div>
+                            </div>
+                        </div>
+                    </p-card>
+                </ng-template>
+            </p-splitter>
+            <div style="margin-left: 30%; margin-top: 2%;">
+                <p-button label="Save" [text]="true" [raised]="true" severity="primary" (onClick)="onUpdateCustomer()"
+                    [disabled]="customerRequestDtoFormGroup.invalid" />&nbsp;
+                <p-button label="Cancel" [text]="true" [raised]="true" severity="danger" />
+            </div>
+
+        </form>
+    </p-card>
+</p-sidebar>

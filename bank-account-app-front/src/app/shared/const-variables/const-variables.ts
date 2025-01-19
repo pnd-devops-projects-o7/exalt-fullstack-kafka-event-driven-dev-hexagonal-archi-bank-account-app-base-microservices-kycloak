@@ -1,0 +1,13 @@
+export const confirmMsg: string = 'Confirm Operation';
+export const successDetailsMessage: string = 'Operation successfully';
+export const successSeverity: string = 'success';
+export const errorDetailsMessage: string = 'An error has occurred';
+export const errorSeverity: string = 'error';
+export const rejectedDetails: string = 'Operation rejected';
+export const acceptLabel: string = 'Yes';
+export const rejectLabel: string = 'No';
+export const life: number = 2000;
+export const observableComplete: string = 'Obserable has completed';
+export const errorServer: string = 'An error of server occurred';
+export const sessionError: string = 'Authentication error, no longer logged in';
+export const timeout: number = 1000;

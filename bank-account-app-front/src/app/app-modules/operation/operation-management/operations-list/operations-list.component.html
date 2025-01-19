@@ -1,0 +1,59 @@
+<h1 style="font-size:large; color: green; text-align: center;">
+    list of operations
+</h1>
+<p-table [value]="operations" [tableStyle]="{ 'min-width': '50rem' }" [paginator]="true" [rows]="4"
+    [rowsPerPageOptions]="[4, 20, 50]" (onPage)="onTablePageChange($event)" [first]="first">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>ID</th>
+            <th>type</th>
+            <th>amount</th>
+            <th>description</th>
+            <th>created at</th>
+            <th>account concern</th>
+            <th>customer info</th>
+            <th>customer address</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-op>
+        <tr>
+            <td style="font-size: small; width: 5%;"> {{op.operationId}} </td>
+            <td> <span [style]="onGetOperationypeStyle(op.operationType)">{{op.operationType}}</span>  </td>
+            <td> {{op.transactionAmount}} </td>
+            <td> {{op.description}} </td>
+            <td> {{op.createdAt | date: 'yyyy-MM-dd hh:mm-ss'}} </td>
+            <td>
+                <p> {{op.accountResponseDto.accountId}} </p>
+                <p> <span [style]="style">account</span>: {{op.accountResponseDto.accountType}}, <span
+                        [style]="style">state</span>: {{op.accountResponseDto.accountState}} </p>
+                <p> <span [style]="style">balance</span>: {{op.accountResponseDto.balance}}, <span
+                        [style]="style">overdraft</span>: {{op.accountResponseDto.overdraft}} </p>
+                <p> <span [style]="style">created at</span>: {{op.accountResponseDto.createdAt | date: 'yyyy-MM-dd
+                    hh:mm-ss'}} </p>
+            </td>
+            <td>
+                <p>{{op.accountResponseDto.customerResponseDto.customerDto.firstname}}
+                    {{op.accountResponseDto.customerResponseDto.customerDto.lastname}}, <span [style]="style">state:
+                    </span>{{op.accountResponseDto.customerResponseDto.customerDto.customerState}}</p>
+
+                <p>{{op.accountResponseDto.customerResponseDto.customerDto.email}}</p>
+                <p> <span [style]="style">created at:
+                    </span> {{op.accountResponseDto.customerResponseDto.customerDto.createdAt | date: 'yyyy-MM-dd
+                    hh:mm:ss'}}</p>
+            </td>
+            <td>
+                <p>{{op.accountResponseDto.customerResponseDto.addressDto.streetNum}}
+                    {{op.accountResponseDto.customerResponseDto.addressDto.streetName}}</p>
+                <p> {{op.accountResponseDto.customerResponseDto.addressDto.postalCode}}
+                    {{op.accountResponseDto.customerResponseDto.addressDto.city}},
+                    {{op.accountResponseDto.customerResponseDto.addressDto.country}}
+                </p>
+            </td>
+        </tr>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <span style="color: blue;"> {{operations.length}} operations </span>
+    </ng-template>
+
+</p-table>

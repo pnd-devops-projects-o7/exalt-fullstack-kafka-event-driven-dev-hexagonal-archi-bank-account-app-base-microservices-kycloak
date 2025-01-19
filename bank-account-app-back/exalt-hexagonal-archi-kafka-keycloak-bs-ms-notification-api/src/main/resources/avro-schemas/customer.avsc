@@ -1,0 +1,88 @@
+{
+  "namespace": "com.exalt.exalthexagonalarchikafkakeycloakcustomerapi.domain.avro_beans",
+  "name": "CustomerEvent",
+  "type": "record",
+  "fields": [
+    {
+      "name": "message",
+      "type": "string"
+    },
+    {
+      "name": "status",
+      "type": "string"
+    },
+    {
+      "name": "customer",
+      "type": {
+        "name": "Customer",
+        "type": "record",
+        "fields": [
+          {
+            "name": "customerId",
+            "type": "string"
+          },
+          {
+            "name": "firstname",
+            "type": "string"
+          },
+          {
+            "name": "lastname",
+            "type": "string"
+          },
+          {
+            "name": "customerState",
+            "type": "string"
+          },
+          {
+            "name": "email",
+            "type": "string"
+          },
+          {
+            "name": "createdAt",
+            "type": {
+              "type": "long",
+              "logicalType": "timestamp-millis"
+            }
+          },
+          {
+            "name": "address",
+            "type": {
+              "name": "Address",
+              "type": "record",
+              "fields": [
+                {
+                  "name": "addressId",
+                  "type": "string"
+                },
+                {
+                  "name": "streetNum",
+                  "type": "int"
+                },
+                {
+                  "name": "streetName",
+                  "type": "string"
+                },
+                {
+                  "name": "postalCode",
+                  "type": "int"
+                },
+                {
+                  "name": "city",
+                  "type": "string"
+                },
+                {
+                  "name": "country",
+                  "type": "string"
+                },
+                {
+                  "name": "birthCountry",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,176 @@
+<h1 style="font-size:large; color: green; text-align: center;">
+    list of accounts
+</h1>
+<p-messages key="key1" /><p-messages key="key2" />
+<p-confirmDialog [style]="{width: '20vw'}" />
+<p-table #data [value]="accounts" [tableStyle]="{ 'min-width': '50rem' }" [paginator]="true" [rows]="4"
+    [rowsPerPageOptions]="[4, 20, 50]" (onPage)="onTablePageChange($event)" [first]="first"
+    [globalFilterFields]="['customerResponseDto.customerDto.lastname','customerResponseDto.customerDto.firstname']">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>ID</th>
+            <th>type</th>
+            <th>balance</th>
+            <th>overdraft/i-rate</th>
+            <th>state</th>
+            <th>created At</th>
+            <th>customer
+                <span class="p-input-icon-left ml-auto">
+                    <i class="pi pi-search"></i>
+                    <input pInputText (input)="data.filterGlobal($any($event.target).value, 'contains')"
+                        placeholder="firstname or lastname" size="10" />
+                </span>
+            </th>
+            <th>customer addr</th>
+            <th>operations</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-account>
+        <tr>
+            <td style="font-size: small; width: 5%;"> {{account.accountId}} </td>
+            <td> <span [style]="onSetAccountColor(account.accountType)"> {{account.accountType}} </span></td>
+            <td> {{account.balance | currency: 'EUR'}} </td>
+            <td> {{account.overdraft | currency: 'EUR'}} {{account.interestRate | number:'1.2-2'}}</td>
+            <td> <span [style]="onSetAccountColor(account.accountState)">{{account.accountState}} </span></td>
+            <td> {{account.createdAt | date: 'yyyy-MM-dd hh:mm:ss'}} </td>
+            <td>
+                <p>{{account.customerResponseDto.customerDto.firstname}}
+                    {{account.customerResponseDto.customerDto.lastname}}, <span [style]="style">state:
+                    </span>{{account.customerResponseDto.customerDto.customerState}}</p>
+
+                <p>{{account.customerResponseDto.customerDto.email}}</p>
+                <p> <span [style]="style">created at:
+                    </span> {{account.customerResponseDto.customerDto.createdAt | date: 'yyyy-MM-dd hh:mm:ss'}}</p>
+            </td>
+            <td>
+                <p>{{account.customerResponseDto.addressDto.streetNum}}
+                    {{account.customerResponseDto.addressDto.streetName}}</p>
+                <p> {{account.customerResponseDto.addressDto.postalCode}}
+                    {{account.customerResponseDto.addressDto.city}},
+                    {{account.customerResponseDto.addressDto.country}}
+                </p>
+            </td>
+            <td>
+                <p-button icon="pi pi-pencil" size="small" [rounded]="true" [text]="true" [severity]="severity"
+                    [pTooltip]="onGetAccountState(account.accountState)" [tooltipPosition]="tooltipPosition"
+                    (onClick)="onSwitchAccountStateEvent(account)" />
+
+                <p-button icon="pi pi-window-maximize" size="small" [rounded]="true" [text]="true"
+                    [severity]="onSetOverdraftIRateIconSeverity(account.accountType)"
+                    [pTooltip]="onGetTooltip(account.accountType)" [tooltipPosition]="tooltipPosition"
+                    (onClick)="onOpenInterestRateUpdateSidebarUI(account)" *ngIf="account.accountState=='ACTIVE'" />
+
+                <p-button icon="pi pi-window-maximize" size="small" [rounded]="true" [text]="true" severity="info"
+                    pTooltip="operation UI" [tooltipPosition]="tooltipPosition"
+                    (onClick)="onOpenUpdateBalanceFormUI(account)" *ngIf="account.accountType==='CURRENT' && account.accountState=='ACTIVE'" />
+
+                <p-button icon="pi pi-window-maximize" size="small" [rounded]="true" [text]="true" [severity]="severity"
+                    pTooltip="transfer UI" [tooltipPosition]="tooltipPosition"
+                    (onClick)="onOpenCreateTransferFromAccountFormUI(account)" *ngIf="account.accountState=='ACTIVE'"/>
+            </td>
+        </tr>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <span style="color: #00f;"> {{accounts.length}} accounts</span>
+    </ng-template>
+
+</p-table>
+
+<!-- a sidebar for updating saving account interest rate-->
+<p-sidebar [(visible)]="accountSidebarVisible" [position]="sidebarPosition" *ngIf="selectedAccount"
+    [style]="{width:'fit-content'}">
+    <p-card header="update overdraft / interest-rate">
+        <form [formGroup]="overdraftIRateForm">
+            <div>
+                <label for="accountId">Account ID</label><br>
+                <input type="text" pInputText formControlName="accountId" id="accountId"
+                    [(ngModel)]="selectedAccount.accountId" />
+            </div>
+            <br>
+            <div>
+                <label for="overdraftIrate"><span style="font-weight: bold;"> new overdraft/i-rate </span></label><br>
+                <input type="number" pInputText formControlName="overdraftIrate" id="overdraftIrate" />
+            </div>
+            <br>
+            <div class="buttons">
+                <p-button label="Update" [text]="true" [raised]="true" [disabled]="overdraftIRateForm.invalid"
+                    (onClick)="onUpdateAccountOverdraftOrInterestRateEvent()" />&nbsp;
+                <p-button label="Cancel" [text]="true" [raised]="true" [severity]="severity" />
+            </div>
+        </form>
+    </p-card>
+</p-sidebar>
+<!-- END a sidebar for updating saving account interest rate-->
+
+<!-- a sidebar for create operation on a given account id-->
+<p-sidebar [(visible)]="operationRequestDtoFormVisible" [position]="sidebarPosition" *ngIf="selectedAccount"
+    [style]="{width:'fit-content'}">
+    <p-card header="operation UI">
+        <form [formGroup]="operationRequestDtoForm">
+            <div class="p-float-label">
+                <p-dropdown [options]="operationTypes" optionLabel="operationType"
+                    placeholder="Select an operation type" formControlName="operationType" /><label
+                    for="operationType">operation type</label>
+            </div>
+            <br>
+            <div>
+                <label for="amount"><span style="font-weight: bold;"> amount </span></label><br>
+                <input type="number" pInputText formControlName="amount" id="amount" />
+            </div>
+            <br>
+            <div>
+                <label for="description">description</label><br>
+                <input type="text" pInputText formControlName="description" id="description" />
+            </div>
+            <br>
+            <div>
+                <label for="accountId">Account ID</label><br>
+                <input type="text" pInputText formControlName="accountId" id="accountId"
+                    [(ngModel)]="selectedAccount.accountId" />
+            </div>
+            <br>
+            <div class="buttons">
+                <p-button label="create" [text]="true" [raised]="true" [disabled]="operationRequestDtoForm.invalid"
+                    (onClick)="onUpdateBalanceCurrentAccountEvent()" />&nbsp;
+                <p-button label="Cancel" [text]="true" [raised]="true" [severity]="severity" />
+            </div>
+        </form>
+    </p-card>
+</p-sidebar>
+<!-- END a sidebar for depositing amount on currnt account-->
+
+<!-- a sidebar for create a transfer from a given account id-->
+<p-sidebar [(visible)]="transferRequestDtoFormVisible" [position]="sidebarPosition" *ngIf="selectedAccount"
+    [style]="{width:'fit-content'}">
+    <p-card header="transfer UI">
+        <form [formGroup]="transferRequestDtoForm">
+            <div>
+                <label for="originAccount">origin account</label><br>
+                <input type="text" pInputText formControlName="originAccount" id="originAccount"
+                    [(ngModel)]="selectedAccount.accountId" />
+            </div>
+            <br>
+            <div>
+                <label for="destinationAccount">destination account</label><br>
+                <input type="text" pInputText formControlName="destinationAccount" id="destinationAccount" />
+            </div>
+            <br>
+            <div>
+                <label for="transferAmount">amount</label><br>
+                <input type="number" pInputText formControlName="transferAmount" id="transferAmount" />
+            </div>
+            <br>
+            <div>
+                <label for="description">description</label><br>
+                <textarea pInputTextarea pTextarea formControlName="description"></textarea>
+            </div>
+            <br>
+            <div class="buttons">
+                <p-button label="transfer" [text]="true" [raised]="true" [disabled]="transferRequestDtoForm.invalid"
+                    (onClick)="onCreateTransferEvent()" />&nbsp;
+                <p-button label="Cancel" [text]="true" [raised]="true" [severity]="severity" />
+            </div>
+        </form>
+    </p-card>
+</p-sidebar>

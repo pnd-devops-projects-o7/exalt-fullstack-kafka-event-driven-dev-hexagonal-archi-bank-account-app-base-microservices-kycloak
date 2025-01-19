@@ -1,0 +1,101 @@
+{
+  "namespace": "com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.domain.avro_beans.account",
+  "name": "BankAccountEvent",
+  "type": "record",
+  "fields": [
+    {
+      "name": "status",
+      "type": "string"
+    },
+    {
+      "name": "message",
+      "type": "string"
+    },
+    {
+      "name": "accountType",
+      "type": "string"
+    },
+    {
+      "name": "bankAccount",
+      "type": {
+        "type": "record",
+        "name": "BankAccount",
+        "fields": [
+          {
+            "name": "accountId",
+            "type": "string"
+          },
+          {
+            "name": "type",
+            "type": "string"
+          },
+          {
+            "name": "accountState",
+            "type": "string"
+          },
+          {
+            "name": "balance",
+            "type": {
+              "type": "string",
+              "java-class":"java.math.BigDecimal",
+              "precision": 7,
+              "scale": 3
+            }
+          },
+          {
+            "name": "createdAt",
+            "type": {
+              "type": "long",
+              "logicalType": "timestamp-millis"
+            }
+          },
+          {
+            "name": "overdraft",
+            "type": "double"
+          },
+          {
+            "name": "interestRate",
+            "type": "double"
+          },
+          {
+            "name": "customer",
+            "type": {
+              "type": "record",
+              "name": "Customer",
+              "fields": [
+                {
+                  "name": "customerId",
+                  "type": "string"
+                },
+                {
+                  "name": "firstname",
+                  "type": "string"
+                }
+              ,{
+                  "name": "lastname",
+                  "type": "string"
+                },
+                {
+                  "name": "email",
+                  "type": "string"
+                },
+                {
+                  "name": "customerState",
+                  "type": "string"
+                },
+
+                {
+                  "name": "createdAt",
+                  "type": {
+                    "type": "long",
+                    "logicalType": "timestamp-millis"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

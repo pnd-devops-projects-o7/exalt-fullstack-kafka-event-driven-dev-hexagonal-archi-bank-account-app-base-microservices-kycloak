@@ -1,0 +1,104 @@
+spring:
+  #application name
+  application:
+    name: ${BANK_ACCOUNT_API_APP_NAME}
+    # disable logo in logs
+  main:
+    banner-mode: off
+    # database configuration
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DATABASE_HOSTNAME}:${DATABASE_HOST_PORT}/${BANK_ACCOUNT_API_DB}
+    username: ${DATABASE_ROOT_USER}
+    password: ${DATABASE_ROOT_PWD}
+  # disable JPA auto creation because using flyway
+  jpa:
+    hibernate:
+      ddl-auto: none
+  # flyway config
+  flyway:
+    baseline-on-migrate: true
+    validate-on-migrate: true
+    enabled: true
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+
+  # kafka producer config, writing requests are published as an event in kafka infra
+  kafka:
+    producer:
+      bootstrap-servers: http://kafka-server1:19092,http://kafka-server2:29092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      properties:
+        spring:
+          json:
+            add:
+              type:
+                headers: false
+    # schema registry config to define a common model of event for kafka producer and kafka consumer
+    properties:
+      schema:
+        registry:
+          url: http://schema-registry-service:8081
+  # security config: urls for Keycloak authentication provider
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${JWT_ISSUER}
+security:
+  oauth2:
+    converter:
+      keycloak:
+        client-id: ${KEYCLOAK_ANGULAR_APP_CLIENT_ID}
+# kafka topic configuration: duration time and size of message, topic partitions and topic replicas
+kafka:
+  topic-config:
+    topic1: ${ACCOUNT_TOPIC_NAME1}
+    partitions: ${ACCOUNT_TOPIC_PARTITIONS}
+    topic2: ${ACCOUNT_TOPIC_NAME2}}
+    retention:
+      duration: ${KAFKA_TOPIC_RETENTION_DURATION}
+      size: ${KAFKA_TOPIC_RETENTION_SIZE}
+      clean-up-policy: ${KAFKA_TOPIC_RETENTION_CLEANUP_POLICY}
+
+server:
+  port: ${BANK_ACCOUNT_API_SERVER_PORT}
+# actuator config, to be used by K8s for healthcheck
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-components: always
+      probes:
+        enabled: true # enable /actuator/health/liveness and /actuator/health/readiness for K8s
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+
+# eureka server for microservices registration (for testing, it will be removed when deploying into k8s)
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${SERVICE_REGISTRY_API_APP_NAME}:${SERVICE_REGISTRY_API_SERVER_PORT}/eureka/
+
+# remote customer
+remote-client:
+  name: ${ROUTE2_ID}
+  base-url: ${ROUTE2_URI}
+  context-path: ${CONTEXT_PATH2}
+
+cron:
+  expression: 0 0/30 * * * ?
+
+# swagger ui for apis documentation
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui

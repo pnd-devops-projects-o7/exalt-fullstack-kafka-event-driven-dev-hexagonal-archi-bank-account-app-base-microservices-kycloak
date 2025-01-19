@@ -1,0 +1,37 @@
+<p-splitter 
+    [panelSizes]="[18, 82]">
+    <ng-template pTemplate>
+        <ul style="line-height:170%">
+            <li><span style="color: #00f;">Bank-Account-App</span> is an application base microservices with business microservices:
+              <span style="color: #f00;">customer</span>,
+                <span style="color: #f00;">bank-account</span>,
+                <span style="color: #f00;">operation</span>,
+                <span style="color: #f00;">notification</span>
+             
+            </li>
+            <li>each business microservice has its own <span style="color: #f00;">db</span></li>
+            <li>each business microservice implements a <span style="color: #f00;">architecture hexagonale</span></li>
+            <li>business microservices interact between:
+              <span style="color: #f00;">bank-account</span> interacts with
+              <span style="color: #f00;">customer</span> and
+                <span style="color: #f00;">operation</span> interacts with
+                    <span style="color: #f00;">bank-account</span>
+            </li>
+            <li><span style="color: #00f;">gateway-service-proxy</span> routes <span style="color: #f00;">frontend app</span> requests
+             to the bankend microservices</li>
+             <li><span style="color: #00f;">Keycloak</span> identity provider authenticate and authorize all users' requests</li>
+            <li> <span style="color: #00f;">Bank-Account-App stack </span> is deployed into <span style="color: #f00;"> docker images</span></li>
+            <li>on backend side, <span style="color: #00f;">kafka infrastructure</span> is used to publish events related to users requests</li>
+            <li><span style="color: #00f;">bs-ms-notification</span> sends a notification email on 
+                <span style="color: #f00;">smtp-email-server</span> when an event is published in <span style="color: #f00;"> kafka topic</span></li>
+            <li> <span style="color: #f00;">docker containers</span> of  Bank-Account-App stack are deployed into a <span style="color: #f00;">minikube cluster</span> 
+                  using <span style="color: #f00;">Kubernetes</span> </li>
+            <li>for more details: <a [href]=gitRepository>
+              git repo</a></li>
+          </ul>
+    </ng-template>
+    
+    <ng-template pTemplate>
+       <img [src]="imagePath" [style]="imgStyle">
+    </ng-template>
+</p-splitter>
