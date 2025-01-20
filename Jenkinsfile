@@ -67,7 +67,7 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry([credentialsId: "dockerhub-credentials-jenkins", url: ""]) {
-                        sh "docker compose -f ./docker/bank-account-app-compose.yml build"
+                        sh "docker compose -f ./stack-docker-compose/bank-account-app-compose.yml build"
                         sh "docker system prune -f"
                     }
                 }
@@ -77,7 +77,7 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry([credentialsId: "dockerhub-credentials-jenkins", url: ""]) {
-                        sh "docker compose -f ./docker/bank-account-app-compose.yml push"
+                        sh "docker compose -f ./stack-docker-compose/bank-account-app-compose.yml push"
                     }
                 }
             }
