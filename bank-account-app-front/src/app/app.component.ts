@@ -12,6 +12,7 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { SuperusersService } from './shared/services/keycloak/superusers.service';
 
 
+
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -27,7 +28,7 @@ export class AppComponent implements OnInit {
   router = inject(Router);
   userProfile!: KeycloakProfile;
   keyclaokService = inject(KeycloakService);
-  superuserService = inject(SuperusersService);
+  isSuperuserService = inject(SuperusersService);
   
 
   tooltipPosition: string ="top";
@@ -41,7 +42,7 @@ export class AppComponent implements OnInit {
       {
         label: 'app', icon: PrimeIcons.ANGLE_DOUBLE_RIGHT,
         command: () => this.router.navigate(['/app-menu']),
-        visible: this.superuserService.isSuperUser()
+        visible: this.isSuperuserService.isSuperUser()
       }
     ];
 

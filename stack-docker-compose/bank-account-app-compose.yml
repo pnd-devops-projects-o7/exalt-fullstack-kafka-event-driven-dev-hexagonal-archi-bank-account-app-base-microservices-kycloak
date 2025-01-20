@@ -248,7 +248,7 @@ services:
     container_name: ${GATEWAY_SERVICE_PROXY_APP_NAME}
     image: placidenduwayo1/${GATEWAY_SERVICE_PROXY_APP_NAME}:${APPLICATION_TAG}
     build:
-      context: ../bank-account-app-back/exalt-hexagonal-archi-kafka-keycloak-backend-gateway-service-proxy
+      context: ../bank-account-app-back/exalt-hexagonal-archi-kafka-keycloak-gateway-service-proxy
       dockerfile: Dockerfile
     ports:
       - ${GATEWAY_SERVICE_PROXY_PORT}:${GATEWAY_SERVICE_PROXY_PORT}
