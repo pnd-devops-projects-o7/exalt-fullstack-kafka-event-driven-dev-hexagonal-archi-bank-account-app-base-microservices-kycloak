@@ -40,7 +40,7 @@ COPY pom.xml /build/
 COPY src /build/src
 RUN mvn package -DskipTest
 WORKDIR /build/target/
-RUN java -Djarmode=layertools -jar exalt-hexagonal-archi-kafka-keycloak-backend-gateway-service-proxy.jar extract
+RUN java -Djarmode=layertools -jar exalt-hexagonal-archi-kafka-keycloak-gateway-service-proxy.jar extract
 
 FROM maven:3.9.8-eclipse-temurin-21-alpine AS final
 COPY --from=builder /build/target/dependencies/ ./

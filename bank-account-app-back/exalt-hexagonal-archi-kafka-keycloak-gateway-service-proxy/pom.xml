@@ -11,8 +11,8 @@
 	<groupId>com.exalt</groupId>
 	<artifactId>gateway-proxy</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>exalt-hexagonal-archi-kafka-keycloak-backend-gateway-service-proxy</name>
-	<description>exalt-hexagonal-archi-kafka-keycloak-backend-gateway-service-proxy</description>
+	<name>exalt-hexagonal-archi-kafka-keycloak-gateway-service-proxy</name>
+	<description>exalt-hexagonal-archi-kafka-keycloak-gateway-service-proxy</description>
 
 	<properties>
 		<java.version>21</java.version>
