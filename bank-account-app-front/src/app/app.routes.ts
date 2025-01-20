@@ -1,14 +1,14 @@
 import { Routes } from '@angular/router';
 import { AccueilComponent } from './accueil/accueil.component';
 import { AppEntryComponent } from './app-entry/app-entry.component';
-import { AppAuthGuard } from './shared/services/authentication/app-auth.guard';
+import { AppAuthGuard } from './shared/services/keycloak/app-auth.guard';
 
 export const routes: Routes = [
     {
         path: 'accueil', component: AccueilComponent
     },
     {
-        path: 'app-menu', component: AppEntryComponent, canActivate: [AppAuthGuard], data: { roles: ['ADMIN', 'OWNER', 'USER'] },
+        path: 'app-menu', component: AppEntryComponent, canActivate: [AppAuthGuard], data: { roles: ['ADMIN', 'OWNER', 'MANAGER'] },
         children: [
             {
                 path: 'customers', loadChildren: () => import('./app-modules/customer/customer.module')

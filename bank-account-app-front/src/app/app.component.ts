@@ -7,9 +7,9 @@ import { MenuItem, PrimeIcons } from 'primeng/api';
 import { MenubarModule } from 'primeng/menubar';
 import { KeycloakProfile } from 'keycloak-js';
 import { KeycloakService } from 'keycloak-angular';
-import { LoggedService } from './shared/services/authentication/logged.service';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { SuperusersService } from './shared/services/keycloak/superusers.service';
 
 
 @Component({
@@ -27,20 +27,21 @@ export class AppComponent implements OnInit {
   router = inject(Router);
   userProfile!: KeycloakProfile;
   keyclaokService = inject(KeycloakService);
-  loggedService = inject(LoggedService);
+  superuserService = inject(SuperusersService);
+  
 
   tooltipPosition: string ="top";
 
   async ngOnInit(): Promise<void> {
     this.accueilMenu = [
       {
-        label: 'app-desc', icon: PrimeIcons.INFO_CIRCLE,
-        command: () => this.router.navigate(['accueil'])
+        label: "app-desc", icon: PrimeIcons.INFO_CIRCLE,
+        command: () => this.router.navigate(["accueil"])
       },
       {
         label: 'app', icon: PrimeIcons.ANGLE_DOUBLE_RIGHT,
         command: () => this.router.navigate(['/app-menu']),
-        visible: await this.loggedService.isLoggedPromise()
+        visible: this.superuserService.isSuperUser()
       }
     ];
 
