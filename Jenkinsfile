@@ -39,7 +39,7 @@ pipeline {
             }
             post {
                 success {
-                    dir("./bank-account-app-back/exalt-hexagonal-archi-kafka-keycloak-eureka-server/") {
+                    dir("./bank-account-app-back/exalt-hexagonal-archi-kafka-keycloak-registry-eureka-server/") {
                         archiveArtifacts "**/target/*.jar"
                     }
                     dir("./bank-account-app-back/exalt-hexagonal-archi-kafka-keycloak-backend-gateway-oauth2-client/") {
