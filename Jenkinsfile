@@ -15,7 +15,7 @@ pipeline {
         }
         stage("Build") {
             steps {
-                dir("./bank-account-app-back/exalt-hexagonal-archi-kafka-keycloak-eureka-server/") {
+                dir("./bank-account-app-back/exalt-hexagonal-archi-kafka-keycloak-registry-eureka-server/") {
                     sh "mvn clean install"
                 }
                 dir("./bank-account-app-back/exalt-hexagonal-archi-kafka-keycloak-backend-gateway-oauth2-client/") {
