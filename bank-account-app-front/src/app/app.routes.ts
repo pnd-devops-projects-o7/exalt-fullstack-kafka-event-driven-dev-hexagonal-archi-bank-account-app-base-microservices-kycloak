@@ -2,8 +2,15 @@ import { Routes } from '@angular/router';
 import { AccueilComponent } from './accueil/accueil.component';
 import { AppEntryComponent } from './app-entry/app-entry.component';
 import { AppAuthGuard } from './shared/services/keycloak/app-auth.guard';
+import { StandloneComponent } from './standlone/standlone.component';
 
 export const routes: Routes = [
+    {
+        path: '', redirectTo: '/standlone', pathMatch: 'full'
+    },
+    {
+        path: 'standlone', component: StandloneComponent
+    },
     {
         path: 'accueil', component: AccueilComponent
     },

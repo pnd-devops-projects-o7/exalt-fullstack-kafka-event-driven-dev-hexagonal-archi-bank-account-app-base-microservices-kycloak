@@ -11,8 +11,6 @@ import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { SuperusersService } from './shared/services/keycloak/superusers.service';
 
-
-
 @Component({
   selector: 'app-root',
   standalone: true,
