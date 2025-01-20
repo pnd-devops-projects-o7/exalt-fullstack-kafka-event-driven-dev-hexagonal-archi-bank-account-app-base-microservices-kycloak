@@ -1,24 +1,32 @@
 <h1 style="font-size:large; color: green; text-align: center;">
     list of operations
 </h1>
-<p-table [value]="operations" [tableStyle]="{ 'min-width': '50rem' }" [paginator]="true" [rows]="4"
-    [rowsPerPageOptions]="[4, 20, 50]" (onPage)="onTablePageChange($event)" [first]="first">
+<p-table #data [value]="operations" [tableStyle]="{ 'min-width': '50rem' }" [paginator]="true" [rows]="4"
+    [rowsPerPageOptions]="[4, 20, 50]" (onPage)="onTablePageChange($event)" [first]="first" 
+    [globalFilterFields]="['accountResponseDto.customerResponseDto.customerDto.firstname',
+    'accountResponseDto.customerResponseDto.customerDto.lastname']">
     <ng-template pTemplate="header">
         <tr>
             <th>ID</th>
             <th>type</th>
             <th>amount</th>
             <th>description</th>
-            <th>created at</th>
+            <th>created date</th>
             <th>account concern</th>
-            <th>customer info</th>
+            <th>customer info
+                <span class="p-input-icon-left ml-auto">
+                    <i class="pi pi-search"></i>
+                    <input pInputText (input)="data.filterGlobal($any($event.target).value, 'contains')"
+                        placeholder="first or last name" size="10" />
+                </span>
+            </th>
             <th>customer address</th>
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-op>
         <tr>
             <td style="font-size: small; width: 5%;"> {{op.operationId}} </td>
-            <td> <span [style]="onGetOperationypeStyle(op.operationType)">{{op.operationType}}</span>  </td>
+            <td> <span [style]="onGetOperationypeStyle(op.operationType)">{{op.operationType}}</span> </td>
             <td> {{op.transactionAmount}} </td>
             <td> {{op.description}} </td>
             <td> {{op.createdAt | date: 'yyyy-MM-dd hh:mm-ss'}} </td>

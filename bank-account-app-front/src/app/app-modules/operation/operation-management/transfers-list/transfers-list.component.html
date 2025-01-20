@@ -2,17 +2,24 @@
     list of transfers
 </h1>
 
-<p-table #data [value]="transfers" [tableStyle]="{ 'min-width': '50rem' }" [paginator]="true" [rows]="4"
-    [rowsPerPageOptions]="[4, 20, 50]" (onPage)="onTablePageChange($event)" [first]="first">
+<p-table #data [value]="transfers" [paginator]="true" [rows]="4"
+    [rowsPerPageOptions]="[4, 20, 50]" (onPage)="onTablePageChange($event)" [first]="first"
+    [globalFilterFields]="['origin.customerResponseDto.customerDto.firstname','origin.customerResponseDto.customerDto.lastname']">
     <ng-template pTemplate="header">
         <tr>
             <th>ID</th>
             <th>amount</th>
             <th>description</th>
-            <th>createdAt</th>
-            <th>origin acc</th>
-            <th>origin customer</th>
-            <th>destination acc</th>
+            <th>created date</th>
+            <th>origin account</th>
+            <th>origin customer
+                <span class="p-input-icon-left ml-auto">
+                    <i class="pi pi-search"></i>
+                    <input pInputText (input)="data.filterGlobal($any($event.target).value, 'contains')"
+                        placeholder="first or last name" size="10" />
+                </span>
+            </th>
+            <th>destination account</th>
             <th>destination customer</th>
         </tr>
     </ng-template>
@@ -34,10 +41,15 @@
             </td>
             <td [style]="style1">
                 <p>{{transfer.origin.customerResponseDto.customerDto.firstname}}
-                    {{transfer.origin.customerResponseDto.customerDto.lastname}}, <span [style]="style2">state:
-                    </span>{{transfer.origin.customerResponseDto.customerDto.customerState}}</p>
-
-                <p>{{transfer.origin.customerResponseDto.customerDto.email}}</p>
+                    {{transfer.origin.customerResponseDto.customerDto.lastname}}
+                </p>
+                <p>
+                    <span [style]="style2">state:
+                    </span>{{transfer.origin.customerResponseDto.customerDto.customerState}}
+                </p>
+                <p>
+                    {{transfer.origin.customerResponseDto.customerDto.email}}
+                </p>
 
             </td>
             <td [style]="style1">
@@ -51,9 +63,11 @@
             </td>
             <td [style]="style1">
                 <p>{{transfer.destination.customerResponseDto.customerDto.firstname}}
-                    {{transfer.destination.customerResponseDto.customerDto.lastname}},
+                    {{transfer.destination.customerResponseDto.customerDto.lastname}}
+                </p>
                 <p> <span [style]="style2">state:
                     </span>{{transfer.destination.customerResponseDto.customerDto.customerState}}
+                </p>
 
                 <p>{{transfer.destination.customerResponseDto.customerDto.email}}</p>
 

@@ -132,7 +132,7 @@ public class TransferInputServiceImpl implements TransferInputService {
             throw new OperationApiBusinessException("remote origin or destination account state not allowed");
         }
         //check origin account balance enough
-        if (ValidatorTools.accountBalanceInsufficient(originAccountResponseDto.balance(), transferRequestDto.transferAmount())) {
+        if (ValidatorTools.accountBalanceInsufficient(originAccountResponseDto, transferRequestDto.transferAmount())) {
             logger.info("log remote account balance insufficient");
             throw new OperationApiBusinessException("remote account balance insufficient");
         }

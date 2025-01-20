@@ -4,11 +4,12 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { observableComplete } from '../../../../shared/const-variables/const-variables';
 import { TableModule } from 'primeng/table';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
   selector: 'app-transfers-list',
   standalone: true,
-  imports: [CommonModule, TableModule],
+  imports: [CommonModule, TableModule, InputTextModule],
   templateUrl: './transfers-list.component.html',
   styleUrl: './transfers-list.component.css'
 })

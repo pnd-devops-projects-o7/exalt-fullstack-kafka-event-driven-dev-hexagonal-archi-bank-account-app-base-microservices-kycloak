@@ -2,11 +2,12 @@ import { Component, Input } from '@angular/core';
 import { OperationResponseDto } from '../../../../shared/models/backend/operation/operation-response.dto';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
   selector: 'app-operations-list',
   standalone: true,
-  imports: [CommonModule, TableModule],
+  imports: [CommonModule, TableModule, InputTextModule],
   templateUrl: './operations-list.component.html',
   styleUrl: './operations-list.component.css'
 })

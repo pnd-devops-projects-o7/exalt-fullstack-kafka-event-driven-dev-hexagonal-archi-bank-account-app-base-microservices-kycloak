@@ -7,6 +7,8 @@ import com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure
 import java.math.BigDecimal;
 
 public class ValidatorTools {
+    private static final String SAVING_ACCOUNT="SAVING";
+    private static final String CURRENT_ACCOUNT="CURRENT";
     private ValidatorTools() {
     }
 
@@ -15,11 +17,6 @@ public class ValidatorTools {
         return operationRequestDto.operationType().isBlank()
                 || operationRequestDto.description().isBlank()
                 || operationRequestDto.accountId().isBlank();
-    }
-
-    public static boolean transactionAmountValid(BigDecimal transactionAmount) {
-        int comparison = transactionAmount.compareTo(new BigDecimal(10));
-        return comparison == 0 || comparison > 0;
     }
 
     public static boolean remoteAccountClientUnreachable(AccountResponseDto accountResponseDto) {
@@ -31,7 +28,7 @@ public class ValidatorTools {
     }
 
     public static boolean remoteAccountTypeUnAllowed(String accountType) {
-        return accountType.equals("SAVING");
+        return accountType.equals(SAVING_ACCOUNT);
     }
 
     public static boolean operationTypeValid(String operationType) {
@@ -39,13 +36,17 @@ public class ValidatorTools {
     }
 
     public static boolean accountBalanceInsufficient(AccountResponseDto accountResponseDto,BigDecimal operationAmount) {
-        int result = accountResponseDto.balance()
-                .add(BigDecimal.valueOf(accountResponseDto.overdraft()))
-                .compareTo(operationAmount);
+        int result=10000;
+        if(accountResponseDto.accountType().equals(CURRENT_ACCOUNT)) {
+            result = accountResponseDto.balance()
+                    .add(BigDecimal.valueOf(accountResponseDto.overdraft()))
+                    .compareTo(operationAmount);
+        }
+        else if(accountResponseDto.accountType().equals(SAVING_ACCOUNT)){
+            result = accountResponseDto.balance()
+                    .compareTo(operationAmount);
+        }
         return result < 0;
-    }
-    public static boolean accountBalanceInsufficient(BigDecimal balance, BigDecimal transferAmount){
-        return balance.compareTo(transferAmount)<0;
     }
 
     //transfer validators

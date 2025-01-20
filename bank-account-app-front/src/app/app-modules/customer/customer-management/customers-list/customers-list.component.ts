@@ -304,10 +304,10 @@ export class CustomersListComponent implements OnInit {
   // change state printed color base on customer state
   onCustomerStateServerity(state: string) {
     if (state === "SUSPENDED" || state==="ARCHIVE") {
-      return 'font-weight: bold; color: red;';
+      return 'color: red;';
     }
     else {
-      return 'font-weight: bold; color: forestgreen;';
+      return 'color: forestgreen;';
     }
   }
 

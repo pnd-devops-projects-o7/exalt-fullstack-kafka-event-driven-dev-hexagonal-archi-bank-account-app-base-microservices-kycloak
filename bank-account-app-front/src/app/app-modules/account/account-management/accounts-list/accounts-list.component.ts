@@ -38,7 +38,8 @@ interface OperationType {
   selector: 'app-accounts-list',
   standalone: true,
   imports: [TableModule, CommonModule, ButtonModule, TooltipModule, MessagesModule, ConfirmDialogModule,
-    SidebarModule, CardModule, FormsModule, ReactiveFormsModule, InputTextModule, DropdownModule, InputTextareaModule
+    SidebarModule, CardModule, FormsModule, ReactiveFormsModule, InputTextModule, DropdownModule, 
+    InputTextareaModule
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './accounts-list.component.html',
@@ -308,17 +309,17 @@ export class AccountsListComponent implements OnInit {
   onSetAccountColor(color: string): string {
     switch (color) {
       case 'SAVING':
-        return 'font-weight: bold; color: forestgreen;';
+        return 'color: forestgreen;';
       case 'CURRENT':
-        return 'font-weight: bold; color: #00f;';
+        return 'color: #00f;';
       case 'CREATED':
-        return 'font-weight: bold; color: #000;';
+        return 'color: #000;';
       case 'ACTIVE':
-        return 'font-weight: bold; color: forestgreen;';
+        return 'color: forestgreen;';
       case 'SUSPENDED':
-        return 'font-weight: bold; color: #f00;';
+        return 'color: #f00;';
       default:
-        return 'font-weight: bold; color: #f00;';
+        return 'color: #f00;';
     }
   }
 
@@ -332,11 +333,11 @@ export class AccountsListComponent implements OnInit {
   }
 
   //a corresponding state tooltip to show
-  onGetAccountState(accountState: string) : string {
-    if(accountState==="ACTIVE"){
+  onGetAccountState(accountState: string): string {
+    if (accountState === "ACTIVE") {
       return "suspend";
     }
-    else if(accountState==="SUSPENDED") {
+    else if (accountState === "SUSPENDED") {
       return "reactive";
     }
     return "";
@@ -351,9 +352,17 @@ export class AccountsListComponent implements OnInit {
   }
 
   //initialise selected account and make sidebar visible
-  onOpenInterestRateUpdateSidebarUI(account: AccountResponseDto) {
+  tooltip!: string;
+  onOpenOverdraftOrInterestRateUpdateSidebarUI(account: AccountResponseDto) {
     this.selectedAccount = account;
     this.accountSidebarVisible = true;
+    // label to print according account type
+    if (account.accountType === "SAVING") {
+      this.tooltip = "update i-rate";
+    }
+    else if (account.accountType === "CURRENT") {
+      this.tooltip = "update overdraft";
+    }
 
   }
 
@@ -371,13 +380,16 @@ export class AccountsListComponent implements OnInit {
     this.operationEventService.pushish(OperationEvent.UPDATE_BALANCE_ACCOUNT_EVENT);
   }
 
-  // tooltip text to show according account type
   onGetTooltip(accountType: string): string {
     if (accountType === "SAVING") {
       return "update i-rate";
     }
-    else {
+    else if (accountType === "CURRENT") {
       return "update overdraft";
+    }
+
+    else {
+      return "";
     }
   }
 
@@ -390,5 +402,21 @@ export class AccountsListComponent implements OnInit {
   //on user click button create transfer, an event is published
   onCreateTransferEvent() {
     this.operationEventService.pushish(OperationEvent.CREATE_TRANSFER_EVENT);
+  }
+
+  //highlight according to account balance mount
+  onBalanceAmountColoring(amount: number): string {
+    if (amount <= 100) {
+      return "color: red;";
+    }
+    else if(((amount >= 101) && (amount <= 500))){
+      return "color: chocolate;";
+    }
+    else if(((amount >= 501) && (amount <= 1000))){
+      return "cornflowerblue";
+    }
+    else {
+      return "color:forestgreen;";
+    }
   }
 }

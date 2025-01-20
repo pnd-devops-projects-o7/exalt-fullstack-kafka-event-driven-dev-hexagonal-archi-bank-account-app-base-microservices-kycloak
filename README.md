@@ -94,4 +94,4 @@ The frontend part of **Bank-Account-App** is an angular (v17) application
 - pattern observable with **RxJs**
 - managing Observable related to user events like click on button
 - graphic design with **PrimeNG**
-- integrate Keycloak as identity provider
+- integrate **Keycloak** as identity provider

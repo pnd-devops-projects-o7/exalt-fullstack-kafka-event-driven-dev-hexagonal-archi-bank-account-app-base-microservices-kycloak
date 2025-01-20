@@ -63,7 +63,7 @@ public class OperationInputServiceImpl implements OperationInputService {
                 .getRemoteCustomerById(accountResponseDto.customerResponseDto().customerDto().customerId());
 
         Operation operation = MapperService.mapFromOperationRequestDto(operationRequestDto, transactionAmount);
-        BankAccount bankAccount = (BankAccount) MapperService.mapFromAccountResponseDto(accountResponseDto);
+        BankAccount bankAccount = MapperService.mapFromAccountResponseDto(accountResponseDto);
         bankAccount.setCustomer(MapperService.mapFromCustomerResponseDto(customerResponseDto));
         operation.setBankAccount(bankAccount);
         OperationEntity operationEntity = MapperService.mapFromOperation(operation);
@@ -105,7 +105,8 @@ public class OperationInputServiceImpl implements OperationInputService {
         if (ValidatorTools.operationRequestDtoFieldsEmpty(operationRequestDto)) {
             throw new OperationApiBusinessException("one or more fields are empty");
         }
-        if (transactionAmount==null) {
+        if (transactionAmount==null || transactionAmount.compareTo(new BigDecimal(10))<0) {
+            //minimal value of transaction is 10
             throw new OperationApiBusinessException("operation transaction amount invalid");
         }
 

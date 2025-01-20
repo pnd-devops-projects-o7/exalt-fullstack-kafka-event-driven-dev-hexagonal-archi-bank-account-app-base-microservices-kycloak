@@ -29,7 +29,7 @@
         <tr>
             <td style="font-size: small; width: 5%;"> {{account.accountId}} </td>
             <td> <span [style]="onSetAccountColor(account.accountType)"> {{account.accountType}} </span></td>
-            <td> {{account.balance | currency: 'EUR'}} </td>
+            <td > <span [style]="onBalanceAmountColoring(account.balance)">{{account.balance | currency: 'EUR'}} </span> </td>
             <td> {{account.overdraft | currency: 'EUR'}} {{account.interestRate | number:'1.2-2'}}</td>
             <td> <span [style]="onSetAccountColor(account.accountState)">{{account.accountState}} </span></td>
             <td> {{account.createdAt | date: 'yyyy-MM-dd hh:mm:ss'}} </td>
@@ -58,7 +58,7 @@
                 <p-button icon="pi pi-window-maximize" size="small" [rounded]="true" [text]="true"
                     [severity]="onSetOverdraftIRateIconSeverity(account.accountType)"
                     [pTooltip]="onGetTooltip(account.accountType)" [tooltipPosition]="tooltipPosition"
-                    (onClick)="onOpenInterestRateUpdateSidebarUI(account)" *ngIf="account.accountState=='ACTIVE'" />
+                    (onClick)="onOpenOverdraftOrInterestRateUpdateSidebarUI(account)" *ngIf="account.accountState=='ACTIVE'" />
 
                 <p-button icon="pi pi-window-maximize" size="small" [rounded]="true" [text]="true" severity="info"
                     pTooltip="operation UI" [tooltipPosition]="tooltipPosition"
@@ -77,7 +77,7 @@
 
 </p-table>
 
-<!-- a sidebar for updating saving account interest rate-->
+<!-- a sidebar for updating account interest rate (for saving) or overdraft (for current)-->
 <p-sidebar [(visible)]="accountSidebarVisible" [position]="sidebarPosition" *ngIf="selectedAccount"
     [style]="{width:'fit-content'}">
     <p-card header="update overdraft / interest-rate">
@@ -89,7 +89,7 @@
             </div>
             <br>
             <div>
-                <label for="overdraftIrate"><span style="font-weight: bold;"> new overdraft/i-rate </span></label><br>
+                <label for="overdraftIrate"><span style="font-weight: bold;"> {{tooltip}} </span></label><br>
                 <input type="number" pInputText formControlName="overdraftIrate" id="overdraftIrate" />
             </div>
             <br>
