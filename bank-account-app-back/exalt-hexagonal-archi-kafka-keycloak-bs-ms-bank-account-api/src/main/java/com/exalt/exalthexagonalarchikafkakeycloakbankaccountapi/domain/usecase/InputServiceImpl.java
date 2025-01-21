@@ -131,32 +131,24 @@ public class InputServiceImpl implements InputService {
             bankAccountEntity.setAccountState(ACTIVE_STATE);
             bankAccountEvent.setMessage("account is activated, ready for operations");
             bankAccountEvent.setStatus("ACTIVATED ACCOUNT");
-            switch (bankAccountEntity) {
-                case CurrentAccount currentAccount -> {
-                    outputService.createCurrentAccount(currentAccount);
-                    bankAccountEvent.setAccountType("CURRENT ACCOUNT");
-                }
-                case SavingAccount savingAccount -> {
-                    outputService.createSavingAccount(savingAccount);
-                    bankAccountEvent.setAccountType("SAVING ACCOUNT");
-                }
-                default -> {
-                }
+            if(bankAccountEntity instanceof CurrentAccount currentAccount){
+                outputService.createCurrentAccount(currentAccount);
+                bankAccountEvent.setAccountType("CURRENT ACCOUNT");
+            }
+            else if(bankAccountEntity instanceof SavingAccount savingAccount){
+                outputService.createSavingAccount(savingAccount);
+                bankAccountEvent.setAccountType("SAVING ACCOUNT");
             }
         } else if (bankAccountEntity.getAccountState().equals(ACTIVE_STATE)) {
             bankAccountEntity.setAccountState(SUSPENDED_STATE);
             bankAccountEvent.setMessage("account is suspended, no longer undergo operations");
             bankAccountEvent.setStatus("SUSPENDED ACCOUNT");
-            switch (bankAccountEntity) {
-                case CurrentAccount currentAccount -> {
-                    outputService.createCurrentAccount(currentAccount);
-                    bankAccountEvent.setAccountType("CURRENT ACCOUNT");
-                }
-                case SavingAccount savingAccount -> {
-                    outputService.createSavingAccount(savingAccount);
-                    bankAccountEvent.setAccountType("SAVING ACCOUNT");
-                }
-                default -> LOGGER.log(Level.INFO, "do nothing");
+            if(bankAccountEntity instanceof CurrentAccount currentAccount){
+                outputService.createCurrentAccount(currentAccount);
+                bankAccountEvent.setAccountType("CURRENT ACCOUNT");
+            } else if (bankAccountEntity instanceof  SavingAccount savingAccount) {
+                outputService.createSavingAccount(savingAccount);
+                bankAccountEvent.setAccountType("SAVING ACCOUNT");
             }
         }
         //build kafka event

@@ -388,7 +388,7 @@ class InputServiceImplTest {
     }
 
     @Test
-    void canReturnBankAccountApiBusinessException_AccountNotFound() {
+    void canReturnAccountNotFound_updateBalance() {
         //prepare
         final String exceptionMessage = "account with id";
         AccountNotFoundException runtimeException = Assertions.assertThrows(AccountNotFoundException.class,
@@ -397,17 +397,137 @@ class InputServiceImplTest {
                     final String accountId = "000";
                     //execute
                     Mockito.when(outputServiceMock.getAccountById(accountId)).thenReturn(null);
-                    AccountResponseDto accountResponseDto = inputServiceImplUnderTest.updateAccountBalance(accountId,BigDecimal.valueOf(200));
+                    AccountResponseDto accountResponseDto = inputServiceImplUnderTest.updateAccountBalance(accountId, BigDecimal.valueOf(200));
                     //verify
-                    Assertions.assertAll("*",()->{
+                    Assertions.assertAll("*", () -> {
                         Assertions.assertNull(accountResponseDto);
                         Mockito.verify(outputServiceMock, Mockito.atLeast(1)).getAccountById(accountId);
                     });
                 });
         //verify
-        Assertions.assertAll("*",()->{
+        Assertions.assertAll("*", () -> {
             Assertions.assertNotNull(runtimeException);
             Assertions.assertTrue(runtimeException.getMessage().contains(exceptionMessage));
+        });
+    }
+
+    @Test
+    void canReturnAccountNotFound_switchState() {
+        //prepare
+        final String exceptionMessage = "not exist";
+        AccountNotFoundException runtimeException = Assertions
+                .assertThrows(AccountNotFoundException.class, () -> {
+                    //prepare
+                    final String accountId = "000";
+                    //execute
+                    Mockito.when(outputServiceMock.getAccountById(accountId)).thenReturn(null);
+                    AccountResponseDto accountResponseDto = inputServiceImplUnderTest.switchAccountState(accountId);
+                    //verify
+                    Assertions.assertAll("*", () -> {
+                        Assertions.assertNull(accountResponseDto);
+                        Mockito.verify(outputServiceMock, Mockito.atLeast(1)).getAccountById(accountId);
+                    });
+                });
+        //verify
+        Assertions.assertAll("*", () -> {
+            Assertions.assertNotNull(runtimeException);
+            Assertions.assertTrue(runtimeException.getMessage().contains(exceptionMessage));
+        });
+    }
+
+    @Test
+    void canReturnBankAccountApiBusinessException_switchState_due_accountState() {
+        //prepare
+        final String exceptionMsg = "can not be activated/suspended because";
+        BankAccountApiBusinessException runtimeException = Assertions
+                .assertThrows(BankAccountApiBusinessException.class, () -> {
+                    //prepare
+                    final String currentAccountId = "21";
+                    CurrentAccount currentAccount1 = new CurrentAccount(10);
+                    currentAccount1.setAccountId(currentAccountId);
+                    currentAccount1.setAccountState("CREATED");
+                    currentAccount1.setBalance(BigDecimal.valueOf(300000));
+                    currentAccount1.setCustomerId(currentAccount.getCustomerId());
+                    currentAccount1.setCreatedAt(Instant.now());
+
+                    final String savingAccountId = "23";
+                    SavingAccount savingAccount1 = new SavingAccount(4.2);
+                    savingAccount1.setAccountId(savingAccountId);
+                    savingAccount1.setAccountState("CREATED");
+                    savingAccount1.setBalance(BigDecimal.valueOf(350000));
+                    savingAccount1.setCustomerId(savingAccount.getCustomerId());
+                    savingAccount1.setCreatedAt(Instant.now());
+                    //execute
+                    Mockito.when(outputServiceMock.getAccountById(currentAccountId)).thenReturn(currentAccount1);
+                    Mockito.when(outputServiceMock.getAccountById(savingAccountId)).thenReturn(savingAccount1);
+                    AccountResponseDto currentAccountResponseDto = inputServiceImplUnderTest.switchAccountState(currentAccountId);
+                    AccountResponseDto savingAccountResponseDto = inputServiceImplUnderTest.switchAccountState(savingAccountId);
+                    //verify
+                    Assertions.assertAll("*", () -> {
+                        Assertions.assertNull(currentAccountResponseDto);
+                        Assertions.assertNull(savingAccountResponseDto);
+                        Mockito.verify(outputServiceMock, Mockito.atLeast(1)).getAccountById(currentAccountId);
+                        Mockito.verify(outputServiceMock, Mockito.atLeast(1)).getAccountById(savingAccountId);
+                    });
+                });
+        //verify
+        Assertions.assertAll("*", () -> {
+            Assertions.assertNotNull(runtimeException);
+            Assertions.assertTrue(runtimeException.getMessage().contains(exceptionMsg));
+        });
+    }
+
+    @Test
+    void canReturnAccountNotFound_updateOverdraftOrIRate() {
+        //prepare
+        final String exceptionMsg = "account with id";
+        AccountNotFoundException accountNotFoundException = Assertions
+                .assertThrows(AccountNotFoundException.class, () -> {
+                    //prepare
+                    final String accountId = "00";
+                    //execute
+                    Mockito.when(outputServiceMock.getAccountById(accountId)).thenReturn(null);
+                    AccountResponseDto accountResponseDtoNull = inputServiceImplUnderTest.updateAccountOverdraftOrInterestRate(accountId,2000.0);
+                    //verify
+                    Assertions.assertAll("*", () -> {
+                        Assertions.assertNull(accountResponseDtoNull);
+                        Mockito.verify(outputServiceMock, Mockito.atLeast(1)).getAccountById(accountId);
+                    });
+                });
+        //verify
+        Assertions.assertAll("*", () -> {
+            Assertions.assertNotNull(accountNotFoundException);
+            Assertions.assertTrue(accountNotFoundException.getMessage().contains(exceptionMsg));
+        });
+    }
+
+    @Test
+    void canReturnBankAccountApiBusinessException_updateOverdraftOrIRate(){
+        //prepare
+        final String exceptionMsg ="in not updatable state";
+        BankAccountApiBusinessException bankAccountApiBusinessException = Assertions
+                .assertThrows(BankAccountApiBusinessException.class, ()->{
+                    //prepare
+                    final String currentAccountId = "21";
+                    CurrentAccount currentAccount1 = new CurrentAccount(10);
+                    currentAccount1.setAccountId(currentAccountId);
+                    currentAccount1.setAccountState("CREATED");
+                    currentAccount1.setBalance(BigDecimal.valueOf(300000));
+                    currentAccount1.setCustomerId(currentAccount.getCustomerId());
+                    currentAccount1.setCreatedAt(Instant.now());
+                    //execute
+                    Mockito.when(outputServiceMock.getAccountById(currentAccountId)).thenReturn(currentAccount1);
+                    AccountResponseDto accountResponseDtoNull = inputServiceImplUnderTest.updateAccountOverdraftOrInterestRate(currentAccountId,0.0);
+                    //verify
+                    Assertions.assertAll("*", () -> {
+                        Assertions.assertNull(accountResponseDtoNull);
+                        Mockito.verify(outputServiceMock, Mockito.atLeast(1)).getAccountById(currentAccountId);
+                    });
+                });
+        //verify
+        Assertions.assertAll("*", () -> {
+            Assertions.assertNotNull(bankAccountApiBusinessException);
+            Assertions.assertTrue(bankAccountApiBusinessException.getMessage().contains(exceptionMsg));
         });
     }
 }
