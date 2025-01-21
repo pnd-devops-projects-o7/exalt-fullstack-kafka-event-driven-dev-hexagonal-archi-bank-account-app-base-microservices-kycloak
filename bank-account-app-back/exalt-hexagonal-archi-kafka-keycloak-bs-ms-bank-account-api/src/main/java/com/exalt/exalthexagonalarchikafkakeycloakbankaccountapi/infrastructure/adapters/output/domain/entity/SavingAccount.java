@@ -2,10 +2,7 @@ package com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.infrastructure.
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,6 +10,7 @@ import lombok.Setter;
 @Getter
 @Entity
 @DiscriminatorValue("saving")
+@Builder
 public class SavingAccount extends BankAccountEntity {
     private double interestRate;
 

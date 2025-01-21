@@ -92,16 +92,14 @@ public class InputServiceImpl implements InputService {
         Collection<BankAccountEntity> bankAccountEntities = outputService.getAllBankAccounts();
         return bankAccountEntities.stream()
                 .map(bankAccountEntity -> {
-                    AccountResponseDto accountResponseDto;
+                    AccountResponseDto accountResponseDto = null;
                     CustomerResponseDto customerResponseDto = remoteClientService.getRemoteCustomerById(bankAccountEntity.getCustomerId());
                     if (bankAccountEntity instanceof CurrentAccount currentAccount) {
                         accountResponseDto = MapperService.mapToAccountResponseDto(currentAccount, customerResponseDto);
-                        return accountResponseDto;
                     } else if (bankAccountEntity instanceof SavingAccount savingAccount) {
                         accountResponseDto = MapperService.mapToAccountResponseDto(savingAccount, customerResponseDto);
-                        return accountResponseDto;
                     }
-                    return null;
+                    return accountResponseDto;
                 }).toList();
     }
 
@@ -184,64 +182,63 @@ public class InputServiceImpl implements InputService {
         if (bankAccountEntity instanceof CurrentAccount currentAccount) {
             outputService.createCurrentAccount(currentAccount);
             bankAccountEvent.setAccountType("CURRENT ACCOUNT");
-        }
-        else if(bankAccountEntity instanceof SavingAccount savingAccount){
+        } else if (bankAccountEntity instanceof SavingAccount savingAccount) {
             outputService.createSavingAccount(savingAccount);
             bankAccountEvent.setAccountType("SAVING ACCOUNT");
         }
 
-    //build kafka event
+        //build kafka event
         bankAccountEvent.setMessage("account balance is updated");
         bankAccountEvent.setStatus("UPDATE BALANCE");
-    BankAccount bankAccount = MapperService.mapFromAccountEntity(bankAccountEntity);
-    CustomerResponseDto customerResponseDto = remoteClientService.getRemoteCustomerById(bankAccountEntity.getCustomerId());
+        BankAccount bankAccount = MapperService.mapFromAccountEntity(bankAccountEntity);
+        CustomerResponseDto customerResponseDto = remoteClientService.getRemoteCustomerById(bankAccountEntity.getCustomerId());
         bankAccount.setCustomer(MapperService.mapFromCustomerResponseDto(customerResponseDto));
         bankAccountEvent.setBankAccount(bankAccount);
-    //call kafka connector to send kafka event into kafka infra
+        //call kafka connector to send kafka event into kafka infra
         eventProducer.updateAccountBalanceEvent(bankAccountEvent);
-        return MapperService.mapToAccountResponseDto(bankAccountEntity,customerResponseDto);
-}
-
-@Override
-public AccountResponseDto updateAccountOverdraftOrInterestRate(String accountId, Double overdraftOrIrate) {
-    BankAccountEntity bankAccountEntity = outputService.getAccountById(accountId);
-    if (bankAccountEntity == null) {
-        LOGGER.log(Level.INFO, "account not found");
-        throw new AccountNotFoundException(String.format("account with id %s not found", accountId));
+        return MapperService.mapToAccountResponseDto(bankAccountEntity, customerResponseDto);
     }
 
-    if (bankAccountEntity.getAccountState().equals(CREATED_STATE)) {
-        LOGGER.log(Level.INFO, "account in not updatable state");
-        throw new BankAccountApiBusinessException("account in not updatable state");
-    }
+    @Override
+    public AccountResponseDto updateAccountOverdraftOrInterestRate(String accountId, Double overdraftOrIrate) {
+        BankAccountEntity bankAccountEntity = outputService.getAccountById(accountId);
+        if (bankAccountEntity == null) {
+            LOGGER.log(Level.INFO, "account not found");
+            throw new AccountNotFoundException(String.format("account with id %s not found", accountId));
+        }
 
-    BankAccountEvent bankAccountEvent = new BankAccountEvent();
-    switch (bankAccountEntity) {
-        //call output connector to persist account with new interest rate or overdraft
-        case CurrentAccount currentAccount -> {
-            currentAccount.setOverdraft(overdraftOrIrate);
-            outputService.createCurrentAccount(currentAccount);
-            bankAccountEvent.setAccountType("CURRENT ACCOUNT");
-            bankAccountEvent.setStatus("UPDATE OVERDRAFT");
-            bankAccountEvent.setMessage("update account overdraft");
+        if (bankAccountEntity.getAccountState().equals(CREATED_STATE)) {
+            LOGGER.log(Level.INFO, "account in not updatable state");
+            throw new BankAccountApiBusinessException("account in not updatable state");
         }
-        case SavingAccount savingAccount -> {
-            savingAccount.setInterestRate(overdraftOrIrate);
-            outputService.createSavingAccount(savingAccount);
-            bankAccountEvent.setAccountType("SAVING ACCOUNT");
-            bankAccountEvent.setStatus("UPDATE IRATE");
-            bankAccountEvent.setMessage("update interest rate");
+
+        BankAccountEvent bankAccountEvent = new BankAccountEvent();
+        switch (bankAccountEntity) {
+            //call output connector to persist account with new interest rate or overdraft
+            case CurrentAccount currentAccount -> {
+                currentAccount.setOverdraft(overdraftOrIrate);
+                outputService.createCurrentAccount(currentAccount);
+                bankAccountEvent.setAccountType("CURRENT ACCOUNT");
+                bankAccountEvent.setStatus("UPDATE OVERDRAFT");
+                bankAccountEvent.setMessage("update account overdraft");
+            }
+            case SavingAccount savingAccount -> {
+                savingAccount.setInterestRate(overdraftOrIrate);
+                outputService.createSavingAccount(savingAccount);
+                bankAccountEvent.setAccountType("SAVING ACCOUNT");
+                bankAccountEvent.setStatus("UPDATE IRATE");
+                bankAccountEvent.setMessage("update interest rate");
+            }
+            default -> {
+            }
         }
-        default -> {
-        }
+        //build account event for kafka
+        BankAccount bankAccount = MapperService.mapFromAccountEntity(bankAccountEntity);
+        CustomerResponseDto customerResponseDto = remoteClientService.getRemoteCustomerById(bankAccountEntity.getCustomerId());
+        bankAccount.setCustomer(MapperService.mapFromCustomerResponseDto(customerResponseDto));
+        bankAccountEvent.setBankAccount(bankAccount);
+        //call output connector to send event in kafka infra
+        eventProducer.updateAccountOverdraftOrInterestRateEvent(bankAccountEvent);
+        return MapperService.mapToAccountResponseDto(bankAccountEntity, customerResponseDto);
     }
-    //build account event for kafka
-    BankAccount bankAccount = MapperService.mapFromAccountEntity(bankAccountEntity);
-    CustomerResponseDto customerResponseDto = remoteClientService.getRemoteCustomerById(bankAccountEntity.getCustomerId());
-    bankAccount.setCustomer(MapperService.mapFromCustomerResponseDto(customerResponseDto));
-    bankAccountEvent.setBankAccount(bankAccount);
-    //call output connector to send event in kafka infra
-    eventProducer.updateAccountOverdraftOrInterestRateEvent(bankAccountEvent);
-    return MapperService.mapToAccountResponseDto(bankAccountEntity, customerResponseDto);
-}
 }
