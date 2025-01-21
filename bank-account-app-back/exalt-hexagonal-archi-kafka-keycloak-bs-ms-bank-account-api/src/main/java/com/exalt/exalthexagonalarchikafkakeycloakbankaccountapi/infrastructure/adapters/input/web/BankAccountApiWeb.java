@@ -48,7 +48,7 @@ public class BankAccountApiWeb {
     }
     @PostMapping(value = "/accounts/update-balance/{accountId}")
     @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN','OWNER')")
-    public ResponseEntity<AccountResponseDto> updateBalanceCurrentAccount(@PathVariable(value = "accountId") String accountId,
+    public ResponseEntity<AccountResponseDto> updateAccountBalance(@PathVariable(value = "accountId") String accountId,
                                                                             @RequestParam(value = "transaction-amount") BigDecimal transactionAmount){
         log.debug("update account balance id {}, transaction amount {}", accountId, transactionAmount);
         return ResponseEntity.ok().body(inputService.updateAccountBalance(accountId,transactionAmount));
