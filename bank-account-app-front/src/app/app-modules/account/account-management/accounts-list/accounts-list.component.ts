@@ -306,18 +306,20 @@ export class AccountsListComponent implements OnInit {
     });
   }
 
-  onSetAccountColor(color: string): string {
-    switch (color) {
-      case 'SAVING':
-        return 'color: forestgreen;';
-      case 'CURRENT':
-        return 'color: #00f;';
-      case 'CREATED':
-        return 'color: #000;';
-      case 'ACTIVE':
-        return 'color: forestgreen;';
-      case 'SUSPENDED':
-        return 'color: #f00;';
+  onColoring(value: string): string {
+    switch (value) {
+      case "SAVING":
+        return "color: forestgreen;";
+      case "CURRENT":
+        return "color: #00f;";
+      case "CREATED":
+        return "color: #000;";
+      case "ACTIVE":
+        return "color: forestgreen;";
+      case "SUSPENDED":
+        return "color: #f00;";
+      case "ARCHIVE":
+        return "color: #f00;";
       default:
         return 'color: #f00;';
     }

@@ -5,7 +5,7 @@
 <p-confirmDialog [style]="{width: '20vw'}" />
 <div class="card">
     <p-table #data [value]="customers" [tableStyle]="{ 'min-width': '50rem' }" [paginator]="true" [rows]="5"
-        [rowsPerPageOptions]="[5, 20, 50]" (onPage)="onTablePageChange($event)" [first]="first"
+        [rowsPerPageOptions]="[10, 25, 50,{showAll: 'all'}]" (onPage)="onTablePageChange($event)" [first]="first"
         [globalFilterFields]="['customerDto.lastname','customerDto.firstname']">
         <ng-template pTemplate="header">
             <tr>
@@ -18,8 +18,8 @@
                 <th>email</th>
                 <th>state</th>
                 <th>created At</th>
-                <th>live At</th>
-                <th>Operations</th>
+                <th>live at</th>
+                <th>actions</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-customer>

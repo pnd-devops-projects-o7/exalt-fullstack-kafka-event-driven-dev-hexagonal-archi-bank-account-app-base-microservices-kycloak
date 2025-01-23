@@ -27,7 +27,7 @@ public class OutputServiceImpl implements OperationOutputService, TransferOutput
 
     @Override
     public Collection<OperationEntity> getAllOperations() {
-        return operationRepository.findAll();
+        return operationRepository.findAllSavedOperations();
     }
 
     @Override
@@ -42,7 +42,7 @@ public class OutputServiceImpl implements OperationOutputService, TransferOutput
 
     @Override
     public Collection<TransferEntity> getAllTransfers() {
-        return transferRepository.findAll();
+        return transferRepository.findAllSavedTransfers();
     }
 
     @Override

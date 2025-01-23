@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 
 @ControllerAdvice
-public class ExceptionsHandler {
+public class GlobalExceptionsHandler {
     @ExceptionHandler(value = RuntimeException.class)
     public ResponseEntity<ErrorResponse> handler(RuntimeException runtimeException){
         var errorResponse = ErrorResponse.builder()
@@ -25,6 +25,10 @@ public class ExceptionsHandler {
         if(runtimeException instanceof BankAccountApiBusinessException exception){
             badRequestCodeError.setMessage(exception.getMessage());
             return ResponseEntity.badRequest().body(badRequestCodeError);
+        }
+        else if(runtimeException instanceof AccountNotFoundException exception){
+            errorResponse.setMessage(exception.getMessage());
+            return ResponseEntity.ofNullable(errorResponse);
         }
         errorResponse.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
         errorResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());

@@ -2,3 +2,5 @@
 **/**/src/main/resources/*-local.yml
 keycloak-auth-keys/signing-key.key
 keycloak-auth-keys/certificate-signing-request.csr
+stack-docker-compose/.env
+works-sql-requests

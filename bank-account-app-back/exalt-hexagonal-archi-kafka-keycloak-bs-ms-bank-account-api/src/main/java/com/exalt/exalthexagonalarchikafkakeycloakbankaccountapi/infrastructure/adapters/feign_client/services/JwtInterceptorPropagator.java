@@ -1,4 +1,4 @@
-package com.exalt.exalthexagonalarchikafkakeycloakbsmsoperationapi.infrastructure.adapters.feign_clients.services;
+package com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.infrastructure.adapters.feign_client.services;
 
 import com.google.common.net.HttpHeaders;
 import feign.RequestInterceptor;
@@ -9,9 +9,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
-//this class is a request interceptor that operation api
-//uses to send in feign request the jwt to remote bank-account and customer apis
-public class OperationJtwInterceptor implements RequestInterceptor {
+
+public class JwtInterceptorPropagator implements RequestInterceptor {
+    //this class is a request interceptor that account api uses to intercept and propagate jwt to remote customer api
     private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
     @Override
     public void apply(RequestTemplate requestTemplate) {
@@ -20,10 +20,9 @@ public class OperationJtwInterceptor implements RequestInterceptor {
         Authentication authentication = securityContext.getAuthentication();
         JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) authentication;
         String jwtAccessToken = jwtAuthenticationToken.getToken().getTokenValue();
-        if(jwtAccessToken!=null){
-            requestTemplate.header(authorization,"Bearer "+jwtAccessToken);
-        }
-        else {
+        if (jwtAccessToken != null) {
+            requestTemplate.header(authorization, "Bearer " + jwtAccessToken);
+        } else {
             log.error("no authentication token found");
         }
     }

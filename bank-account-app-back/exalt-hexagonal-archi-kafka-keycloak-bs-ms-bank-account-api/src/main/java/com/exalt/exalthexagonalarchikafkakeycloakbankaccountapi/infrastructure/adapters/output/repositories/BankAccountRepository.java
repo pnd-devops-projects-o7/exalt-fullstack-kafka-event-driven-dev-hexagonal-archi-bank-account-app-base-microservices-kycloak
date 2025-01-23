@@ -14,4 +14,6 @@ public interface BankAccountRepository extends JpaRepository<BankAccountEntity, 
     BankAccountEntity findAccountById(@Param("accountId") String accountId);
     @Query(nativeQuery = true, value = "select * from bank_account_api_db.bank_accounts bc where bc.account_state='CREATED'")
     Collection<BankAccountEntity> findAllAccountsByStateCreated();
+    @Query(nativeQuery = true, value = "select * from bank_account_api_db.bank_accounts bacc order by bacc.created_at desc")
+    Collection<BankAccountEntity> findAllCreatedAccounts();
 }

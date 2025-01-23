@@ -22,12 +22,18 @@ export class OperationsListComponent {
     localStorage.setItem('operationPage', this.first.toString());
   }
 
-  onGetOperationypeStyle(opType: string) : string {
-    if(opType==="DEPOSIT") {
-      return "font-weight: bold; color: forestgreen";
-    }
-    else {
-      return "font-weight: bold; color: #f00";
+  onColoring(value: string) : string {
+    switch(value) {
+      case "DEPOSIT":
+        return "color: forestgreen";
+      case "WITHDRAW":
+        return "color: #f00";
+      case "ACTIVE":
+        return "color: forestgreen";
+      case "SUSPENDED":
+        return "color: #f00";
+      default:
+        return "color: forestgreen;";
     }
   }
 }

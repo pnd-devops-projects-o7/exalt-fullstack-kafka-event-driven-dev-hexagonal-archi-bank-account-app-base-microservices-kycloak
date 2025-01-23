@@ -6,7 +6,7 @@ import { StandloneComponent } from './standlone/standlone.component';
 
 export const routes: Routes = [
     {
-        path: '', redirectTo: '/standlone', pathMatch: 'full'
+        path: '', redirectTo: 'standlone', pathMatch: 'full'
     },
     {
         path: 'standlone', component: StandloneComponent

@@ -3,7 +3,7 @@
 </h1>
 
 <p-table #data [value]="transfers" [paginator]="true" [rows]="4"
-    [rowsPerPageOptions]="[4, 20, 50]" (onPage)="onTablePageChange($event)" [first]="first"
+    [rowsPerPageOptions]="[4, 25, 50,{showAll:'all'}]" (onPage)="onTablePageChange($event)" [first]="first"
     [globalFilterFields]="['origin.customerResponseDto.customerDto.firstname','origin.customerResponseDto.customerDto.lastname']">
     <ng-template pTemplate="header">
         <tr>

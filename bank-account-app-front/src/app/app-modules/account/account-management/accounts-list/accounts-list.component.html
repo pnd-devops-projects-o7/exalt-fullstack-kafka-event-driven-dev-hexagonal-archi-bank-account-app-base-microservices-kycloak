@@ -4,16 +4,16 @@
 <p-messages key="key1" /><p-messages key="key2" />
 <p-confirmDialog [style]="{width: '20vw'}" />
 <p-table #data [value]="accounts" [tableStyle]="{ 'min-width': '50rem' }" [paginator]="true" [rows]="4"
-    [rowsPerPageOptions]="[4, 20, 50]" (onPage)="onTablePageChange($event)" [first]="first"
+    [rowsPerPageOptions]="[4, 25, 50, {showAll: 'all'}]" (onPage)="onTablePageChange($event)" [first]="first"
     [globalFilterFields]="['customerResponseDto.customerDto.lastname','customerResponseDto.customerDto.firstname']">
     <ng-template pTemplate="header">
         <tr>
-            <th>ID</th>
-            <th>type</th>
-            <th>balance</th>
+            <th>acc id</th>
+            <th>acc type</th>
+            <th>acc balance</th>
             <th>overdraft/i-rate</th>
-            <th>state</th>
-            <th>created At</th>
+            <th>acc state</th>
+            <th>acc creation date</th>
             <th>customer
                 <span class="p-input-icon-left ml-auto">
                     <i class="pi pi-search"></i>
@@ -22,25 +22,27 @@
                 </span>
             </th>
             <th>customer addr</th>
-            <th>operations</th>
+            <th>actions</th>
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-account>
         <tr>
             <td style="font-size: small; width: 5%;"> {{account.accountId}} </td>
-            <td> <span [style]="onSetAccountColor(account.accountType)"> {{account.accountType}} </span></td>
-            <td > <span [style]="onBalanceAmountColoring(account.balance)">{{account.balance | currency: 'EUR'}} </span> </td>
+            <td> <span [style]="onColoring(account.accountType)"> {{account.accountType}} </span></td>
+            <td> <span [style]="onBalanceAmountColoring(account.balance)">{{account.balance | currency: 'EUR'}} </span>
+            </td>
             <td> {{account.overdraft | currency: 'EUR'}} {{account.interestRate | number:'1.2-2'}}</td>
-            <td> <span [style]="onSetAccountColor(account.accountState)">{{account.accountState}} </span></td>
+            <td> <span [style]="onColoring(account.accountState)">{{account.accountState}} </span></td>
             <td> {{account.createdAt | date: 'yyyy-MM-dd hh:mm:ss'}} </td>
             <td>
                 <p>{{account.customerResponseDto.customerDto.firstname}}
-                    {{account.customerResponseDto.customerDto.lastname}}, <span [style]="style">state:
-                    </span>{{account.customerResponseDto.customerDto.customerState}}</p>
+                    {{account.customerResponseDto.customerDto.lastname}}</p>
+                <p><span [style]="style">state:
+                    </span> <span [style]="onColoring(account.customerResponseDto.customerDto.customerState)">
+                        {{account.customerResponseDto.customerDto.customerState}}</span>
+                    </p>
 
                 <p>{{account.customerResponseDto.customerDto.email}}</p>
-                <p> <span [style]="style">created at:
-                    </span> {{account.customerResponseDto.customerDto.createdAt | date: 'yyyy-MM-dd hh:mm:ss'}}</p>
             </td>
             <td>
                 <p>{{account.customerResponseDto.addressDto.streetNum}}
@@ -58,15 +60,17 @@
                 <p-button icon="pi pi-window-maximize" size="small" [rounded]="true" [text]="true"
                     [severity]="onSetOverdraftIRateIconSeverity(account.accountType)"
                     [pTooltip]="onGetTooltip(account.accountType)" [tooltipPosition]="tooltipPosition"
-                    (onClick)="onOpenOverdraftOrInterestRateUpdateSidebarUI(account)" *ngIf="account.accountState=='ACTIVE'" />
+                    (onClick)="onOpenOverdraftOrInterestRateUpdateSidebarUI(account)"
+                    *ngIf="account.accountState=='ACTIVE'" />
 
                 <p-button icon="pi pi-window-maximize" size="small" [rounded]="true" [text]="true" severity="info"
                     pTooltip="operation UI" [tooltipPosition]="tooltipPosition"
-                    (onClick)="onOpenUpdateBalanceFormUI(account)" *ngIf="account.accountType==='CURRENT' && account.accountState=='ACTIVE'" />
+                    (onClick)="onOpenUpdateBalanceFormUI(account)"
+                    *ngIf="account.accountType==='CURRENT' && account.accountState=='ACTIVE'" />
 
                 <p-button icon="pi pi-window-maximize" size="small" [rounded]="true" [text]="true" [severity]="severity"
                     pTooltip="transfer UI" [tooltipPosition]="tooltipPosition"
-                    (onClick)="onOpenCreateTransferFromAccountFormUI(account)" *ngIf="account.accountState=='ACTIVE'"/>
+                    (onClick)="onOpenCreateTransferFromAccountFormUI(account)" *ngIf="account.accountState=='ACTIVE'" />
             </td>
         </tr>
     </ng-template>

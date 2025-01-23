@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface CustomerRepository extends JpaRepository<CustomerEntity, String> {
-    @Query(value = "select * from customer_api_db.customers cs", nativeQuery = true)
+    @Query(value = "select * from customer_api_db.customers cs order by cs.created_at desc", nativeQuery = true)
     List<CustomerEntity> loadAllPersistedCustomers();
     @Query(value = "select * from customer_api_db.customers as c where c.firstname=:firstname and c.lastname=:lastname " +
             "and c.email=:email", nativeQuery = true)

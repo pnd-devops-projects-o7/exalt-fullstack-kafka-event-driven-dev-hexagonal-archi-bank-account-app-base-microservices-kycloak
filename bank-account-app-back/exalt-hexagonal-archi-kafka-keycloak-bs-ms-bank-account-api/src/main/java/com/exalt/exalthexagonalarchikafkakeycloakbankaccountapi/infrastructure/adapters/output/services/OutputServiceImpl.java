@@ -29,7 +29,7 @@ public class OutputServiceImpl implements OutputService {
 
     @Override
     public Collection<BankAccountEntity> getAllBankAccounts() {
-        return bankAccountRepository.findAll();
+        return bankAccountRepository.findAllCreatedAccounts();
     }
 
     @Override

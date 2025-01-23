@@ -148,7 +148,7 @@ services:
       KC_DB_PASSWORD: ${KEYCLOAK_DATABASE_PWD}
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME}
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD}
-      KC_HOSTNAME: localhost # ${KC_HOSTNAME} # keycloak hostname in production, (localhost in development)
+      KC_HOSTNAME: ${KC_HOSTNAME} # keycloak hostname in production, (localhost in development)
       KC_HTTP_PORT: ${KC_HTTP_PORT}
       KC_HTTPS_PORT: ${KC_HTTPS_PORT}
       KC_HTTP_ENABLED: true
@@ -161,7 +161,7 @@ services:
       - ../keycloak-auth-keys/self-signed-certif.crt:/opt/keycloak/conf/self-signed-certif.crt
       - ../keycloak-auth-keys/signing-key.key:/opt/keycloak/conf/signing-key.key
     command:
-      - start-dev
+      - start #start-dev
       - --verbose
     depends_on:
       bank-account-app-db-server:
@@ -170,6 +170,7 @@ services:
       - ${KC_HTTP_PORT}:${KC_HTTP_PORT}
       - ${KC_HTTPS_PORT}:${KC_HTTPS_PORT}
     restart: always
+
   # email server that is used by notification-api to send email
   smtp-mail-notification-server:
     container_name: ${MAIL_SERVER_HOST_NAME}

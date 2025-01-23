@@ -6,8 +6,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
+
 @Repository
-public interface TransferRepository extends JpaRepository<TransferEntity,String> {
+public interface TransferRepository extends JpaRepository<TransferEntity, String> {
     @Query(nativeQuery = true, value = "select * from operation_api_db.transfers tr where tr.transfer_id=:transferId")
     TransferEntity findTransfer(@Param("transferId") String transferId);
+
+    @Query(nativeQuery = true, value = "select * from operation_api_db.transfers tr order by tr.created_at desc")
+    Collection<TransferEntity> findAllSavedTransfers();
 }
