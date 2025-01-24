@@ -80,9 +80,9 @@ all **Bank-Account-App** services: business microservices, transverse microservi
 - **docker compose** to prepare deployment of the stack of docker images into docker containers
 
 ## exposed apis by business microservices
-[customer-apis](diagrams/customer-apis.png)
-[account-apis](diagrams/account-apis.png)
-[operation-apis](diagrams/operation-apis.png)
+![customer-apis](diagrams/customer-apis.png)
+![account-apis](diagrams/account-apis.png)
+![operation-apis](diagrams/operation-apis.png)
 
 
 
@@ -97,4 +97,4 @@ The frontend part of **Bank-Account-App** is an angular (v17) application
 - integrate **Keycloak** as identity provider
 
 # project architecture summary
-[summary](diagrams/archi-summary.gif)
+![summary](diagrams/archi-summary.gif)
