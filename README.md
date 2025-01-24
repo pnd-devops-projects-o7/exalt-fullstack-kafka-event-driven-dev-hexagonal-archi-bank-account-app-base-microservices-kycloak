@@ -95,3 +95,6 @@ The frontend part of **Bank-Account-App** is an angular (v17) application
 - managing Observable related to user events like click on button
 - graphic design with **PrimeNG**
 - integrate **Keycloak** as identity provider
+
+# project architecture summary
+[summary](diagrams/archi-summary.gif)
