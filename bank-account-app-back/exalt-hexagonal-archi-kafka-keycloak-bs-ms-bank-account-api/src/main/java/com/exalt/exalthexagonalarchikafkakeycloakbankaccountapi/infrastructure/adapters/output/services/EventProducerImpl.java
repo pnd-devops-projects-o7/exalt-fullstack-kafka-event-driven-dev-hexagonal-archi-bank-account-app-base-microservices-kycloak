@@ -34,7 +34,7 @@ public class EventProducerImpl implements EventProducer {
     }
 
     @Override
-    public void activateAccountEvent(ActiveAccountEvent activeAccountEvent) {
+    public void activateAccountCronJobEvent(ActiveAccountEvent activeAccountEvent) {
         Message<?> message = messageBuild(activeAccountEvent,topic2,0);
         LOGGER.log(Level.INFO,"send build activate message {0} into kafka infra", message);
         kafkaTemplate.send(message);

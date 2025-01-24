@@ -63,7 +63,6 @@ public class EmailServiceImpl implements EmailService {
                                             @PartitionOffset(partition = "1", initialOffset = "0"),
                                             @PartitionOffset(partition = "2", initialOffset = "0"),
                                             @PartitionOffset(partition = "3", initialOffset = "0"),
-                                            @PartitionOffset(partition = "4", initialOffset = "0"),
                                     })
             })
     public void sendAccountNotificationEmail(BankAccountEvent bankAccountEvent) throws MessagingException {

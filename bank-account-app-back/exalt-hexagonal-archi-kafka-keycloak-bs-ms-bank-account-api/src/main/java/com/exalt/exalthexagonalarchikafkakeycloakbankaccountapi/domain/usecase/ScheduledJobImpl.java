@@ -49,7 +49,7 @@ public class ScheduledJobImpl implements ScheduledJob {
             activeAccount.setBalance(bankAccountEntity.getBalance());
             activeAccountEvent.setActiveAccount(activeAccount);
             //call kafka connector to send kafka event into kafka infra
-            eventProducer.activateAccountEvent(activeAccountEvent);
+            eventProducer.activateAccountCronJobEvent(activeAccountEvent);
         });
     }
 }

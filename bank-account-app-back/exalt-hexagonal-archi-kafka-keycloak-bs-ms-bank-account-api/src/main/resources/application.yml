@@ -55,12 +55,9 @@ security:
 kafka:
   topic-config:
     topic1: ${ACCOUNT_TOPIC_NAME1}
-    partitions: ${ACCOUNT_TOPIC_PARTITIONS}
     topic2: ${ACCOUNT_TOPIC_NAME2}}
     retention:
       duration: ${KAFKA_TOPIC_RETENTION_DURATION}
-      size: ${KAFKA_TOPIC_RETENTION_SIZE}
-      clean-up-policy: ${KAFKA_TOPIC_RETENTION_CLEANUP_POLICY}
 
 server:
   port: ${BANK_ACCOUNT_API_SERVER_PORT}

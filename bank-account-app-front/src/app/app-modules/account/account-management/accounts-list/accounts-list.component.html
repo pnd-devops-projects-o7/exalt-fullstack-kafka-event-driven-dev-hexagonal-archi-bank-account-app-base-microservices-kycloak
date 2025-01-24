@@ -55,13 +55,13 @@
             <td>
                 <p-button icon="pi pi-pencil" size="small" [rounded]="true" [text]="true" [severity]="severity"
                     [pTooltip]="onGetAccountState(account.accountState)" [tooltipPosition]="tooltipPosition"
-                    (onClick)="onSwitchAccountStateEvent(account)" />
+                    (onClick)="onSwitchAccountStateEvent(account)" *ngIf="account.accountState!=='CREATED'" />
 
                 <p-button icon="pi pi-window-maximize" size="small" [rounded]="true" [text]="true"
                     [severity]="onSetOverdraftIRateIconSeverity(account.accountType)"
                     [pTooltip]="onGetTooltip(account.accountType)" [tooltipPosition]="tooltipPosition"
                     (onClick)="onOpenOverdraftOrInterestRateUpdateSidebarUI(account)"
-                    *ngIf="account.accountState=='ACTIVE'" />
+                    *ngIf="account.accountState==='ACTIVE'" />
 
                 <p-button icon="pi pi-window-maximize" size="small" [rounded]="true" [text]="true" severity="info"
                     pTooltip="operation UI" [tooltipPosition]="tooltipPosition"
@@ -84,7 +84,7 @@
 <!-- a sidebar for updating account interest rate (for saving) or overdraft (for current)-->
 <p-sidebar [(visible)]="accountSidebarVisible" [position]="sidebarPosition" *ngIf="selectedAccount"
     [style]="{width:'fit-content'}">
-    <p-card header="update overdraft / interest-rate">
+    <p-card header="{{tooltip}}">
         <form [formGroup]="overdraftIRateForm">
             <div>
                 <label for="accountId">Account ID</label><br>

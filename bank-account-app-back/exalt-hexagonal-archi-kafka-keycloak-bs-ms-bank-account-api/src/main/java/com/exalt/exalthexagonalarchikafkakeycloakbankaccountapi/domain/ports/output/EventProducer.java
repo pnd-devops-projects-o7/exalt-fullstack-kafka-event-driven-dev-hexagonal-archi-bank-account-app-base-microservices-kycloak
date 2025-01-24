@@ -5,7 +5,7 @@ import com.exalt.exalthexagonalarchikafkakeycloakbankaccountapi.domain.avro_bean
 
 public interface EventProducer {
     void createAccountEvent(BankAccountEvent bankAccountEvent);
-    void activateAccountEvent(ActiveAccountEvent activeAccountEvent);
+    void activateAccountCronJobEvent(ActiveAccountEvent activeAccountEvent);
 
     void switchAccountStateEvent(BankAccountEvent bankAccountEvent);
 

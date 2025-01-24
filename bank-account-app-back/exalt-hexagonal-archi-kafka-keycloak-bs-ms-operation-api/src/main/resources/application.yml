@@ -54,8 +54,7 @@ kafka:
     topic2: ${OPERATION_TOPIC2_NAME}
     retention-config:
       duration: ${KAFKA_TOPIC_RETENTION_DURATION}
-      size: ${KAFKA_TOPIC_RETENTION_SIZE}
-      clean-up-policy: ${KAFKA_TOPIC_RETENTION_CLEANUP_POLICY}
+
 server:
   port: ${OPERATION_API_SERVER_PORT}
 # atcuator config, to be used by K8s for healthcheck

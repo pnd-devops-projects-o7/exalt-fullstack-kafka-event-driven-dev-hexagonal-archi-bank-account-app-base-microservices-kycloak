@@ -56,11 +56,8 @@ security:
 kafka:
   topic-config:
     name: ${CUSTOMER_TOPIC_NAME}
-    partitions: ${CUSTOMER_TOPIC_PARTITIONS}
     retention:
       duration: ${KAFKA_TOPIC_RETENTION_DURATION}
-      size: ${KAFKA_TOPIC_RETENTION_SIZE}
-      clean-up-policy: ${KAFKA_TOPIC_RETENTION_CLEANUP_POLICY}
 
 server:
   port: ${CUSTOMER_API_SERVER_PORT}
