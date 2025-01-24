@@ -74,10 +74,10 @@ class OutputServiceImplTest {
         //prepare
         List<BankAccountEntity> bankAccountEntities = List.of(currentAccount, savingAccount);
         //execute
-        Mockito.when(bankAccountRepository.findAllAccountsByStateCreated()).thenReturn(bankAccountEntities);
+        Mockito.when(bankAccountRepository.findAllCreatedAccounts()).thenReturn(bankAccountEntities);
         underTest.getAllBankAccounts();
         //verify
-        Mockito.verify(bankAccountRepository, Mockito.atLeast(1)).findAllAccountsByStateCreated();
+        Mockito.verify(bankAccountRepository, Mockito.atLeast(1)).findAllCreatedAccounts();
     }
 
     @Test
