@@ -16,7 +16,7 @@ import { InputTextModule } from 'primeng/inputtext';
 export class TransfersListComponent implements OnInit {
   transfers!: Array<TransferResponseDto>;
   activatedRoute = inject(ActivatedRoute);
-  style1:string ="font-size: normal;";
+  style1: string = "font-size: normal;";
   style2: string = "font-weight: bold;"
 
   ngOnInit(): void {
@@ -38,6 +38,21 @@ export class TransfersListComponent implements OnInit {
   onTablePageChange($event: any) {
     this.first = $event.first;
     localStorage.setItem('transferPage', this.first.toString());
+  }
+
+  onColoring(value: string): string {
+    switch (value) {
+      case "ACTIVE":
+        return "color:forestgreen;";
+      case "SUSPENDED":
+        return "color:red;";
+      case "SAVING":
+        return "color:forestgreen;";
+      case "CURRENT":
+        return "color:#00f;";
+      default:
+        return "color:forestgreen;";
+    }
   }
 }
 

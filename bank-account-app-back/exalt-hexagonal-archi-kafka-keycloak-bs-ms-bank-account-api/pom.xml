@@ -6,7 +6,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.4.0</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/>
 	</parent>
 	<groupId>com.exalt</groupId>
 	<artifactId>bank-account-api</artifactId>
@@ -16,6 +16,7 @@
 	<properties>
 		<java.version>21</java.version>
 		<spring-cloud.version>2024.0.0-RC1</spring-cloud.version>
+		<spring-kafka.version>3.3.1</spring-kafka.version>
 		<kafka-avro-serializer.version>7.7.1</kafka-avro-serializer.version>
 		<avro.version>1.11.3</avro.version>
 		<springdoc-openapi.version>2.8.0</springdoc-openapi.version>
@@ -65,6 +66,7 @@
 		<dependency>
 			<groupId>org.springframework.kafka</groupId>
 			<artifactId>spring-kafka</artifactId>
+			<version>${spring-kafka.version}</version>
 		</dependency>
 		<!--database connector-->
 		<dependency>
@@ -100,6 +102,7 @@
 			<groupId>org.springframework.kafka</groupId>
 			<artifactId>spring-kafka-test</artifactId>
 			<scope>test</scope>
+			<version>${spring-kafka.version}</version>
 		</dependency>
 		<!--for integration test-->
 		<dependency>

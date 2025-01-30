@@ -3,7 +3,7 @@ import { KeycloakOptions } from "keycloak-angular";
 // The list of file replacements can be found in `angular.json`.
 const keycloakInitOptions: KeycloakOptions = {
     config: {
-        url: 'http://localhost:8380',
+        url: 'http://my.keycloak-auth-provider.org:8380',
         realm: 'pnd_realm',
         clientId: 'exalt-hexagonal-archi-kafka-keycloak-frontend-app'
     },

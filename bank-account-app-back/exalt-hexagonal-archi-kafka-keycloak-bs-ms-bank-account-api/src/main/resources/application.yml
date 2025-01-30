@@ -23,23 +23,15 @@ spring:
     user: ${spring.datasource.username}
     password: ${spring.datasource.password}
 
-  # kafka producer config, writing requests are published as an event in kafka infra
+  # kafka brokers
   kafka:
-    producer:
-      bootstrap-servers: http://kafka-server1:19092,http://kafka-server2:29092
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
-      properties:
-        spring:
-          json:
-            add:
-              type:
-                headers: false
+    bootstrap-servers: http://kafka-server1:19092,http://kafka-server2:29092
     # schema registry config to define a common model of event for kafka producer and kafka consumer
     properties:
       schema:
         registry:
           url: http://schema-registry-service:8081
+
   # security config: urls for Keycloak authentication provider
   security:
     oauth2:
@@ -50,12 +42,14 @@ security:
   oauth2:
     converter:
       keycloak:
-        client-id: ${KEYCLOAK_ANGULAR_APP_CLIENT_ID}
+        backend-gateway-client-id: ${KEYCLOAK_BACKEND_GATEWAY_CLIENT_ID}
+        public-angular-app-client-id: ${KEYCLOAK_ANGULAR_APP_CLIENT_ID}
+
 # kafka topic configuration: duration time and size of message, topic partitions and topic replicas
 kafka:
   topic-config:
     topic1: ${ACCOUNT_TOPIC_NAME1}
-    topic2: ${ACCOUNT_TOPIC_NAME2}}
+    topic2: ${ACCOUNT_TOPIC_NAME2}
     retention:
       duration: ${KAFKA_TOPIC_RETENTION_DURATION}
 

@@ -1,68 +1,75 @@
 <h1 style="font-size:large; color: green; text-align: center;">
     list of operations
 </h1>
-<p-table #data [value]="operations" [tableStyle]="{ 'min-width': '50rem' }" [paginator]="true" [rows]="4"
-    [rowsPerPageOptions]="[4, 20, 50,{showAll:'all'}]" (onPage)="onTablePageChange($event)" [first]="first" [globalFilterFields]="['accountResponseDto.customerResponseDto.customerDto.firstname',
+<ng-template #template>
+    <h6 style="font-size: medium; color: red; text-align: center;">
+        no operation registered till now
+    </h6>
+</ng-template>
+<div *ngIf="operations.length>0; else template">
+    <p-table #data [value]="operations" [tableStyle]="{ 'min-width': '50rem' }" [paginator]="true" [rows]="4"
+        [rowsPerPageOptions]="[4, 20, 50,{showAll:'all'}]" (onPage)="onTablePageChange($event)" [first]="first"
+        [globalFilterFields]="['accountResponseDto.customerResponseDto.customerDto.firstname',
     'accountResponseDto.customerResponseDto.customerDto.lastname']">
-    <ng-template pTemplate="header">
-        <tr>
-            <th>op id</th>
-            <th>op type</th>
-            <th>op amount</th>
-            <th>description</th>
-            <th>op creation date</th>
-            <th>account concern</th>
-            <th>customer
-                <span class="p-input-icon-left ml-auto">
-                    <i class="pi pi-search"></i>
-                    <input pInputText (input)="data.filterGlobal($any($event.target).value, 'contains')"
-                        placeholder="first or last name" size="10" />
-                </span>
-            </th>
-            <th>customer address</th>
-        </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-op>
-        <tr>
-            <td style="font-size: small; width: 5%;"> {{op.operationId}} </td>
-            <td> <span [style]="onColoring(op.operationType)">{{op.operationType}}</span> </td>
-            <td> {{op.transactionAmount}} </td>
-            <td> {{op.description}} </td>
-            <td> {{op.createdAt | date: 'yyyy-MM-dd hh:mm-ss'}} </td>
-            <td>
-                <p> {{op.accountResponseDto.accountId}} </p>
-                <p> <span [style]="style">account</span>: {{op.accountResponseDto.accountType}}, <span
-                        [style]="style">state</span>: <span
-                        [style]="onColoring(op.accountResponseDto.accountState)">{{op.accountResponseDto.accountState}}</span>
-                </p>
-                <p> <span [style]="style">balance</span>: {{op.accountResponseDto.balance}}, <span
-                        [style]="style">overdraft</span>: {{op.accountResponseDto.overdraft}} </p>
-                <p> <span [style]="style">created at</span>: {{op.accountResponseDto.createdAt | date: 'yyyy-MM-dd
-                    hh:mm-ss'}} </p>
-            </td>
-            <td>
-                <p>{{op.accountResponseDto.customerResponseDto.customerDto.firstname}}
-                    {{op.accountResponseDto.customerResponseDto.customerDto.lastname}}, <span [style]="style">state:
-                    </span>{{op.accountResponseDto.customerResponseDto.customerDto.customerState}}</p>
+        <ng-template pTemplate="header">
+            <tr>
+                <th>op id</th>
+                <th>op type</th>
+                <th>op amount</th>
+                <th>description</th>
+                <th>op creation date</th>
+                <th>account concern</th>
+                <th>customer
+                    <span class="p-input-icon-left ml-auto">
+                        <i class="pi pi-search"></i>
+                        <input pInputText (input)="data.filterGlobal($any($event.target).value, 'contains')"
+                            placeholder="first or last name" size="10" />
+                    </span>
+                </th>
+                <th>customer address</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-op>
+            <tr>
+                <td style="font-size: small; width: 5%;"> {{op.operationId}} </td>
+                <td> <span [style]="onColoring(op.operationType)">{{op.operationType}}</span> </td>
+                <td> {{op.transactionAmount | currency: 'EUR'}} </td>
+                <td> {{op.description}} </td>
+                <td> {{op.createdAt | date: 'yyyy-MM-dd hh:mm-ss'}} </td>
+                <td>
+                    <p> {{op.accountResponseDto.accountId}} </p>
+                    <p> <span [style]="style">account</span>: {{op.accountResponseDto.accountType}}, <span
+                            [style]="style">state</span>: <span
+                            [style]="onColoring(op.accountResponseDto.accountState)">{{op.accountResponseDto.accountState}}</span>
+                    </p>
+                    <p> <span [style]="style">balance</span>: {{op.accountResponseDto.balance | currency:'EUR'}}, <span
+                            [style]="style">overdraft</span>: {{op.accountResponseDto.overdraft | currency:'EUR'}} </p>
+                </td>
+                <td>
+                    <p>{{op.accountResponseDto.customerResponseDto.customerDto.firstname}}
+                        {{op.accountResponseDto.customerResponseDto.customerDto.lastname}}
+                    <p><span [style]="style">state:
+                        </span> <span
+                            [style]="onColoring(op.accountResponseDto.customerResponseDto.customerDto.customerState)">
+                            {{op.accountResponseDto.customerResponseDto.customerDto.customerState}}</span>
+                    </p>
 
-                <p>{{op.accountResponseDto.customerResponseDto.customerDto.email}}</p>
-                <p> <span [style]="style">created at:
-                    </span> {{op.accountResponseDto.customerResponseDto.customerDto.createdAt | date: 'yyyy-MM-dd
-                    hh:mm:ss'}}</p>
-            </td>
-            <td>
-                <p>{{op.accountResponseDto.customerResponseDto.addressDto.streetNum}}
-                    {{op.accountResponseDto.customerResponseDto.addressDto.streetName}}</p>
-                <p> {{op.accountResponseDto.customerResponseDto.addressDto.postalCode}}
-                    {{op.accountResponseDto.customerResponseDto.addressDto.city}},
-                    {{op.accountResponseDto.customerResponseDto.addressDto.country}}
-                </p>
-            </td>
-        </tr>
-    </ng-template>
+                    <p>{{op.accountResponseDto.customerResponseDto.customerDto.email}}</p>
+                </td>
+                <td>
+                    <p>{{op.accountResponseDto.customerResponseDto.addressDto.streetNum}}
+                        {{op.accountResponseDto.customerResponseDto.addressDto.streetName}}</p>
+                    <p> {{op.accountResponseDto.customerResponseDto.addressDto.postalCode}}
+                        {{op.accountResponseDto.customerResponseDto.addressDto.city}},
+                        {{op.accountResponseDto.customerResponseDto.addressDto.country}}
+                    </p>
+                </td>
+            </tr>
+        </ng-template>
 
-    <ng-template pTemplate="footer">
-        <span style="color: blue;"> {{operations.length}} operations </span>
-    </ng-template>
+        <ng-template pTemplate="footer">
+            <span style="color: blue;"> {{operations.length}} operations </span>
+        </ng-template>
 
-</p-table>
+    </p-table>
+</div>

@@ -11,9 +11,7 @@ spring:
       globalcors:
         cors-configurations:
           '[/**]':
-            allowed-origins:
-              - "http://localhost:4200" # front app angular application
-              - ${KEYCLOAK_ANGULAR_APP_CLIENT_ID}
+            allowed-origins: ${ALLOWED_CROSS_ORIGIN}
             allowed-methods:
               - GET
               - POST

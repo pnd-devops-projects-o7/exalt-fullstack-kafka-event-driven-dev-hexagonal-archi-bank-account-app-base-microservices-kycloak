@@ -135,11 +135,8 @@ public class EmailServiceImpl implements EmailService {
         mimeMessageHelper.setText(String.format("""
                 Hello,
                 \s
-                                    
                 %s
-                 
                 is %s\s
-                         
                 Best Regards,
                 The Team
                 """, event, status));

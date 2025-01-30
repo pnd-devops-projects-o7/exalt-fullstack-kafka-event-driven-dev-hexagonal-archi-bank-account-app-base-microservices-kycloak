@@ -8,9 +8,9 @@ VALUES
 
 INSERT INTO customers (customer_id, firstname, lastname, state, email, created_at, address_id)
 VALUES
-    ('C001', 'John', 'Doe', 'California', 'john.doe@example.com', '2025-01-01', 'A1'),
-    ('C002', 'Jane', 'Smith', 'New York', 'jane.smith@example.com', '2025-01-02', 'A2'),
-    ('C003', 'Alice', 'Johnson', 'California', 'alice.johnson@example.com', '2025-01-03', 'A3'),
-    ('C004', 'Bob', 'Williams', 'Georgia', 'bob.williams@example.com', '2025-01-04', 'A4'),
-    ('C005', 'Charlie', 'Brown', 'Illinois', 'charlie.brown@example.com', '2025-01-05', 'A5');
+    ('7b0b0f21-6e38-418a-ae79-0e38d3539ab1', 'John', 'Doe', 'ACTIVE', 'john.doe@example.com', '2025-01-01', 'A1'),
+    ('394d5015-8053-4cc7-bb61-13db4ed625be', 'Jane', 'Smith', 'ACTIVE', 'jane.smith@example.com', '2025-01-02', 'A2'),
+    ('9e1ccd5b-6610-4350-b7ce-755226746e18', 'Alice', 'Johnson', 'ACTIVE', 'alice.johnson@example.com', '2025-01-03', 'A3'),
+    ('8c55b5e9-f145-4fa8-bb54-c92ef6629b11', 'Bob', 'Williams', 'ACTIVE', 'bob.williams@example.com', '2025-01-04', 'A4'),
+    ('e8eb7e16-265c-4a40-9a0c-18bbfb0ac73c', 'Charlie', 'Brown', 'ACTIVE', 'charlie.brown@example.com', '2025-01-05', 'A5');
 

@@ -38,8 +38,10 @@ public class InputServiceImpl implements InputService {
     public CustomerResponseDto createCustomer(CustomerRequestDto customerRequestDto) {
         //validate customer input information
         validateCustomerDtoInfos(customerRequestDto);
-        if (CustomerValidation.isInvalidBirthCountry(customerRequestDto.addressDto().birthCountry())) {
-            throw new CustomerApiBusinessException("country input not exists in the world");
+        final String birthCountry = customerRequestDto.addressDto().birthCountry();
+        final String residenceCountry = customerRequestDto.addressDto().country();
+        if (CustomerValidation.isInvalidCountry(residenceCountry) || CustomerValidation.isInvalidCountry(birthCountry)) {
+            throw new CustomerApiBusinessException(String.format("résidence or birth country input not exists in the world: %s, %s", residenceCountry, birthCountry));
         }
         List<String> emails = loadAllPersistedCustomers().stream()
                 .map(customerResponseDto -> customerResponseDto.customerDto().email()).toList();

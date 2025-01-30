@@ -2,81 +2,99 @@
     list of transfers
 </h1>
 
-<p-table #data [value]="transfers" [paginator]="true" [rows]="4"
-    [rowsPerPageOptions]="[4, 25, 50,{showAll:'all'}]" (onPage)="onTablePageChange($event)" [first]="first"
-    [globalFilterFields]="['origin.customerResponseDto.customerDto.firstname','origin.customerResponseDto.customerDto.lastname']">
-    <ng-template pTemplate="header">
-        <tr>
-            <th>ID</th>
-            <th>amount</th>
-            <th>description</th>
-            <th>created date</th>
-            <th>origin account</th>
-            <th>origin customer
-                <span class="p-input-icon-left ml-auto">
-                    <i class="pi pi-search"></i>
-                    <input pInputText (input)="data.filterGlobal($any($event.target).value, 'contains')"
-                        placeholder="first or last name" size="10" />
-                </span>
-            </th>
-            <th>destination account</th>
-            <th>destination customer</th>
-        </tr>
-    </ng-template>
+<ng-template #template>
+    <h6 style="font-size: medium; color: red; text-align: center;">
+        no transfer made till now
+    </h6>
+</ng-template>
 
-    <ng-template pTemplate="body" let-transfer>
-        <tr>
-            <td style="font-size: small; width: 5%;"> {{transfer.transferId}} </td>
-            <td [style]="style1"> {{transfer.transferAmount}} </td>
-            <td style="width: 7%;"> {{transfer.description}} </td>
-            <td [style]="style1"> {{transfer.createdAt | date: 'yyyy-MM-dd hh:mm:ss'}} </td>
-            <td [style]="style1">
-                <p>{{transfer.origin.accountId}}</p>
-                <p> <span [style]="style2">Acc type</span>: {{ transfer.origin.accountType}},
-                    <span [style]="style2">Acc state</span>: {{ transfer.origin.accountState}}
-                </p>
-                <p><span [style]="style2">Balance</span>: {{ transfer.origin.balance}},
-                    <span [style]="style2">Overdraft</span>: {{ transfer.origin.overdraft}}
-                </p>
-            </td>
-            <td [style]="style1">
-                <p>{{transfer.origin.customerResponseDto.customerDto.firstname}}
-                    {{transfer.origin.customerResponseDto.customerDto.lastname}}
-                </p>
-                <p>
-                    <span [style]="style2">state:
-                    </span>{{transfer.origin.customerResponseDto.customerDto.customerState}}
-                </p>
-                <p>
-                    {{transfer.origin.customerResponseDto.customerDto.email}}
-                </p>
+<div *ngIf="transfers.length>0; else template">
 
-            </td>
-            <td [style]="style1">
-                <p>{{transfer.destination.accountId}}</p>
-                <p> <span [style]="style2">Acc type</span>: {{ transfer.destination.accountType}},
-                    <span [style]="style2">Acc state</span>: {{ transfer.destination.accountState}},
-                </p>
-                <p> <span [style]="style2">Balance</span>: {{ transfer.destination.balance}},
-                    <span [style]="style2">Overdraft</span>: {{ transfer.destination.overdraft}}
-                </p>
-            </td>
-            <td [style]="style1">
-                <p>{{transfer.destination.customerResponseDto.customerDto.firstname}}
-                    {{transfer.destination.customerResponseDto.customerDto.lastname}}
-                </p>
-                <p> <span [style]="style2">state:
-                    </span>{{transfer.destination.customerResponseDto.customerDto.customerState}}
-                </p>
+    <p-table #data [value]="transfers" [paginator]="true" [rows]="4" [rowsPerPageOptions]="[4, 25, 50,{showAll:'all'}]"
+        (onPage)="onTablePageChange($event)" [first]="first"
+        [globalFilterFields]="['origin.customerResponseDto.customerDto.firstname','origin.customerResponseDto.customerDto.lastname']">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>ID</th>
+                <th>amount</th>
+                <th>description</th>
+                <th>created date</th>
+                <th>origin account</th>
+                <th>origin customer
+                    <span class="p-input-icon-left ml-auto">
+                        <i class="pi pi-search"></i>
+                        <input pInputText (input)="data.filterGlobal($any($event.target).value, 'contains')"
+                            placeholder="first or last name" size="10" />
+                    </span>
+                </th>
+                <th>destination account</th>
+                <th>destination customer</th>
+            </tr>
+        </ng-template>
 
-                <p>{{transfer.destination.customerResponseDto.customerDto.email}}</p>
+        <ng-template pTemplate="body" let-transfer>
+            <tr>
+                <td style="font-size: small; width: 5%;"> {{transfer.transferId}} </td>
+                <td [style]="style1"> {{transfer.transferAmount  | currency: 'EUR'}} </td>
+                <td style="width: 7%;"> {{transfer.description}} </td>
+                <td [style]="style1"> {{transfer.createdAt | date: 'yyyy-MM-dd hh:mm:ss'}} </td>
+                <td [style]="style1">
+                    <p>{{transfer.origin.accountId}}</p>
+                    <p> <span [style]="style2">Acc type</span>: <span [style]="onColoring(transfer.origin.accountType)">
+                            {{ transfer.origin.accountType}} </span>,
+                        <span [style]="style2">Acc state</span>: <span
+                            [style]="onColoring(transfer.origin.accountState)">
+                            {{ transfer.origin.accountState}}</span>
+                    </p>
+                    <p><span [style]="style2">Balance</span>: {{ transfer.origin.balance | currency: 'EUR'}},
+                        <span [style]="style2">Overdraft</span>: {{ transfer.origin.overdraft | currency: 'EUR'}}
+                    </p>
+                </td>
+                <td [style]="style1">
+                    <p>{{transfer.origin.customerResponseDto.customerDto.firstname}}
+                        {{transfer.origin.customerResponseDto.customerDto.lastname}}
+                    </p>
+                    <p>
+                        <span [style]="style2">state:</span>
+                        <span [style]="onColoring(transfer.origin.customerResponseDto.customerDto.customerState)">
+                            {{transfer.origin.customerResponseDto.customerDto.customerState}}</span>
+                    </p>
+                    <p>
+                        {{transfer.origin.customerResponseDto.customerDto.email}}
+                    </p>
 
-            </td>
-        </tr>
-    </ng-template>
+                </td>
+                <td [style]="style1">
+                    <p>{{transfer.destination.accountId}}</p>
+                    <p> <span [style]="style2">Acc type</span>: <span
+                            [style]="onColoring(transfer.destination.accountType)">
+                            {{ transfer.destination.accountType}}</span>,
+                        <span [style]="style2">Acc state</span>:
+                        <span [style]="onColoring(transfer.destination.accountState)">{{
+                            transfer.destination.accountState}}</span>,
+                    </p>
+                    <p> <span [style]="style2">Balance</span>: {{ transfer.destination.balance | currency: 'EUR'}},
+                        <span [style]="style2">Overdraft</span>: {{ transfer.destination.overdraft | currency: 'EUR'}}
+                    </p>
+                </td>
+                <td [style]="style1">
+                    <p>{{transfer.destination.customerResponseDto.customerDto.firstname}}
+                        {{transfer.destination.customerResponseDto.customerDto.lastname}}
+                    </p>
+                    <p> <span [style]="style2">state:</span>
+                        <span [style]="onColoring(transfer.destination.customerResponseDto.customerDto.customerState)">
+                            {{transfer.destination.customerResponseDto.customerDto.customerState}}</span>
+                    </p>
 
-    <ng-template pTemplate="footer">
-        <span style="color: blue;"> {{transfers.length}} transfers </span>
-    </ng-template>
+                    <p>{{transfer.destination.customerResponseDto.customerDto.email}}</p>
 
-</p-table>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="footer">
+            <span style="color: blue;"> {{transfers.length}} transfers </span>
+        </ng-template>
+
+    </p-table>
+</div>

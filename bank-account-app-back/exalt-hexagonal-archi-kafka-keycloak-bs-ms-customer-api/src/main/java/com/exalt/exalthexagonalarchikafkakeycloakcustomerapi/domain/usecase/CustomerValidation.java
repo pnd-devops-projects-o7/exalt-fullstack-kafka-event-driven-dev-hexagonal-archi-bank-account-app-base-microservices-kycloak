@@ -27,12 +27,6 @@ public class CustomerValidation {
         return !worldCountries.contains(country);
     }
 
-    public static boolean isInvalidBirthCountry(String birthCountry){
-        /* check entered country is valid*/
-        List<String> worldCountries = WorldCountriesLoader.loadWorldCountries();
-        return !worldCountries.contains(birthCountry);
-    }
-
     public static boolean isInvalidEmail(String email){
         /* check email is valid using simple regex*/
         final String regex="^(.+)@(\\S+)$";

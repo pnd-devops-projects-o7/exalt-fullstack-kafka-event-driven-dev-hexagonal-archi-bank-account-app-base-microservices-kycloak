@@ -28,22 +28,12 @@ public class EventProducerImpl implements EventProducer {
     @Override
     public void createOperationEvent(OperationEvent operationEvent) {
         log.debug("send operation event {} to kafka", operationEvent);
-        Message<?> message = buildObjectMsg(operationEvent, operationTopic);
-        objectEventKafkaTemplate.send(message);
+        objectEventKafkaTemplate.send(operationTopic,0,"0",operationEvent);
     }
 
     @Override
     public void createTransfer(TransferEvent transferEvent) {
         log.debug("send transfer event {} to kafka", transferEvent);
-        Message<?> message = buildObjectMsg(transferEvent, transferTopic);
-        objectEventKafkaTemplate.send(message);
-    }
-
-    private Message<?> buildObjectMsg(Object objectEvent, String topic){
-        return MessageBuilder
-                .withPayload(objectEvent)
-                .setHeader(KafkaHeaders.TOPIC,topic)
-                .setHeader(KafkaHeaders.PARTITION, 0)
-                .build();
+        objectEventKafkaTemplate.send(transferTopic,0,"0",transferEvent);
     }
 }

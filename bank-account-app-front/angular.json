@@ -69,10 +69,21 @@
                   "with": "src/environments/environment.local.ts"
                 }
               ]
+            },
+            "prod": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ]
             }
 
           },
-          "defaultConfiguration": "production"
+          "defaultConfiguration": "prod"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -85,6 +96,9 @@
             },
             "local": {
               "buildTarget": "bank-account-app-front:build:local"
+            },
+            "prod":{
+               "buildTarget": "bank-account-app-front:build:prod"
             }
           },
           "defaultConfiguration": "development"

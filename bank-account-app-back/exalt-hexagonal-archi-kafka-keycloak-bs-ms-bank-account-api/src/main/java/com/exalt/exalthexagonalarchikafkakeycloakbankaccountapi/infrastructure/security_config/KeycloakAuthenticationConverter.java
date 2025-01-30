@@ -19,16 +19,19 @@ import java.util.stream.Stream;
 
 @Component
 public class KeycloakAuthenticationConverter implements Converter<Jwt, AbstractAuthenticationToken> {
-    @Value("${security.oauth2.converter.keycloak.client-id}")
-    String keycloakClientId;
+    @Value("${security.oauth2.converter.keycloak.backend-gateway-client-id}")
+    String backendGatewayClientId;
+    @Value("${security.oauth2.converter.keycloak.public-angular-app-client-id}")
+    String publicAngularAppClientId;
     private final JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+
     @Override
     public AbstractAuthenticationToken convert(@NonNull Jwt jwt) {
         Collection<GrantedAuthority> authorities = Stream.concat(
                         jwtGrantedAuthoritiesConverter.convert(jwt).stream(),
                         extractAuthorities(jwt).stream())
                 .collect(Collectors.toSet());
-        return new JwtAuthenticationToken(jwt,authorities, jwt.getClaim("preferred_username"));
+        return new JwtAuthenticationToken(jwt, authorities, jwt.getClaim("preferred_username"));
     }
 
     private Collection<GrantedAuthority> extractAuthorities(@NonNull Jwt jwt) {
@@ -36,10 +39,16 @@ public class KeycloakAuthenticationConverter implements Converter<Jwt, AbstractA
             return Set.of();
         }
         Map<String, Object> resourceAccess = jwt.getClaim("resource_access");
-        if (resourceAccess.get(keycloakClientId) == null) {
+        Map<String, Object> clientIdRoles = null;
+        if(resourceAccess.containsKey(publicAngularAppClientId)) {
+            clientIdRoles = (Map<String, Object>) resourceAccess.get(publicAngularAppClientId);
+        }
+        else if (resourceAccess.containsKey(backendGatewayClientId)) {
+            clientIdRoles = (Map<String, Object>) resourceAccess.get(backendGatewayClientId);
+        }
+        if (clientIdRoles == null) {
             return Set.of();
         }
-        Map<String, Object> clientIdRoles = (Map<String, Object>) resourceAccess.get(keycloakClientId);
         Collection<String> keycloakRoles = (Collection<String>) clientIdRoles.get("roles");
         //map keycloak roles into spring security roles
         return keycloakRoles.stream()
