@@ -33,13 +33,13 @@ public class ScheduledJobImpl implements ScheduledJob {
                 outputService.createCurrentAccount(currentAccount);
                 activeAccountEvent.setMessage("Current Account is activated");
                 activeAccount.setType("CURRENT ACCOUNT");
-                activeAccount.setOverdraft(((CurrentAccount) bankAccountEntity).getOverdraft());
+                activeAccount.setOverdraft(currentAccount.getOverdraft());
                 activeAccount.setInterestRate(0);
             } else if (bankAccountEntity instanceof SavingAccount savingAccount) {
                 outputService.createSavingAccount(savingAccount);
                 activeAccountEvent.setMessage("Saving Account is activated");
                 activeAccount.setType("SAVING ACCOUNT");
-                activeAccount.setInterestRate(((SavingAccount) bankAccountEntity).getInterestRate());
+                activeAccount.setInterestRate(savingAccount.getInterestRate());
                 activeAccount.setOverdraft(0);
             }
             //continue building active account event for kafka topic
