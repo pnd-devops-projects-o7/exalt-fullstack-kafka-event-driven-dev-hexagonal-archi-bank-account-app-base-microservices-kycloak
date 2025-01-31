@@ -1,6 +1,7 @@
 package com.exalt.exalthexagonalarchikafkakeycloakcustomerapi.domain.usecase;
 
 import com.exalt.exalthexagonalarchikafkakeycloakcustomerapi.domain.exceptions.CustomerApiBusinessException;
+import com.exalt.exalthexagonalarchikafkakeycloakcustomerapi.domain.exceptions.CustomerNotFoundException;
 import com.exalt.exalthexagonalarchikafkakeycloakcustomerapi.domain.output.EventProducer;
 import com.exalt.exalthexagonalarchikafkakeycloakcustomerapi.domain.output.OutputService;
 import com.exalt.exalthexagonalarchikafkakeycloakcustomerapi.infrastructure.adapters.output.domain.dtos.AddressDto;
@@ -32,6 +33,12 @@ class InputServiceImplTest {
 
     private AutoCloseable closeable;
 
+    private final CustomerRequestDto customerRequestDto = new CustomerRequestDto(
+            new CustomerDto("test", "test", "test", "test@domain.com", "test",
+                    Instant.now()), new AddressDto("test", 1, "test", 59300,
+            "test", "France", "France")
+    );
+
     CustomerEntity customerEntity = CustomerEntity.builder()
             .customerId("1")
             .firstname("test")
@@ -61,13 +68,7 @@ class InputServiceImplTest {
     }
 
     @Test
-    void createCustomer() {
-        //prepare
-        CustomerRequestDto customerRequestDto = new CustomerRequestDto(
-                new CustomerDto("test", "test", "test", "test@domain.com", "test",
-                        Instant.now()), new AddressDto("test", 1, "test", 59300,
-                "test", "France", "France")
-        );
+    void createCustomerTest() {
         //execute
         CustomerResponseDto responseDto = underTest.createCustomer(customerRequestDto);
         //verify
@@ -164,6 +165,83 @@ class InputServiceImplTest {
     }
 
     @Test
+    void archiveCustomerCouldReturnExceptionTestWhenCustomerDoesNotExist() {
+        //prepare
+        final String exceptionPart = "customer with id bellow";
+        CustomerNotFoundException customerNotFoundException = Assertions
+                .assertThrows(CustomerNotFoundException.class, () -> {
+                    //prepare
+                    final String customerId = "1";
+                    //execute
+                    Mockito.when(outputService.getCustomerById(customerId))
+                            .thenReturn(null);
+                    CustomerResponseDto customerResponse = underTest.archiveCustomer(customerId);
+                    //verify
+                    Assertions.assertAll("**", () -> {
+                        Mockito.verify(outputService, Mockito.atLeast(1))
+                                .getCustomerById(customerId);
+                        Assertions.assertNull(customerResponse);
+                    });
+                });
+        Assertions.assertAll("**", () -> {
+            Assertions.assertNotNull(customerNotFoundException);
+            Assertions.assertTrue(customerNotFoundException.getMessage().contains(exceptionPart));
+        });
+    }
+
+    @Test
+    void archiveCustomerCouldReturnExceptionTestWhenCustomerAlreadyArchived() {
+        //prepare
+        final String exceptionMessage = "is already archived";
+        CustomerApiBusinessException customerApiBusinessException = Assertions
+                .assertThrows(CustomerApiBusinessException.class, () -> {
+                    //prepare
+                    final String customerId = "1";
+                    CustomerEntity customer = customerEntity;
+                    customer.setState("ARCHIVE");
+                    //execute
+                    Mockito.when(outputService.getCustomerById(customerId))
+                            .thenReturn(customer);
+                    CustomerResponseDto customerResponse = underTest.archiveCustomer(customerId);
+                    Assertions.assertAll("**", () -> {
+                        Mockito.verify(outputService, Mockito.atLeast(1))
+                                .getCustomerById(customerId);
+                        Assertions.assertNull(customerResponse);
+                    });
+                });
+        Assertions.assertAll("**", () -> {
+            Assertions.assertNotNull(customerApiBusinessException);
+            Assertions.assertTrue(customerApiBusinessException.getMessage().contains(exceptionMessage));
+        });
+    }
+
+    @Test
+    void archiveCustomerCouldReturnExceptionWhenCustomerIsNotSuspended() {
+        //prepare
+        final String exceptionMessage = "he must be suspended";
+        CustomerApiBusinessException apiBusinessException = Assertions
+                .assertThrows(CustomerApiBusinessException.class, () -> {
+                    //prepare
+                    final String customerId = "1";
+                    CustomerEntity customer = customerEntity;
+                    //execute
+                    Mockito.when(outputService.getCustomerById(customerId))
+                            .thenReturn(customer);
+                    CustomerResponseDto customerResponse = underTest.archiveCustomer(customerId);
+                    //verify
+                    Assertions.assertAll("**", () -> {
+                        Mockito.verify(outputService, Mockito.atLeast(1))
+                                .getCustomerById(customerId);
+                        Assertions.assertNull(customerResponse);
+                    });
+                });
+        Assertions.assertAll("**", () -> {
+            Assertions.assertNotNull(apiBusinessException);
+            Assertions.assertTrue(apiBusinessException.getMessage().contains(exceptionMessage));
+        });
+    }
+
+    @Test
     void updateCustomerInfoTest() {
         //prepare
         final String customerId = "1";
@@ -184,7 +262,7 @@ class InputServiceImplTest {
     }
 
     @Test
-    void customerSwitchStateTest() {
+    void customerSwitchStateFromActiveToSuspendedTest() {
         //prepare
         final String customerId = "1";
         //execute
@@ -196,6 +274,143 @@ class InputServiceImplTest {
             Mockito.verify(outputService, Mockito.atLeast(1))
                     .getCustomerById(customerId);
             Assertions.assertNotNull(responseDto);
+        });
+    }
+
+    @Test
+    void customerSwitchStateFromSuspendedToActiveTest() {
+        //prepare
+        final String customerId = "1";
+        CustomerEntity customer = customerEntity;
+        customer.setState("SUSPENDED");
+        //execute
+        Mockito.when(outputService.getCustomerById(customerId)).thenReturn(customer);
+        CustomerResponseDto responseDto = underTest.customerSwitchState(customerId);
+
+        //verify
+        Assertions.assertAll("**", () -> {
+            Mockito.verify(outputService, Mockito.atLeast(1))
+                    .getCustomerById(customerId);
+            Assertions.assertNotNull(responseDto);
+            Assertions.assertEquals("ACTIVE", responseDto.customerDto().customerState());
+        });
+    }
+
+    @Test
+    void customerSwitchStateCouldReturnExceptionWhenCustomerDoesNotExist() {
+        //prepare
+        final String exceptionPart = "is not found";
+        CustomerNotFoundException customerNotFoundException = Assertions
+                .assertThrows(CustomerNotFoundException.class, () -> {
+                    final String customerId = "1";
+                    Mockito.when(outputService.getCustomerById(customerId))
+                            .thenReturn(null);
+                    CustomerResponseDto customerResponse = underTest.customerSwitchState(customerId);
+                    Assertions.assertAll("**", () -> {
+                        Mockito.verify(outputService, Mockito.atLeast(1))
+                                .getCustomerById(customerId);
+                        Assertions.assertNull(customerResponse);
+                    });
+                });
+        Assertions.assertAll("**", () -> {
+            Assertions.assertNotNull(customerNotFoundException);
+            Assertions.assertTrue(customerNotFoundException.getMessage().contains(exceptionPart));
+        });
+    }
+
+    @Test
+    void customerSwitchStateCouldReturnExceptionWhenCustomerAlreadyArchived() {
+        //prepare
+        final String exception = "customer is archived";
+        RuntimeException runtimeException = Assertions
+                .assertThrows(CustomerApiBusinessException.class, () -> {
+                    //prepare
+                    final String customerId = "1";
+                    CustomerEntity customer = customerEntity;
+                    customer.setState("ARCHIVE");
+                    //execute
+                    Mockito.when(outputService.getCustomerById(customerId)).thenReturn(customer);
+                    CustomerResponseDto customerResponse = underTest.customerSwitchState(customerId);
+                    Assertions.assertAll("**", () -> {
+                        Mockito.verify(outputService, Mockito.atLeast(1))
+                                .getCustomerById(customerId);
+                        Assertions.assertNull(customerResponse);
+                    });
+                });
+        Assertions.assertAll("**", () -> {
+            Assertions.assertNotNull(runtimeException);
+            Assertions.assertEquals(exception, runtimeException.getMessage());
+        });
+    }
+
+    @Test
+    void updateCustomerInfoCouldReturnExceptionWhenCustomerIsNotFound() {
+        final String exceptionPart = "not found";
+        RuntimeException runtimeException = Assertions
+                .assertThrows(CustomerNotFoundException.class, () -> {
+                    final String customerId = "1";
+                    Mockito.when(outputService.getCustomerById(customerId))
+                            .thenReturn(null);
+                    CustomerResponseDto customerResponseDto = underTest.updateCustomerInfo(customerId, customerRequestDto);
+                    Assertions.assertAll("**", () -> {
+                        Mockito.verify(outputService, Mockito.atLeast(1))
+                                .getCustomerById(customerId);
+                        Assertions.assertNull(customerResponseDto);
+                    });
+                });
+        Assertions.assertAll("**", () -> {
+            Assertions.assertNotNull(runtimeException);
+            Assertions.assertTrue(runtimeException.getMessage().contains(exceptionPart));
+        });
+    }
+
+    @Test
+    void updateCustomerInfoCouldReturnExceptionWhenCustomerAlreadyArchived() {
+        //prepare
+        final String exceptionPart = "because of its state";
+        RuntimeException runtimeException = Assertions
+                .assertThrows(CustomerApiBusinessException.class, () -> {
+                    final String customerId = "1";
+                    CustomerEntity customer = customerEntity;
+                    customer.setState("ARCHIVE");
+
+                    Mockito.when(outputService.getCustomerById(customerId))
+                            .thenReturn(customer);
+                    CustomerResponseDto customerResponse = underTest.updateCustomerInfo(customerId, customerRequestDto);
+                    Assertions.assertAll("**", () -> {
+                        Mockito.verify(outputService, Mockito.atLeast(1))
+                                .getCustomerById(customerId);
+                        Assertions.assertNull(customerResponse);
+                    });
+                });
+        Assertions.assertAll("**", () -> {
+            Assertions.assertNotNull(runtimeException);
+            Assertions.assertTrue(runtimeException.getMessage().contains(exceptionPart));
+        });
+    }
+
+    @Test
+    void createCustomerCouldReturnExceptionWhenCustomerAlreadyExists() {
+        //prepare
+        final String exceptionPart = "customer input information";
+        RuntimeException runtimeException = Assertions
+                .assertThrows(CustomerApiBusinessException.class, () -> {
+                    //execute
+                    Mockito.when(outputService.findCustomerBy(customerRequestDto.customerDto().firstname(),
+                                    customerRequestDto.customerDto().lastname(), customerRequestDto.customerDto().email()))
+                            .thenReturn(customerEntity);
+                    CustomerResponseDto customerResponse = underTest.createCustomer(customerRequestDto);
+                    Assertions.assertAll("**", () -> {
+                        Mockito.verify(outputService, Mockito.atLeast(1))
+                                .findCustomerBy(customerRequestDto.customerDto().firstname(),
+                                        customerRequestDto.customerDto().lastname(), customerRequestDto.customerDto().email());
+                        Assertions.assertNull(customerResponse);
+                    });
+                });
+        //verify
+        Assertions.assertAll("**", () -> {
+            Assertions.assertNotNull(runtimeException);
+            Assertions.assertTrue(runtimeException.getMessage().contains(exceptionPart));
         });
     }
 }

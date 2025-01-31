@@ -140,7 +140,8 @@ services:
     container_name: keycloak-authentication-provider-bank-account-app
     image: quay.io/keycloak/keycloak:26.0.6
     networks:
-      - bank-account-app-net
+      bank-account-app-net:
+        ipv4_address: ${KEYCLOAK_IDP_IP_ADDRESS}
     environment:
       KC_DB: mysql
       KC_DB_URL: jdbc:mysql://${DATABASE_HOSTNAME}/${KEYCLOAK_DB}
@@ -148,7 +149,7 @@ services:
       KC_DB_PASSWORD: ${KEYCLOAK_DATABASE_PWD}
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME}
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD}
-      KC_HOSTNAME: ${KC_HOSTNAME} # keycloak hostname in production, (localhost in development)
+      KC_HOSTNAME: ${KC_HOSTNAME}
       KC_HTTP_PORT: ${KC_HTTP_PORT}
       KC_HTTPS_PORT: ${KC_HTTPS_PORT}
       KC_HTTP_ENABLED: true
@@ -179,7 +180,8 @@ services:
       - ${MAIL_SERVER_HOST_PORT1}:${MAIL_SERVER_HOST_PORT1}
       - ${MAIL_SERVER_HOST_PORT2}:${MAIL_SERVER_HOST_PORT2}
     networks:
-      - bank-account-app-net
+      bank-account-app-net:
+        ipv4_address: ${SMTP_MAIL_SERVER_IP_ADDRESS}
     restart: always
 
 # eureka server for microservices registration
@@ -451,7 +453,10 @@ services:
 networks:
   bank-account-app-net:
     driver: bridge
-
+    ipam:
+      config:
+        - subnet: ${SUBNET}
+          gateway: ${GATEWAY}
 volumes:
   bank-account-app-volume:
     driver: local

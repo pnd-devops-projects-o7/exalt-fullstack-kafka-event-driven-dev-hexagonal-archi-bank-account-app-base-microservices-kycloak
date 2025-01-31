@@ -11,8 +11,7 @@ export class StandloneComponent {
   imagePath: string;
   imgStyle: string;
   constructor(){
-    this.imagePath = "./assets/archi/archi-summary.gif";
+    this.imagePath = "./assets/archi/archi-summary.webm";
   this.imgStyle = "width: 1550px; height: 750px;"
   } 
-
 }

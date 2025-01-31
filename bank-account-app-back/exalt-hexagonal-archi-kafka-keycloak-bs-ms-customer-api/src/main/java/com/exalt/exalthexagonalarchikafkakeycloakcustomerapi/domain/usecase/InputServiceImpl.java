@@ -146,21 +146,17 @@ public class InputServiceImpl implements InputService {
             throw new CustomerApiBusinessException("customer is archived");
         }
         CustomerEvent customerEvent = MapperService.mapToCustomerEventFromEntity(customerEntity);
-        switch (customerEntity.getState()){
-            //call output connector to save customer with new state related
-            case  SUSPENDED -> {
-                customerEntity.setState(ACTIVE);
-                outputService.createCustomer(customerEntity);
-                customerEvent.setStatus("CUSTOMER ACTIVATE");
-                customerEvent.setMessage("Customer ACTIVATED event");
-            }
-            case ACTIVE -> {
-                customerEntity.setState(SUSPENDED);
-                outputService.createCustomer(customerEntity);
-                customerEvent.setStatus("CUSTOMER SUSPENDED");
-                customerEvent.setMessage("Customer SUSPENDED event");
-            }
-            default -> LOGGER.log(Level.WARNING,"do nothing");
+        if(customerEntity.getState().equals(SUSPENDED)){
+            customerEntity.setState(ACTIVE);
+            outputService.createCustomer(customerEntity);
+            customerEvent.setStatus("CUSTOMER ACTIVATE");
+            customerEvent.setMessage("Customer ACTIVATED event");
+        }
+        else if (customerEntity.getState().equals(ACTIVE)){
+            customerEntity.setState(SUSPENDED);
+            outputService.createCustomer(customerEntity);
+            customerEvent.setStatus("CUSTOMER SUSPENDED");
+            customerEvent.setMessage("Customer SUSPENDED event");
         }
        //calling output connector to publish event
         eventProducer.customerSuspendEvent(customerEvent);

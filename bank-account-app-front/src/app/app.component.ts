@@ -27,12 +27,17 @@ export class AppComponent implements OnInit {
   userProfile!: KeycloakProfile;
   keyclaokService = inject(KeycloakService);
   isSuperuserService = inject(SuperusersService);
-  
 
-  tooltipPosition: string ="top";
+
+  tooltipPosition: string = "top";
 
   async ngOnInit(): Promise<void> {
     this.accueilMenu = [
+      {
+
+        label: "standlone", icon: PrimeIcons.HOME, 
+        command: () => this.router.navigate(['standlone'])
+      },
       {
         label: "app-desc", icon: PrimeIcons.INFO_CIRCLE,
         command: () => this.router.navigate(["accueil"])
@@ -58,7 +63,7 @@ export class AppComponent implements OnInit {
   }
 
   //handlilng logout, it remove session from keycloak
-  handleLogout(){
+  handleLogout() {
     this.keyclaokService.logout(window.location.origin);
   }
 }
