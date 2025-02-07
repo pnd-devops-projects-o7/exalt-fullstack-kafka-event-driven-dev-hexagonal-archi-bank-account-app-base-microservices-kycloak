@@ -63,7 +63,7 @@ export class AppComponent implements OnInit {
   }
 
   //handlilng logout, it remove session from keycloak
-  handleLogout() {
-    this.keyclaokService.logout(window.location.origin);
+  async handleLogout() {
+    await this.keyclaokService.logout(window.location.origin);
   }
 }
