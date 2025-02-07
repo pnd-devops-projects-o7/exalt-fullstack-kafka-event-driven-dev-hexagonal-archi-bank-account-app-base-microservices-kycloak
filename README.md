@@ -40,6 +40,9 @@ After connecting the **frontend-App** to the **Backend Microservices**, refering
 ## Bank-Account-App architecture Backend & Frontend connected
 ![exalt-bank-account-app-archi_](./diagrams/exalt-bank-account-app-archi-fullstack.gif)
 
+## Bank-Account-App architecture summary
+![summary](diagrams/archi-summary.webm)
+
 # Backend
 ## 4 applications microservices business:
  chaque business microservice implémente une architecture hexagonale
@@ -95,6 +98,3 @@ The frontend part of **Bank-Account-App** is an angular (v17) application
 - managing Observable related to user events like click on button
 - graphic design with **PrimeNG**
 - integrate **Keycloak** as identity provider
-
-# project architecture summary
-![summary](diagrams/archi-summary.gif)
