@@ -35,7 +35,7 @@ After connecting the **frontend-App** to the **Backend Microservices**, refering
 - The Backend-Gateway-OAuth2-Client becomes a simple gateway to route any request without any check
     - it is no longer a TokenRelay
 - Frontend App is configured as **trusted** in KeyCloak, refer to flow below:
-![flows2](diagrams/exalt-bank-account-app-flows-3.gif)
+![flows2](diagrams/exalt-bank-account-app-flows-2.gif)
 
 ## Bank-Account-App architecture Backend & Frontend connected
 ![exalt-bank-account-app-archi_](./diagrams/exalt-bank-account-app-archi-fullstack.gif)
