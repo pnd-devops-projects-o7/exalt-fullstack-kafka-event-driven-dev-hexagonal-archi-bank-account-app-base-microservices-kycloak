@@ -41,7 +41,7 @@ After connecting the **frontend-App** to the **Backend Microservices**, refering
 ![exalt-bank-account-app-archi_](./diagrams/exalt-bank-account-app-archi-fullstack.gif)
 
 ## Bank-Account-App architecture summary
-![summary](diagrams/bank-account-app-archi-summary.png)
+![summary](diagrams/bank-account-app-archi-summary.gif)
 
 # Backend
 ## 4 applications microservices business:
