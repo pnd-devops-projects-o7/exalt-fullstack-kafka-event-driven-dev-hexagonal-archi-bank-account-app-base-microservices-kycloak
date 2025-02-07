@@ -11,11 +11,11 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 @EnableWebFluxSecurity
 public class BackendGatewayOAuth2SecurityConfig {
     @Bean
-    public SecurityWebFilterChain filterChain(ServerHttpSecurity httpSecurity){
+    public SecurityWebFilterChain filterChain(ServerHttpSecurity httpSecurity) {
         httpSecurity
-                .authorizeExchange(auth-> auth.anyExchange().authenticated())
+                .authorizeExchange(auth -> auth.anyExchange().authenticated())
                 .oauth2Login(Customizer.withDefaults())
-                .oauth2ResourceServer(oauth2->
+                .oauth2ResourceServer(oauth2 ->
                         oauth2.opaqueToken(Customizer.withDefaults()));
         httpSecurity.csrf(ServerHttpSecurity.CsrfSpec::disable);
 

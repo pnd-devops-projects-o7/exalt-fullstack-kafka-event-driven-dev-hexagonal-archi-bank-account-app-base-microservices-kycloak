@@ -1,0 +1,79 @@
+spring:
+  # spring boot application name
+  application:
+    name: ${BACKEND_GATEWAY_CLIENT_APP_NAME}
+    # disable spring boot logo from log
+  main:
+    banner-mode: off
+
+  # keycloak security client configuration
+  security:
+    oauth2:
+      # register gateway as an oauth2 client to redirect users' request to keycloak IDP
+      client:
+        registration:
+          exalt-backend-gateway-client:
+            provider: keycloak-idp
+            client-id: ${KEYCLOAK_BACKEND_GATEWAY_CLIENT_ID}
+            client-name: ${KEYCLOAK_BACKEND_GATEWAY_CLIENT_NAME}
+            client-secret: ${KEYCLOAK_CLIENT_SECRET}
+            authorization-grant-type: ${KEYCLOAK_AUTHORIZATION_CODE}
+            redirect-uri: ${REDIRECT_URI}/{registrationId}
+            scope: openid
+        provider:
+          keycloak-idp:
+            issuer-uri: ${JWT_ISSUER}
+      # register gateway as an oauth2 resource server because teh cloud gateway exposes an endpoint to get a OPAQUE token
+      resourceserver:
+        opaquetoken:
+          introspection-uri: ${spring.security.oauth2.client.provider.keycloak-idp.issuer-uri}/protocol/openid-connect/token/introspect
+          client-id: ${spring.security.oauth2.client.registration.exalt-backend-gateway-client.client-id}
+          client-secret: ${spring.security.oauth2.client.registration.exalt-backend-gateway-client.client-secret}
+
+  #define routes of the backend microservices
+  cloud:
+    gateway:
+      default-filters:
+        - TokenRelay= # To enable the gateway to forward requests to the backend microservices with the relayed access token
+      routes:
+        - id: ${ROUTE1_ID}
+          uri: ${ROUTE1_URI}
+          predicates:
+            - Path=${ROUTE1_PREDICATE}
+        - id: ${ROUTE2_ID}
+          uri: ${ROUTE2_URI}
+          predicates:
+            - Path=${ROUTE2_PREDICATE}
+        - id: ${ROUTE3_ID}
+          uri: ${ROUTE3_URI}
+          predicates:
+            - Path=${ROUTE3_PREDICATE}
+        - id: ${ROUTE4_ID}
+          uri: ${ROUTE4_URI}
+          predicates:
+            - Path=${ROUTE4_PREDICATE}
+
+# actuator for health check
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-components: always
+      probes:
+        enabled: true # enable /actuator/health/liveness and /actuator/health/readiness for K8s
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${SERVICE_REGISTRY_API_APP_NAME}:${SERVICE_REGISTRY_API_SERVER_PORT}/eureka
+
+server:
+  port: ${BACKEND_GATEWAY_CLIENT_SERVER_PORT}

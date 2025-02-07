@@ -36,6 +36,7 @@ import { AccountResponseDto } from '../../../../shared/models/backend/account/ac
 import { AccountRequestDto } from '../../../../shared/models/backend/account/account-request.dto';
 import { SplitterModule } from 'primeng/splitter';
 import { CustomerRequestDto } from '../../../../shared/models/backend/customer/customer-request.dto';
+import { FloatLabelModule } from 'primeng/floatlabel';
 
 interface AccountType {
   type: string;
@@ -46,7 +47,7 @@ interface AccountType {
   standalone: true,
   imports: [TableModule, CommonModule, ButtonModule, TooltipModule, ConfirmDialogModule, MessagesModule, TagModule,
     ToastModule, SidebarModule, CardModule, FormsModule, DropdownModule, ReactiveFormsModule, InputTextModule,
-    SplitterModule
+    SplitterModule, FloatLabelModule
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './customers-list.component.html',

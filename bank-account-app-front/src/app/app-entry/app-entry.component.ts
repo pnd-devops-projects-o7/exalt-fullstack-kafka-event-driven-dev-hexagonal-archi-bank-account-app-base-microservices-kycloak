@@ -17,11 +17,13 @@ import { acceptLabel, confirmMsg, errorDetailsMessage, errorSeverity, life, reje
 import { CustomerRequestDto } from '../shared/models/backend/customer/customer-request.dto';
 import { CustomerResponseDto } from '../shared/models/backend/customer/customer-response.dto';
 import { CustomerEventsService } from '../shared/services/user-events/customer/customer-events.service';
+import { FloatLabelModule } from 'primeng/floatlabel';
 @Component({
   selector: 'app-app-entry',
   standalone: true,
   imports: [MenubarModule, SidebarModule, CardModule, ButtonModule, SplitterModule,
-    FormsModule, ReactiveFormsModule, InputTextModule, ToastModule, ConfirmDialogModule, MessagesModule
+    FormsModule, ReactiveFormsModule, InputTextModule, ToastModule, ConfirmDialogModule, MessagesModule,
+    FloatLabelModule
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './app-entry.component.html',

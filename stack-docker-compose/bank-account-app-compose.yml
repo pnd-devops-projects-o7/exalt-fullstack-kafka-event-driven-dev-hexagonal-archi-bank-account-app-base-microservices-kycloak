@@ -149,18 +149,23 @@ services:
       KC_DB_PASSWORD: ${KEYCLOAK_DATABASE_PWD}
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME}
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD}
-      KC_HOSTNAME: ${KC_HOSTNAME}
+      KC_HOSTNAME: ${KC_HOSTNAME} #in production mode a hostname is required, hostname can be localhost or a dns
       KC_HTTP_PORT: ${KC_HTTP_PORT}
       KC_HTTPS_PORT: ${KC_HTTPS_PORT}
       KC_HTTP_ENABLED: true
-      KC_HTTPS_ENABLED: false
+      KC_HTTPS_ENABLED: true
       KC_HEALTH_ENABLED: true
-      #keycloak in production configuration must have a certificate configured
-      KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/conf/self-signed-certif.crt
-      KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/conf/signing-key.key
+      #keycloak in production must have a certificate configured
+      KC_HTTPS_KEY_STORE_FILE: /opt/keycloak/conf/keystore.p12
+      KC_HTTPS_KEY_STORE_PASSWORD: ${KC_HTTPS_KEY_STORE_PASSWORD}
+      KC_HTTPS_TRUST_STORE_FILE: /opt/keycloak/conf/keystore.p12
+      KC_HTTPS_TRUST_STORE_PASSWORD: ${KC_HTTPS_KEY_STORE_PASSWORD}
+      #KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/conf/server.crt
+      #KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/conf/server.key
     volumes:
-      - ../keycloak-auth-keys/self-signed-certif.crt:/opt/keycloak/conf/self-signed-certif.crt
-      - ../keycloak-auth-keys/signing-key.key:/opt/keycloak/conf/signing-key.key
+      - ../keycloak-auth-certificate/keystore.p12:/opt/keycloak/conf/keystore.p12
+    #  - ../keycloak-auth-certificate/server.crt:/opt/keycloak/conf/server.crt
+    # - ../keycloak-auth-certificate/server.key:/opt/keycloak/conf/server.key
     command:
       - start #start-dev
       - --verbose

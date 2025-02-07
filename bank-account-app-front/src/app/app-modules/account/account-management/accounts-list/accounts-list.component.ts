@@ -24,11 +24,10 @@ import { OperationEvent } from '../../../../shared/models/events/operation-actio
 import { OperationRequestDto } from '../../../../shared/models/backend/operation/operation-request.dto';
 import { OperationService } from '../../../../shared/services/backend/operation/operation.service';
 import { OperationResponseDto } from '../../../../shared/models/backend/operation/operation-response.dto';
-import { InputTextareaModule } from 'primeng/inputtextarea';
 import { TransferRequestDto } from '../../../../shared/models/backend/operation/transfer-request.dto';
 import { TransferResponseDto } from '../../../../shared/models/backend/operation/transfer-response.dto';
 import { TransferService } from '../../../../shared/services/backend/operation/transfer.service';
-
+import { FloatLabelModule } from 'primeng/floatlabel';
 
 interface OperationType {
   operationType: string;
@@ -38,8 +37,8 @@ interface OperationType {
   selector: 'app-accounts-list',
   standalone: true,
   imports: [TableModule, CommonModule, ButtonModule, TooltipModule, MessagesModule, ConfirmDialogModule,
-    SidebarModule, CardModule, FormsModule, ReactiveFormsModule, InputTextModule, DropdownModule, 
-    InputTextareaModule
+    SidebarModule, CardModule, FormsModule, ReactiveFormsModule, InputTextModule, DropdownModule,
+    FloatLabelModule
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './accounts-list.component.html',
@@ -77,6 +76,7 @@ export class AccountsListComponent implements OnInit {
   transferRequestDtoForm!: FormGroup;
   condition1: string = "account.accountType='CURRENT'";
   condition2: string = "account.accountType='CURRENT' AND account.accountState='ACTIVE'";
+  value: string ="test float label"
 
   // to back to table page where we were before going to anothe page
   first: number = Number(localStorage.getItem('accountPage'))

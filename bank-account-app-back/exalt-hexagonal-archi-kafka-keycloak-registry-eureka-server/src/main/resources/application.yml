@@ -1,13 +1,3 @@
 spring:
-  application:
-    name: ${SERVICE_REGISTRY_API_APP_NAME}
-  main:
-    banner-mode: off
-
-server:
-  port: ${SERVICE_REGISTRY_API_SERVER_PORT}
-
-eureka:
-  client:
-    register-with-eureka: false
-    fetch-registry: false
+  profiles:
+    active: docker

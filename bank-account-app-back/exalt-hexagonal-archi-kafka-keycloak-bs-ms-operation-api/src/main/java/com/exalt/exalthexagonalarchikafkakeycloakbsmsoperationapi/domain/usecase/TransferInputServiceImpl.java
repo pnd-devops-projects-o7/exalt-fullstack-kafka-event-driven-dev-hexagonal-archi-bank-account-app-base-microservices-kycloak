@@ -120,8 +120,9 @@ public class TransferInputServiceImpl implements TransferInputService {
     private void checkRemoteAccountValidity(AccountResponseDto originAccountResponseDto, AccountResponseDto destinationAccountResponseDto,
                                             TransferRequestDto transferRequestDto) {
         final Logger logger = Logger.getLogger(TransferMapperService.class.getSimpleName());
-        if (ValidatorTools.remoteAccountClientUnreachable(
-                originAccountResponseDto) || ValidatorTools.remoteAccountClientUnreachable(destinationAccountResponseDto)) {
+        //check remote accounts apis are reachable
+        if (ValidatorTools.remoteAccountClientUnreachable(originAccountResponseDto)
+                || ValidatorTools.remoteAccountClientUnreachable(destinationAccountResponseDto)) {
             logger.info("log remote origin or destination account unreachable");
             throw new OperationApiBusinessException("remote origin or destination account unreachable");
         }

@@ -100,16 +100,17 @@
     [style]="{width:'fit-content'}">
     <p-card header="{{tooltip}}">
         <form [formGroup]="overdraftIRateForm">
-            <div>
-                <label for="accountId">account id</label><br>
+            <p-floatLabel>
                 <input type="text" pInputText formControlName="accountId" id="accountId"
                     [(ngModel)]="selectedAccount.accountId" />
-            </div>
+                    <label for="accountId">account id</label>
+            </p-floatLabel>
             <br>
-            <div>
-                <label for="overdraftIrate"><span style="font-weight: bold;"> {{tooltip}} </span></label><br>
+            <p-floatLabel>
+                
                 <input type="number" pInputText formControlName="overdraftIrate" id="overdraftIrate" />
-            </div>
+                <label for="overdraftIrate"><span> {{tooltip}} </span></label>
+            </p-floatLabel>
             <br>
             <div class="buttons">
                 <p-button label="Update" [text]="true" [raised]="true" [disabled]="overdraftIRateForm.invalid"
@@ -126,27 +127,27 @@
     [style]="{width:'fit-content'}">
     <p-card header="operation UI">
         <form [formGroup]="operationRequestDtoForm">
+            <p-floatLabel>
+                <input type="text" pInputText formControlName="accountId" id="accountId"
+                    [(ngModel)]="selectedAccount.accountId" />
+                    <label for="accountId">account id</label>
+            </p-floatLabel>
+            <br/>
             <div class="p-float-label">
                 <p-dropdown [options]="operationTypes" optionLabel="operationType"
                     placeholder="Select an operation type" formControlName="operationType" /><label
                     for="operationType">operation type</label>
             </div>
             <br>
-            <div>
-                <label for="amount"><span style="font-weight: bold;"> amount </span></label><br>
+            <p-floatLabel>
                 <input type="number" pInputText formControlName="amount" id="amount" />
-            </div>
+                <label for="amount"><span> amount </span></label>
+            </p-floatLabel>
             <br>
-            <div>
-                <label for="description">description</label><br>
+            <p-floatLabel>
                 <input type="text" pInputText formControlName="description" id="description" />
-            </div>
-            <br>
-            <div>
-                <label for="accountId">account id</label><br>
-                <input type="text" pInputText formControlName="accountId" id="accountId"
-                    [(ngModel)]="selectedAccount.accountId" />
-            </div>
+                <label for="description">description</label>
+            </p-floatLabel>
             <br>
             <div class="buttons">
                 <p-button label="create" [text]="true" [raised]="true" [disabled]="operationRequestDtoForm.invalid"
@@ -161,29 +162,29 @@
 <!-- a sidebar for create a transfer from a given account id-->
 <p-sidebar [(visible)]="transferRequestDtoFormVisible" [position]="sidebarPosition" *ngIf="selectedAccount"
     [style]="{width:'fit-content'}">
-    <p-card header="transfer UI">
+    <p-card header="transfer ui">
         <form [formGroup]="transferRequestDtoForm">
-            <div>
-                <label for="originAccount">origin account</label><br>
+            <p-floatLabel>
                 <input type="text" pInputText formControlName="originAccount" id="originAccount"
                     [(ngModel)]="selectedAccount.accountId" />
-            </div>
-            <br>
-            <div>
-                <label for="destinationAccount">destination account</label><br>
+                <label for="originAccount">origin account</label>
+            </p-floatLabel>
+            <br/>
+            <p-floatLabel>
                 <input type="text" pInputText formControlName="destinationAccount" id="destinationAccount" />
-            </div>
-            <br>
-            <div>
-                <label for="transferAmount">amount</label><br>
+                <label for="destinationAccount">destination account</label>
+            </p-floatLabel>
+            <br/>
+            <p-floatLabel>
                 <input type="number" pInputText formControlName="transferAmount" id="transferAmount" />
-            </div>
-            <br>
-            <div>
-                <label for="description">description</label><br>
-                <textarea pInputTextarea pTextarea formControlName="description"></textarea>
-            </div>
-            <br>
+                <label for="transferAmount">amount</label>
+            </p-floatLabel>
+            <br/>
+            <p-floatLabel>
+                <input type="text" pInputText formControlName="description" id="description" />
+                <label for="description">description</label>
+            </p-floatLabel>
+            <br/>
             <div class="buttons">
                 <p-button label="transfer" [text]="true" [raised]="true" [disabled]="transferRequestDtoForm.invalid"
                     (onClick)="onCreateTransferEvent()" />&nbsp;

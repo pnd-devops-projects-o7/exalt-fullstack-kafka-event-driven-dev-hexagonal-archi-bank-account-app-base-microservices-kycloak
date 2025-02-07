@@ -1,6 +1,6 @@
 .idea
 **/**/src/main/resources/*-local.yml
-keycloak-auth-keys/signing-key.key
-keycloak-auth-keys/certificate-signing-request.csr
+keycloak-auth-certificate/signing-key.key
+keycloak-auth-certificate/certificate-signing-request.csr
 stack-docker-compose/.env
 works-sql-requests

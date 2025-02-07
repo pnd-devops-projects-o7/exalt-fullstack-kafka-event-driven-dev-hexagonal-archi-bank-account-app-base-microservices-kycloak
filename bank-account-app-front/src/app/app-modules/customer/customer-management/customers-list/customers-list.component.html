@@ -120,29 +120,31 @@
                     <p-card header="customer">
                         <div class="col flex align-items-center justify-content-center">
                             <div formGroupName="customer">
-                                <div>
-                                    <label for="customerId">customer id</label><br>
+                                <p-floatLabel>
                                     <input pInputText type="text" id="customerId" class="form-control"
                                         formControlName="customerId"
                                         [(ngModel)]="selectedCustomer.customerDto.customerId">
-                                </div>
-                                <div>
-                                    <label for="firstname">firstname</label><br>
+                                        <label for="customerId">customer id</label>
+                                </p-floatLabel>
+                                <br>
+                                <p-floatLabel>
                                     <input pInputText type="text" id="firstname" class="form-control"
                                         formControlName="firstname"
                                         [(ngModel)]="selectedCustomer.customerDto.firstname">
-                                </div>
-                                <div>
-                                    <label for="lastname">lastname</label><br>
+                                        <label for="firstname">firstname</label><br>
+                                </p-floatLabel>
+                                <br>
+                                <p-floatLabel>
                                     <input pInputText type="text" id="lastname" class="form-control"
                                         formControlName="lastname" [(ngModel)]="selectedCustomer.customerDto.lastname">
-                                </div>
-                                <div>
-                                    <label for="email">email</label><br>
+                                        <label for="lastname">lastname</label>
+                                </p-floatLabel>
+                                <br>
+                                <p-floatLabel>
                                     <input pInputText type="text" id="email" class="form-control"
                                         formControlName="email" [(ngModel)]="selectedCustomer.customerDto.email">
-
-                                </div>
+                                        <label for="email">email</label>
+                                </p-floatLabel>
                             </div>
                         </div>
                     </p-card>
@@ -151,30 +153,31 @@
                     <p-card header="address">
                         <div class="col flex align-items-center justify-content-center">
                             <div formGroupName="address">
-                                <div>
-                                    <label for="streetNum">street number</label><br>
+                                <p-floatLabel>
                                     <input pInputText type="number" class="form-control" id="streetNum"
                                         formControlName="streetNum" [(ngModel)]="selectedCustomer.addressDto.streetNum">
-                                </div>
-
-                                <div>
-                                    <label for="streetName">street name</label><br>
+                                        <label for="streetNum">street number</label>
+                                </p-floatLabel>
+                                <br>
+                                <p-floatLabel>
                                     <input pInputText type="text" class="form-control" id="streetName"
                                         formControlName="streetName"
                                         [(ngModel)]="selectedCustomer.addressDto.streetName">
-                                </div>
-                                <div>
-                                    <label for="postalCode">postal code</label><br>
+                                        <label for="streetName">street name</label>
+                                </p-floatLabel>
+                                <br>
+                                <p-floatLabel>
                                     <input pInputText type="number" class="form-control" id="postalCode"
                                         formControlName="postalCode"
                                         [(ngModel)]="selectedCustomer.addressDto.postalCode">
-                                </div>
-
-                                <div>
-                                    <label for="city">city name</label><br>
+                                        <label for="postalCode">postal code</label>
+                                </p-floatLabel>
+                                <br>
+                                <p-floatLabel>
                                     <input pInputText type="text" class="form-control" id="city" formControlName="city"
                                         [(ngModel)]="selectedCustomer.addressDto.city">
-                                </div>
+                                        <label for="city">city name</label>
+                                </p-floatLabel>
                             </div>
                         </div>
                     </p-card>
