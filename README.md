@@ -42,7 +42,6 @@ After connecting the **frontend-App** to the **Backend Microservices**, refering
 
 ## Bank-Account-App architecture summary
 ![summary](diagrams/bank-account-app-archi-summary.png)
-![summary](diagrams/archi-summary.webm)
 
 # Backend
 ## 4 applications microservices business:
