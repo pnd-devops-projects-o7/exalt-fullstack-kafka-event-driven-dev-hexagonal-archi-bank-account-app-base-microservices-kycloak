@@ -103,7 +103,7 @@
             <div class="buttons">
                 <p-button label="Create" [text]="true" [raised]="true" [disabled]="accountFormGroup.invalid"
                     (onClick)="onCreateAccountEvent()" />&nbsp;
-                <p-button label="Cancel" [text]="true" [raised]="true" severity="danger" />
+                <p-button label="Cancel" [text]="true" [raised]="true" severity="danger" (onClick)="accountSidebarVisible=false"/>
             </div>
         </form>
     </p-card>
@@ -186,7 +186,7 @@
             <div style="margin-left: 30%; margin-top: 2%;">
                 <p-button label="Save" [text]="true" [raised]="true" severity="primary" (onClick)="onUpdateCustomer()"
                     [disabled]="customerRequestDtoFormGroup.invalid" />&nbsp;
-                <p-button label="Cancel" [text]="true" [raised]="true" severity="danger" />
+                <p-button label="Cancel" [text]="true" [raised]="true" severity="danger" (onClick)="customerSidebarVisible=false"/>
             </div>
 
         </form>

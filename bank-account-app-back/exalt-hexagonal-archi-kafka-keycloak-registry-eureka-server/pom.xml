@@ -16,12 +16,14 @@
 	<properties>
 		<java.version>21</java.version>
 		<spring-cloud.version>2023.0.1</spring-cloud.version>
+		<loki-logback-appender.version>1.5.2</loki-logback-appender.version>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+		<!--eureka server for services registration-->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
@@ -30,6 +32,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<!--grafana-loki for logs observability-->
+		<dependency>
+			<groupId>com.github.loki4j</groupId>
+			<artifactId>loki-logback-appender</artifactId>
+			<version>${loki-logback-appender.version}</version>
 		</dependency>
 	</dependencies>
 

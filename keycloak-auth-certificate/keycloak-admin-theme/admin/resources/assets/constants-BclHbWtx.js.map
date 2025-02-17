@@ -1,0 +1,1 @@
+{"version":3,"file":"constants-BclHbWtx.js","sources":["../../../../../../../src/page/constants.ts"],"sourcesContent":["export const PAGE_PROVIDER = \"org.keycloak.services.ui.extend.UiPageProvider\";\nexport const TAB_PROVIDER = \"org.keycloak.services.ui.extend.UiTabProvider\";\n"],"names":["PAGE_PROVIDER","TAB_PROVIDER"],"mappings":"AAAO,MAAMA,EAAgB,iDAChBC,EAAe"}

@@ -22,17 +22,20 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorization ->{
-                    authorization.requestMatchers("/swagger-ui/**","/api-docs/**")
+                .authorizeHttpRequests(authorization -> {
+                    authorization.requestMatchers(
+                                    "/swagger-ui/**",
+                                    "/api-docs/**",
+                                    "/actuator/**")
                             .permitAll();
                     authorization.anyRequest().authenticated();
                 });
         httpSecurity.oauth2ResourceServer(authorization ->
-            /* instead JWT default converter we define a custom JWT converter to convert Keycloak roles to Spring security roles*/
-            authorization.jwt(configurer ->
-                /*inject custom Jwt converter*/
-                configurer.jwtAuthenticationConverter(keycloakAuthenticationConverter)
-            )
+                /* instead JWT default converter we define a custom JWT converter to convert Keycloak roles to Spring security roles*/
+                authorization.jwt(configurer ->
+                        /*inject custom Jwt converter*/
+                        configurer.jwtAuthenticationConverter(keycloakAuthenticationConverter)
+                )
         );
         return httpSecurity.build();
     }

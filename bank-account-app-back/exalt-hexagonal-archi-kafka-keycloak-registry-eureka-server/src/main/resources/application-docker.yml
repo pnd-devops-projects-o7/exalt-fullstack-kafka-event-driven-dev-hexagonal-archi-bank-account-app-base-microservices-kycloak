@@ -7,6 +7,7 @@ spring:
 server:
   port: ${SERVICE_REGISTRY_API_SERVER_PORT}
 
+# registration server config
 eureka:
   client:
     register-with-eureka: false

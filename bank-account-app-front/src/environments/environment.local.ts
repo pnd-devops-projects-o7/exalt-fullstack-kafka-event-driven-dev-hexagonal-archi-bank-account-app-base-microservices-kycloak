@@ -16,11 +16,9 @@ const keycloakInitOptions: KeycloakOptions = {
             window.location.origin + '/assets/silent-check-sso.html'
     }
 }
-
 export const environment = {
     production: false,
     gatewayApiService: "http://localhost:8279/api",
     logoutUrl: "http://localhost:4200",
     keycloackConfInit: keycloakInitOptions
-
 };

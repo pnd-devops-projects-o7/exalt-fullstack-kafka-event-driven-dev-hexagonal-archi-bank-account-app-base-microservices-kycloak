@@ -1,0 +1,5 @@
+{
+    "KEYCLOAK_URL": "http://localhost:8380",
+    "KEYCLOAK_REALM": "pnd_realm",
+    "KEYCLOAK_CLIENT_ID": "exalt-hexagonal-archi-kafka-keycloak-frontend-app"
+}

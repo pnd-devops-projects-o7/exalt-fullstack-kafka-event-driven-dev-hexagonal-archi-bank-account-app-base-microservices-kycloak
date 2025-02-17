@@ -1,0 +1,2 @@
+import{jsxs as s,Fragment as l,jsx as a}from"react/jsx-runtime";import{a as n,Q as r}from"./main-C047jAp3.js";const i=()=>{const{t:e}=n();return s(l,{children:[a(r,{name:"alias",label:e("name"),labelIcon:e("flowNameHelp"),rules:{required:{value:!0,message:e("required")}}}),a(r,{name:"description",label:e("description"),labelIcon:e("flowDescriptionHelp"),rules:{maxLength:{value:255,message:e("maxLength",{length:255})}}})]})};export{i as N};
+//# sourceMappingURL=NameDescription-D_42Crli.js.map

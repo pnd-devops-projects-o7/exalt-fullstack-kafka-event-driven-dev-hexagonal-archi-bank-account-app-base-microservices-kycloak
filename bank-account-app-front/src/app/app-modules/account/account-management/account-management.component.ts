@@ -22,6 +22,7 @@ export class AccountManagementComponent implements OnInit {
   accountService = inject(AccountService);
 
   ngOnInit(): void {
+    //load all accounts activated route
     this.activatedRoute.data.subscribe({
       next: ({allAccounts})=>{
         this.accounts = allAccounts;

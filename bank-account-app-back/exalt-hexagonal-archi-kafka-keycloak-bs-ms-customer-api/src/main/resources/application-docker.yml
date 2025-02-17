@@ -46,7 +46,7 @@ security:
         backend-gateway-client-id: ${KEYCLOAK_BACKEND_GATEWAY_CLIENT_ID}
         public-angular-app-client-id: ${KEYCLOAK_ANGULAR_APP_CLIENT_ID}
 
-# kafka topic configuration: duration time and size of message, topic partitions and topic replicas
+# kafka topic configuration
 kafka:
   topic-config:
     name: ${CUSTOMER_TOPIC_NAME}
@@ -55,24 +55,30 @@ kafka:
 
 server:
   port: ${CUSTOMER_API_SERVER_PORT}
-# atcuator config, to be used by K8s for healthcheck
+
+# actuator for exposing metrics
 management:
   endpoints:
     web:
       exposure:
-        include: health
+        include: prometheus, metrics, info, health, shutdown, beans
   endpoint:
     health:
       show-components: always
       probes:
         enabled: true # enable /actuator/health/liveness and /actuator/health/readiness for K8s
+      show-details: always
   health:
     livenessstate:
       enabled: true
     readinessstate:
       enabled: true
+  #zipkin
+  zipkin:
+    tracing:
+      endpoint: http://grafana-zipkin-traces-distributor:9411/api/v2/spans
 
-# eureka server for microservices registration (for testing, it will be removed when deploying into k8s)
+# url to registration server
 eureka:
   client:
     service-url:

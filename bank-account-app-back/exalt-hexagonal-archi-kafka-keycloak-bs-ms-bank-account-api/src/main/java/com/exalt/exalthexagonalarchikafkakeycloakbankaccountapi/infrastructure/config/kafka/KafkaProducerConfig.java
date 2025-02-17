@@ -23,12 +23,12 @@ public class KafkaProducerConfig {
 
     @Bean
     public ProducerFactory<String, Object> producerFactory() {
-        Map<String, Object> configPros = new HashMap<>();
-        configPros.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, Arrays.asList(bootstrapServers));
-        configPros.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        configPros.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
-        configPros.put("schema.registry.url", schemaRegistryUrl);
-        return new DefaultKafkaProducerFactory<>(configPros);
+        Map<String, Object> configProps = new HashMap<>();
+        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, Arrays.asList(bootstrapServers));
+        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
+        configProps.put("schema.registry.url", schemaRegistryUrl);
+        return new DefaultKafkaProducerFactory<>(configProps);
     }
 
     @Bean

@@ -1,0 +1,59 @@
+services:
+  #prometheus
+  grafana-prometheus-metrics-monitor:
+    image: prom/prometheus
+    container_name: grafana-prometheus-metrics-monitor
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - grafana_stack_net
+    restart: always
+
+  # zipkin traces distribution
+  grafana-zipkin-traces-distributor:
+    image: openzipkin/zipkin
+    container_name: grafana-zipkin-traces-distributor
+    ports:
+      - "9411:9411" #distributeur zipkin
+    networks:
+      - grafana_stack_net
+    restart: always
+
+  # grafana loki for logging
+  grafana-loki-logs:
+    image: grafana/loki
+    container_name: grafana-loki-logs
+    ports:
+      - "3100:3100"
+    restart: always
+    networks:
+      - grafana_stack_net
+    command: ["-config.file=/etc/loki/local-config.yaml" ]
+
+  #grafana dashboard
+  grafana-dashboard:
+    image: grafana/grafana
+    container_name: grafana-dashboard
+    ports:
+      - "3000:3000"
+    restart: always
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER}
+      GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
+      GF_SMTP_ENABLED: ${GF_SMTP_ENABLED}
+      GF_SMTP_HOST: ${GF_SMTP_HOST}
+      GF_SMTP_FROM_ADDRESS: ${GF_SMTP_FROM_ADDRESS}
+      GF_SMTP_FROM_NAME: ${GF_SMTP_FROM_NAME}
+    networks:
+      - grafana_stack_net
+
+volumes:
+  grafana-storage:
+    driver: local
+
+networks:
+  grafana_stack_net:
+    name: bank_account_app_net
+    external: true

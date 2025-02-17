@@ -19,7 +19,20 @@ spring:
       schema:
         registry:
           url: http://schema-registry-service:8081
-# send mail for notification
+  # send mail for notification with GMAIL SERVER
+  mail:
+    host: ${MAIL_SENDER_GMAIL_SERVER_HOST}
+    port: ${MAIL_SENDER_GMAIL_SERVER_PORT}
+    username: ${MAIL_SENDER_GMAIL_SERVER_USERNAME}
+    password: ${MAIL_SENDER_GMAIL_SERVER_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+# MAIL-HOG SERVER mail sender config used by notification-service to send email
 notification:
   mail:
     sender:
@@ -33,26 +46,30 @@ notification:
 server:
   port: ${NOTIFICATION_API_SERVER_PORT}
 
+# url to registration server
 eureka:
   client:
     service-url:
       defaultZone:  http://${SERVICE_REGISTRY_API_APP_NAME}:${SERVICE_REGISTRY_API_SERVER_PORT}/eureka/
 
+# actuator for exposing metrics
 management:
   endpoints:
     web:
       exposure:
-        include: health
+        include: prometheus, metrics, info, health, shutdown, beans
   endpoint:
     health:
       probes:
         enabled: true
       show-components: always
+      show-details: always
   health:
     livenessstate:
       enabled: true
     readinessstate:
       enabled: true
+
 # topics from where consumer read event
 kafka:
   topics:

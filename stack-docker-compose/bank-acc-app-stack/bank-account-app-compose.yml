@@ -1,0 +1,473 @@
+services:
+#kaka infrastructure: zookeeper, kafka-server-1&2, schema registry-service & kafka-ui
+  zookeeper-server:
+    image: zookeeper:3.5.9
+    container_name: zookeeper-server
+    ports:
+      - "2181:2181"
+    networks:
+      - bank_acc_app_proxy_net
+    healthcheck:
+      test: nc -z localhost 2181 || exit -1
+      start_period: 30s
+      interval: 15s
+      timeout: 10s
+      retries: 3
+    restart: always
+
+  kafka-server-1:
+    image: obsidiandynamics/kafka
+    container_name: kafka-server1
+    networks:
+       - bank_acc_app_proxy_net
+    ports:
+      - "9092:9092"
+      - "19092:19092"
+    environment:
+      KAFKA_BROKER_ID: 0
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-server:2181
+      ALLOW_PLAINTEXT_LISTENER: yes
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://:19092,PLAINTEXT_HOST://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-server-1:19092,PLAINTEXT_HOST://localhost:9092
+    depends_on:
+      zookeeper-server:
+        condition: service_healthy
+    healthcheck:
+      test: nc -z localhost 9092 || exit -1
+      start_period: 30s
+      interval: 15s
+      timeout: 10s
+      retries: 3
+    restart: always
+
+  kafka-server-2:
+    image: obsidiandynamics/kafka
+    container_name: kafka-server2
+    networks:
+      - bank_acc_app_proxy_net
+    ports:
+      - "9093:9093"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-server:2181
+      ALLOW_PLAINTEXT_LISTENER: yes
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://:29092,PLAINTEXT_HOST://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-server-2:29092,PLAINTEXT_HOST://localhost:9093
+    depends_on:
+      zookeeper-server:
+        condition: service_healthy
+    healthcheck:
+      test: nc -z localhost 9093 || exit -1
+      start_period: 30s
+      interval: 15s
+      timeout: 10s
+      retries: 3
+    restart: always
+
+  schema-registry-service:
+    image: confluentinc/cp-schema-registry:5.4.0
+    container_name: schema-registry-service
+    depends_on:
+      kafka-server-1:
+        condition: service_healthy
+      kafka-server-2:
+        condition: service_healthy
+    ports:
+      - "8081:8081"
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry-service
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka-server-1:19092,kafka-server-2:29092
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+      SCHEMA_REGISTRY_AUTHENTICATION_ROLES: write,read,admin
+    networks:
+      - bank_acc_app_proxy_net
+    restart: always
+
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - "8083:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: kafka-cluster1
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-server-1:19092
+      KAFKA_CLUSTERS_0_METRICS_PORT: 9997
+      KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schema-registry-service:8081
+      KAFKA_CLUSTERS_1_NAME: kafka-cluster2
+      KAFKA_CLUSTERS_1_BOOTSTRAPSERVERS: kafka-server-2:29092
+      KAFKA_CLUSTERS_1_METRICS_PORT: 9998
+      KAFKA_CLUSTERS_1_SCHEMAREGISTRY: http://schema-registry-service:8081
+      DYNAMIC_CONFIG_ENABLED: 'true'
+    depends_on:
+      kafka-server-1:
+        condition: service_healthy
+      kafka-server-2:
+        condition: service_healthy
+    networks:
+      - bank_acc_app_proxy_net
+    restart: always
+
+# database for persisting microservices data dans keycloak data
+  bank-account-app-db-server:
+    container_name: ${DATABASE_HOSTNAME}
+    image: mysql:8.4.1
+    ports:
+      - ${DATABASE_HOST_PORT}:${DATABASE_HOST_PORT}
+    volumes:
+      - bank-account-app-volume:/var/lib/mysql
+      - ./bs-ms-dbs:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DATABASE_ROOT_PWD}
+      # The user,password that Keycloak is going to create and use
+      MYSQL_DATABASE: ${KEYCLOAK_DB}
+      MYSQL_USER: ${KEYCLOAK_DATABASE_USER}
+      MYSQL_PASSWORD: ${KEYCLOAK_DATABASE_PWD}
+    networks:
+      - bank_acc_app_proxy_net
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "${SERVER_ADDRESS}", "-u${DATABASE_ROOT_USER}", "-p${DATABASE_ROOT_PWD}" ]
+      start_period: 30s
+      interval: 15s
+      timeout: 10s
+      retries: 3
+    restart: always
+
+  # keycloak IDP
+  keycloak-authentication-provider-bank-account-app:
+    container_name: keycloak-authentication-provider-bank-account-app
+    image: quay.io/keycloak/keycloak:26.0.6
+    networks:
+      bank_acc_app_proxy_net:
+        ipv4_address: ${KEYCLOAK_IDP_IP_ADDRESS}
+    environment:
+      KC_DB: mysql
+      KC_DB_URL: jdbc:mysql://${DATABASE_HOSTNAME}/${KEYCLOAK_DB}
+      KC_DB_USERNAME: ${KEYCLOAK_DATABASE_USER}
+      KC_DB_PASSWORD: ${KEYCLOAK_DATABASE_PWD}
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD}
+      KC_HOSTNAME: ${KC_HOSTNAME} #in production mode a hostname is required, hostname can be localhost or a dns
+      KC_HTTP_PORT: ${KC_HTTP_PORT}
+      KC_HTTPS_PORT: ${KC_HTTPS_PORT}
+      KC_HTTP_ENABLED: true
+      KC_HTTPS_ENABLED: true
+      KC_HEALTH_ENABLED: true
+      #keycloak in production must have a certificate configured
+      KC_HTTPS_KEY_STORE_FILE: /opt/keycloak/conf/keystore.p12
+      KC_HTTPS_KEY_STORE_PASSWORD: ${KC_HTTPS_KEY_STORE_PASSWORD}
+      KC_HTTPS_TRUST_STORE_FILE: /opt/keycloak/conf/keystore.p12
+      KC_HTTPS_TRUST_STORE_PASSWORD: ${KC_HTTPS_KEY_STORE_PASSWORD}
+    volumes:
+      - ../../keycloak-auth-certificate/keystore.p12:/opt/keycloak/conf/keystore.p12
+      - ../../keycloak-auth-certificate/keycloak-login-theme:/opt/keycloak/themes/custom_login_theme
+      - ../../keycloak-auth-certificate/keycloak-admin-theme:/opt/keycloak/themes/custom_admin_theme
+    command:
+      - start #start-dev
+      - --verbose
+    depends_on:
+      bank-account-app-db-server:
+        condition: service_healthy
+    ports:
+      - ${KC_HTTP_PORT}:${KC_HTTP_PORT}
+      - ${KC_HTTPS_PORT}:${KC_HTTPS_PORT}
+    restart: always
+
+  # email server that is used by notification-api to send email
+  smtp-mail-notification-server:
+    container_name: ${MAIL_SERVER_HOST_NAME}
+    image: mailhog/mailhog
+    ports:
+      - ${MAIL_SERVER_HOST_PORT1}:${MAIL_SERVER_HOST_PORT1}
+      - ${MAIL_SERVER_HOST_PORT2}:${MAIL_SERVER_HOST_PORT2}
+    networks:
+      bank_acc_app_proxy_net:
+        ipv4_address: ${MAIL_SERVER_HOST_IP_ADDRESS}
+    restart: always
+
+# eureka server for microservices registration
+  exalt-hexagonal-archi-kafka-keycloak-registry-eureka-server:
+    container_name: ${SERVICE_REGISTRY_API_APP_NAME}
+    image: placidenduwayo1/${SERVICE_REGISTRY_API_APP_NAME}:${APPLICATION_TAG}
+    build:
+      context: ../../bank-account-app-back/exalt-hexagonal-archi-kafka-keycloak-registry-eureka-server
+      dockerfile: Dockerfile
+    ports:
+      - ${SERVICE_REGISTRY_API_SERVER_PORT}:${SERVICE_REGISTRY_API_SERVER_PORT}
+    environment:
+      SERVICE_REGISTRY_API_APP_NAME: ${SERVICE_REGISTRY_API_APP_NAME}
+      SERVICE_REGISTRY_API_SERVER_PORT: ${SERVICE_REGISTRY_API_SERVER_PORT}
+    networks:
+      - bank_acc_app_proxy_net
+    healthcheck:
+      test: [ "CMD","curl","-I","http://${SERVICE_REGISTRY_API_APP_NAME}:${SERVICE_REGISTRY_API_SERVER_PORT}" ]
+      start_period: 30s
+      interval: 15s
+      timeout: 10s
+      retries: 3
+    restart: always
+
+  # backend gateway oauth2 serving as token relay between keycloak and backend resource servers
+  exalt-hexagonal-archi-kafka-keycloak-backend-gateway-oauth2-client:
+    container_name: ${BACKEND_GATEWAY_CLIENT_APP_NAME}
+    image: placidenduwayo1/${BACKEND_GATEWAY_CLIENT_APP_NAME}:${APPLICATION_TAG}
+    build:
+      context: ../../bank-account-app-back/exalt-hexagonal-archi-kafka-keycloak-backend-gateway-oauth2-client
+      dockerfile: Dockerfile
+    ports:
+      - ${BACKEND_GATEWAY_CLIENT_SERVER_PORT}:${BACKEND_GATEWAY_CLIENT_SERVER_PORT}
+    environment:
+      BACKEND_GATEWAY_CLIENT_APP_NAME: ${BACKEND_GATEWAY_CLIENT_APP_NAME}
+      KEYCLOAK_BACKEND_GATEWAY_CLIENT_ID: ${KEYCLOAK_BACKEND_GATEWAY_CLIENT_ID}
+      KEYCLOAK_BACKEND_GATEWAY_CLIENT_NAME: ${KEYCLOAK_BACKEND_GATEWAY_CLIENT_NAME}
+      KEYCLOAK_CLIENT_SECRET: ${KEYCLOAK_CLIENT_SECRET}
+      KEYCLOAK_AUTHORIZATION_CODE: ${KEYCLOAK_AUTHORIZATION_CODE}
+      REDIRECT_URI: ${REDIRECT_URI}
+      JWT_ISSUER: ${JWT_ISSUER}
+      ROUTE1_ID: ${ROUTE1_ID}
+      ROUTE1_URI: ${ROUTE1_URI}
+      ROUTE1_PREDICATE: ${ROUTE1_PREDICATE}
+      ROUTE2_ID: ${ROUTE2_ID}
+      ROUTE2_URI: ${ROUTE2_URI}
+      ROUTE2_PREDICATE: ${ROUTE2_PREDICATE}
+      ROUTE3_ID: ${ROUTE3_ID}
+      ROUTE3_URI: ${ROUTE3_URI}
+      ROUTE3_PREDICATE: ${ROUTE3_PREDICATE}
+      ROUTE4_ID: ${ROUTE4_ID}
+      ROUTE4_URI: ${ROUTE4_URI}
+      ROUTE4_PREDICATE: ${ROUTE4_PREDICATE}
+      SERVICE_REGISTRY_API_APP_NAME: ${SERVICE_REGISTRY_API_APP_NAME}
+      SERVICE_REGISTRY_API_SERVER_PORT: ${SERVICE_REGISTRY_API_SERVER_PORT}
+      BACKEND_GATEWAY_CLIENT_SERVER_PORT: ${BACKEND_GATEWAY_CLIENT_SERVER_PORT}
+    networks:
+      - bank_acc_app_proxy_net
+    depends_on:
+      exalt-hexagonal-archi-kafka-keycloak-registry-eureka-server:
+        condition: service_healthy
+    restart: always
+
+# gateway service proxy: after connecting the frontend, backend-gateway-client as token relay is no longer necessary,
+#we use this following simple gateway service proxy
+  exalt-hexagonal-archi-kafka-keycloak-gateway-service-proxy:
+    container_name: ${GATEWAY_SERVICE_PROXY_APP_NAME}
+    image: placidenduwayo1/${GATEWAY_SERVICE_PROXY_APP_NAME}:${APPLICATION_TAG}
+    build:
+      context: ../../bank-account-app-back/exalt-hexagonal-archi-kafka-keycloak-gateway-service-proxy
+      dockerfile: Dockerfile
+    ports:
+      - ${GATEWAY_SERVICE_PROXY_PORT}:${GATEWAY_SERVICE_PROXY_PORT}
+    environment:
+      GATEWAY_SERVICE_PROXY_APP_NAME: ${GATEWAY_SERVICE_PROXY_APP_NAME}
+      ALLOWED_CROSS_ORIGIN: ${ALLOWED_CROSS_ORIGIN}
+      ROUTE1_ID: ${ROUTE1_ID}
+      ROUTE1_URI: ${ROUTE1_URI}
+      ROUTE1_PREDICATE: ${ROUTE1_PREDICATE}
+      ROUTE2_ID: ${ROUTE2_ID}
+      ROUTE2_URI: ${ROUTE2_URI}
+      ROUTE2_PREDICATE: ${ROUTE2_PREDICATE}
+      ROUTE3_ID: ${ROUTE3_ID}
+      ROUTE3_URI: ${ROUTE3_URI}
+      ROUTE3_PREDICATE: ${ROUTE3_PREDICATE}
+      ROUTE4_ID: ${ROUTE4_ID}
+      ROUTE4_URI: ${ROUTE4_URI}
+      ROUTE4_PREDICATE: ${ROUTE4_PREDICATE}
+      SERVICE_REGISTRY_API_APP_NAME: ${SERVICE_REGISTRY_API_APP_NAME}
+      SERVICE_REGISTRY_API_SERVER_PORT: ${SERVICE_REGISTRY_API_SERVER_PORT}
+      GATEWAY_SERVICE_PROXY_PORT: ${GATEWAY_SERVICE_PROXY_PORT}
+    networks:
+      - bank_acc_app_proxy_net
+    depends_on:
+      exalt-hexagonal-archi-kafka-keycloak-registry-eureka-server:
+        condition: service_healthy
+    restart: always
+
+    #------------ business microservices-----------------
+  exalt-hexagonal-archi-kafka-keycloak-bs-ms-bank-account-api:
+    container_name: ${BANK_ACCOUNT_API_APP_NAME}
+    image: placidenduwayo1/${BANK_ACCOUNT_API_APP_NAME}:${APPLICATION_TAG}
+    build:
+      context: ../../bank-account-app-back/exalt-hexagonal-archi-kafka-keycloak-bs-ms-bank-account-api
+      dockerfile: Dockerfile
+    ports:
+      - ${BANK_ACCOUNT_API_SERVER_PORT}:${BANK_ACCOUNT_API_SERVER_PORT}
+    environment:
+      BANK_ACCOUNT_API_APP_NAME: ${BANK_ACCOUNT_API_APP_NAME}
+      DATABASE_HOSTNAME: ${DATABASE_HOSTNAME}
+      DATABASE_HOST_PORT: ${DATABASE_HOST_PORT}
+      BANK_ACCOUNT_API_DB: ${BANK_ACCOUNT_API_DB}
+      DATABASE_ROOT_USER: ${DATABASE_ROOT_USER}
+      DATABASE_ROOT_PWD: ${DATABASE_ROOT_PWD}
+      JWT_ISSUER: ${JWT_ISSUER}
+      KEYCLOAK_BACKEND_GATEWAY_CLIENT_ID: ${KEYCLOAK_BACKEND_GATEWAY_CLIENT_ID}
+      KEYCLOAK_ANGULAR_APP_CLIENT_ID: ${KEYCLOAK_ANGULAR_APP_CLIENT_ID}
+      ACCOUNT_TOPIC_NAME1: ${ACCOUNT_TOPIC_NAME1}
+      ACCOUNT_TOPIC_NAME2: ${ACCOUNT_TOPIC_NAME2}
+      KAFKA_TOPIC_RETENTION_DURATION: ${KAFKA_TOPIC_RETENTION_DURATION}
+      BANK_ACCOUNT_API_SERVER_PORT: ${BANK_ACCOUNT_API_SERVER_PORT}
+      SERVICE_REGISTRY_API_APP_NAME: ${SERVICE_REGISTRY_API_APP_NAME}
+      SERVICE_REGISTRY_API_SERVER_PORT: ${SERVICE_REGISTRY_API_SERVER_PORT}
+      ROUTE2_ID: ${ROUTE2_ID}
+      ROUTE2_URI: ${ROUTE2_URI}
+      CONTEXT_PATH2: ${CONTEXT_PATH2}
+    depends_on:
+      bank-account-app-db-server:
+        condition: service_healthy
+      exalt-hexagonal-archi-kafka-keycloak-registry-eureka-server:
+        condition: service_healthy
+      kafka-server-1:
+        condition: service_healthy
+      kafka-server-2:
+        condition: service_healthy
+    networks:
+      - bank_acc_app_proxy_net
+    restart: always
+
+  exalt-hexagonal-archi-kafka-keycloak-bs-ms-customer-api:
+    container_name: ${CUSTOMER_API_APP_NAME}
+    image: placidenduwayo1/${CUSTOMER_API_APP_NAME}:${APPLICATION_TAG}
+    build:
+      context: ../../bank-account-app-back/exalt-hexagonal-archi-kafka-keycloak-bs-ms-customer-api
+      dockerfile: Dockerfile
+    ports:
+      - ${CUSTOMER_API_SERVER_PORT}:${CUSTOMER_API_SERVER_PORT}
+    environment:
+      CUSTOMER_API_APP_NAME: ${CUSTOMER_API_APP_NAME}
+      DATABASE_HOSTNAME: ${DATABASE_HOSTNAME}
+      DATABASE_HOST_PORT: ${DATABASE_HOST_PORT}
+      CUSTOMER_API_DB: ${CUSTOMER_API_DB}
+      DATABASE_ROOT_USER: ${DATABASE_ROOT_USER}
+      DATABASE_ROOT_PWD: ${DATABASE_ROOT_PWD}
+      JWT_ISSUER: ${JWT_ISSUER}
+      KEYCLOAK_BACKEND_GATEWAY_CLIENT_ID: ${KEYCLOAK_BACKEND_GATEWAY_CLIENT_ID}
+      KEYCLOAK_ANGULAR_APP_CLIENT_ID: ${KEYCLOAK_ANGULAR_APP_CLIENT_ID}
+      CUSTOMER_TOPIC_NAME: ${CUSTOMER_TOPIC_NAME}
+      KAFKA_TOPIC_RETENTION_DURATION: ${KAFKA_TOPIC_RETENTION_DURATION}
+      CUSTOMER_API_SERVER_PORT: ${CUSTOMER_API_SERVER_PORT}
+      SERVICE_REGISTRY_API_APP_NAME: ${SERVICE_REGISTRY_API_APP_NAME}
+      SERVICE_REGISTRY_API_SERVER_PORT: ${SERVICE_REGISTRY_API_SERVER_PORT}
+    depends_on:
+      bank-account-app-db-server:
+        condition: service_healthy
+      exalt-hexagonal-archi-kafka-keycloak-registry-eureka-server:
+        condition: service_healthy
+      kafka-server-1:
+        condition: service_healthy
+      kafka-server-2:
+        condition: service_healthy
+    networks:
+      - bank_acc_app_proxy_net
+    restart: always
+
+  exalt-hexagonal-archi-kafka-keycloak-bs-ms-operation-api:
+    container_name: ${OPERATION_API_APP_NAME}
+    image: placidenduwayo1/${OPERATION_API_APP_NAME}:${APPLICATION_TAG}
+    build:
+      context: ../../bank-account-app-back/exalt-hexagonal-archi-kafka-keycloak-bs-ms-operation-api
+      dockerfile: Dockerfile
+    ports:
+      - ${OPERATION_API_SERVER_PORT}:${OPERATION_API_SERVER_PORT}
+    environment:
+      OPERATION_API_APP_NAME: ${OPERATION_API_APP_NAME}
+      DATABASE_HOSTNAME: ${DATABASE_HOSTNAME}
+      DATABASE_HOST_PORT: ${DATABASE_HOST_PORT}
+      OPERATION_API_DB: ${OPERATION_API_DB}
+      DATABASE_ROOT_USER: ${DATABASE_ROOT_USER}
+      DATABASE_ROOT_PWD: ${DATABASE_ROOT_PWD}
+      JWT_ISSUER: ${JWT_ISSUER}
+      KEYCLOAK_BACKEND_GATEWAY_CLIENT_ID: ${KEYCLOAK_BACKEND_GATEWAY_CLIENT_ID}
+      KEYCLOAK_ANGULAR_APP_CLIENT_ID: ${KEYCLOAK_ANGULAR_APP_CLIENT_ID}
+      OPERATION_TOPIC1_NAME: ${OPERATION_TOPIC1_NAME}
+      OPERATION_TOPIC2_NAME: ${OPERATION_TOPIC2_NAME}
+      KAFKA_TOPIC_RETENTION_DURATION: ${KAFKA_TOPIC_RETENTION_DURATION}
+      OPERATION_API_SERVER_PORT: ${OPERATION_API_SERVER_PORT}
+      SERVICE_REGISTRY_API_APP_NAME: ${SERVICE_REGISTRY_API_APP_NAME}
+      SERVICE_REGISTRY_API_SERVER_PORT: ${SERVICE_REGISTRY_API_SERVER_PORT}
+      ROUTE1_ID: ${ROUTE1_ID}
+      ROUTE1_URI: ${ROUTE1_URI}
+      CONTEXT_PATH1: ${CONTEXT_PATH1}
+      ROUTE2_ID: ${ROUTE2_ID}
+      ROUTE2_URI: ${ROUTE2_URI}
+      CONTEXT_PATH2: ${CONTEXT_PATH2}
+    depends_on:
+      bank-account-app-db-server:
+        condition: service_healthy
+      exalt-hexagonal-archi-kafka-keycloak-registry-eureka-server:
+        condition: service_healthy
+      kafka-server-1:
+        condition: service_healthy
+      kafka-server-2:
+        condition: service_healthy
+    networks:
+      - bank_acc_app_proxy_net
+    restart: always
+
+  exalt-hexagonal-archi-kafka-keycloak-bs-ms-notification-api:
+    container_name: ${NOTIFICATION_API_APP_NAME}
+    image: placidenduwayo1/${NOTIFICATION_API_APP_NAME}:${APPLICATION_TAG}
+    build:
+      context: ../../bank-account-app-back/exalt-hexagonal-archi-kafka-keycloak-bs-ms-notification-api
+      dockerfile: Dockerfile
+    ports:
+      - ${NOTIFICATION_API_SERVER_PORT}:${NOTIFICATION_API_SERVER_PORT}
+    networks:
+      - bank_acc_app_proxy_net
+    depends_on:
+      exalt-hexagonal-archi-kafka-keycloak-registry-eureka-server:
+        condition: service_healthy
+      kafka-server-1:
+        condition: service_healthy
+      kafka-server-2:
+        condition: service_healthy
+    restart: always
+    environment:
+      NOTIFICATION_API_APP_NAME: ${NOTIFICATION_API_APP_NAME}
+      #for Gmail server as mail sender provider
+      MAIL_SENDER_GMAIL_SERVER_HOST: ${MAIL_SENDER_GMAIL_SERVER_HOST}
+      MAIL_SENDER_GMAIL_SERVER_PORT: ${MAIL_SENDER_GMAIL_SERVER_PORT}
+      MAIL_SENDER_GMAIL_SERVER_USERNAME: ${MAIL_SENDER_GMAIL_SERVER_USERNAME}
+      MAIL_SENDER_GMAIL_SERVER_PASSWORD: ${MAIL_SENDER_GMAIL_SERVER_PASSWORD}
+      #for mail hog server as mail sender provider
+      NOTIFICATION_API_SERVER_PORT: ${NOTIFICATION_API_SERVER_PORT}
+      SERVICE_REGISTRY_API_APP_NAME: ${SERVICE_REGISTRY_API_APP_NAME}
+      SERVICE_REGISTRY_API_SERVER_PORT: ${SERVICE_REGISTRY_API_SERVER_PORT}
+      MAIL_SERVER_HOST_IP_ADDRESS: ${MAIL_SERVER_HOST_IP_ADDRESS}
+      MAIL_SERVER_HOST_PORT1: ${MAIL_SERVER_HOST_PORT1}
+      MAIL_SERVER_USERNAME: ${MAIL_SERVER_USERNAME}
+      MAIL_SERVER_PASSWORD: ${MAIL_SERVER_PASSWORD}
+      MAIL_SENDER_PROTOCOL: ${MAIL_SENDER_PROTOCOL}
+      # business microservices apis kafka topics
+      CUSTOMER_TOPIC_NAME: ${CUSTOMER_TOPIC_NAME}
+      ACCOUNT_TOPIC_NAME1: ${ACCOUNT_TOPIC_NAME1}
+      ACCOUNT_TOPIC_NAME2: ${ACCOUNT_TOPIC_NAME2}
+      OPERATION_TOPIC1_NAME: ${OPERATION_TOPIC1_NAME}
+      OPERATION_TOPIC2_NAME: ${OPERATION_TOPIC2_NAME}
+
+  # fronted application
+  exalt-hexagonal-archi-kafka-keycloak-frontend-app:
+    image: placidenduwayo1/${KEYCLOAK_ANGULAR_APP_CLIENT_ID}:${APPLICATION_TAG}
+    container_name: ${KEYCLOAK_ANGULAR_APP_CLIENT_ID}
+    build:
+      context: ../../bank-account-app-front
+      dockerfile: Dockerfile
+    ports:
+      - ${ANGULAR_APP_PORT}:${NGINX_ANGULAR_PORT}
+    networks:
+      - bank_acc_app_proxy_net
+    restart: always
+    environment:
+      KEYCLOAK_ANGULAR_APP_CLIENT_ID: ${KEYCLOAK_ANGULAR_APP_CLIENT_ID}
+      NGINX_ANGULAR_PORT: ${NGINX_ANGULAR_PORT}
+
+networks:
+  bank_acc_app_proxy_net:
+    driver: bridge
+    name: bank_account_app_net
+    ipam:
+      config:
+        - subnet: ${SUBNET}
+          gateway: ${GATEWAY}
+volumes:
+  bank-account-app-volume:
+    driver: local

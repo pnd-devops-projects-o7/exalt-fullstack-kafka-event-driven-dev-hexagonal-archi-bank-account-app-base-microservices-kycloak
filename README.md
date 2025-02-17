@@ -57,16 +57,16 @@ After connecting the **frontend-App** to the **Backend Microservices**, refering
     - oauth2 authentication & authorization are implemented to filter all requests towards this api
 - ```exalt-hexagonal-archi-kafka-keycloak-bs-ms-notification-api```  
     when a business microservice: customer-api, bank-account-api or operation-api produce an event into kafka topic:  
-    - ```exalt-hexagonal-archi-kafka-keycloak-bs-ms-notification-api``` send an email notification on **smtp-mail-notification-server**: MailHog docker container
+    - ```exalt-hexagonal-archi-kafka-keycloak-bs-ms-notification-api``` send an email notification using **smtp-mail-sender-server**: MailHog or **GMAIL-SERVER**
     - this api has no exposed endpoint
 
 Bank-Account-App being a microservices based, each business microservice uses its own **MySql** db to persist is data.
 
-## 1 api microservice transverse 
+## 2 api microservice transverse 
 - ```exalt-hexagonal-archi-kafka-keycloak-backend-gateway-oauth2-client``` working as **TokenRelay**
-    - this token relay is used before fronted is connected to backend
+    - this token relay is used when we want to authenticate clients like **Postman**, **Swagger-UI**, fronted is connected to backend
 - ```exalt-hexagonal-archi-kafka-keycloak-backend-gateway-service-proxy```:
-    - after frontend is connected to backend, we use this simple gateway-service-proxy just to route users' requests without security check
+    - when we connect public client (our angular application) is connected to backend, we use this simple gateway-service-proxy just to route users' requests without security check
 
 ## infrastructure kafka
 infrastructure kafka for persisting and distributing kafka events

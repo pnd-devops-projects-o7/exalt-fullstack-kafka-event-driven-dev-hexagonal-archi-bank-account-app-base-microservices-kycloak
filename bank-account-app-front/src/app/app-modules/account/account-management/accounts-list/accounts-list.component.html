@@ -62,28 +62,32 @@
                     </p>
                 </td>
                 <td>
-                    <span style="font-weight: bold; color: chocolate;" *ngIf="account.accountState==='CREATED'"> en
-                        cours d'activation</span>
+                    <span style="font-weight: bold; color: chocolate;"
+                        *ngIf="account.accountState==='CREATED'; else otherOp"> en
+                        cours d'activation ...</span>
 
-                    <p-button icon="pi pi-pencil" size="small" [rounded]="true" [text]="true" [severity]="severity"
-                        [pTooltip]="onGetAccountState(account.accountState)" [tooltipPosition]="tooltipPosition"
-                        (onClick)="onSwitchAccountStateEvent(account)" *ngIf="account.accountState!=='CREATED'" />
+                    <ng-template #otherOp>
+                        <p-button icon="pi pi-pencil" size="small" [rounded]="true" [text]="true" [severity]="severity"
+                            [pTooltip]="onGetAccountState(account.accountState)" [tooltipPosition]="tooltipPosition"
+                            (onClick)="onSwitchAccountStateEvent(account)" />
 
-                    <p-button icon="pi pi-window-maximize" size="small" [rounded]="true" [text]="true"
-                        [severity]="onSetOverdraftIRateIconSeverity(account.accountType)"
-                        [pTooltip]="onGetTooltip(account.accountType)" [tooltipPosition]="tooltipPosition"
-                        (onClick)="onOpenOverdraftOrInterestRateUpdateSidebarUI(account)"
-                        *ngIf="account.accountState==='ACTIVE'" />
+                        <p-button icon="pi pi-window-maximize" size="small" [rounded]="true" [text]="true"
+                            [severity]="onSetOverdraftIRateIconSeverity(account.accountType)"
+                            [pTooltip]="onGetTooltip(account.accountType)" [tooltipPosition]="tooltipPosition"
+                            (onClick)="onOpenOverdraftOrInterestRateUpdateSidebarUI(account)"
+                            *ngIf="account.accountState==='ACTIVE'" />
 
-                    <p-button icon="pi pi-window-maximize" size="small" [rounded]="true" [text]="true" severity="info"
-                        pTooltip="operation UI" [tooltipPosition]="tooltipPosition"
-                        (onClick)="onOpenUpdateBalanceFormUI(account)"
-                        *ngIf="account.accountType==='CURRENT' && account.accountState=='ACTIVE'" />
+                        <p-button icon="pi pi-window-maximize" size="small" [rounded]="true" [text]="true"
+                            severity="info" pTooltip="operation UI" [tooltipPosition]="tooltipPosition"
+                            (onClick)="onOpenUpdateBalanceFormUI(account)"
+                            *ngIf="account.accountType==='CURRENT' && account.accountState=='ACTIVE'" />
 
-                    <p-button icon="pi pi-window-maximize" size="small" [rounded]="true" [text]="true"
-                        [severity]="severity" pTooltip="transfer UI" [tooltipPosition]="tooltipPosition"
-                        (onClick)="onOpenCreateTransferFromAccountFormUI(account)"
-                        *ngIf="account.accountState=='ACTIVE'" />
+                        <p-button icon="pi pi-window-maximize" size="small" [rounded]="true" [text]="true"
+                            [severity]="severity" pTooltip="transfer UI" [tooltipPosition]="tooltipPosition"
+                            (onClick)="onOpenCreateTransferFromAccountFormUI(account)"
+                            *ngIf="account.accountState=='ACTIVE'" />
+                    </ng-template>
+
                 </td>
             </tr>
         </ng-template>
@@ -98,24 +102,25 @@
 <!-- a sidebar for updating account interest rate (for saving) or overdraft (for current)-->
 <p-sidebar [(visible)]="accountSidebarVisible" [position]="sidebarPosition" *ngIf="selectedAccount"
     [style]="{width:'fit-content'}">
-    <p-card header="{{tooltip}}">
+    <p-card [header]="tooltip">
         <form [formGroup]="overdraftIRateForm">
             <p-floatLabel>
                 <input type="text" pInputText formControlName="accountId" id="accountId"
                     [(ngModel)]="selectedAccount.accountId" />
-                    <label for="accountId">account id</label>
+                <label for="accountId">account id</label>
             </p-floatLabel>
             <br>
             <p-floatLabel>
-                
+
                 <input type="number" pInputText formControlName="overdraftIrate" id="overdraftIrate" />
-                <label for="overdraftIrate"><span> {{tooltip}} </span></label>
+                <label for="overdraftIrate">{{tooltip}}</label>
             </p-floatLabel>
             <br>
             <div class="buttons">
                 <p-button label="Update" [text]="true" [raised]="true" [disabled]="overdraftIRateForm.invalid"
                     (onClick)="onUpdateAccountOverdraftOrInterestRateEvent()" />&nbsp;
-                <p-button label="Cancel" [text]="true" [raised]="true" [severity]="severity" />
+                <p-button label="Cancel" [text]="true" [raised]="true" [severity]="severity"
+                    (onClick)="accountSidebarVisible=false" />
             </div>
         </form>
     </p-card>
@@ -130,9 +135,9 @@
             <p-floatLabel>
                 <input type="text" pInputText formControlName="accountId" id="accountId"
                     [(ngModel)]="selectedAccount.accountId" />
-                    <label for="accountId">account id</label>
+                <label for="accountId">account id</label>
             </p-floatLabel>
-            <br/>
+            <br />
             <div class="p-float-label">
                 <p-dropdown [options]="operationTypes" optionLabel="operationType"
                     placeholder="Select an operation type" formControlName="operationType" /><label
@@ -152,7 +157,8 @@
             <div class="buttons">
                 <p-button label="create" [text]="true" [raised]="true" [disabled]="operationRequestDtoForm.invalid"
                     (onClick)="onUpdateBalanceCurrentAccountEvent()" />&nbsp;
-                <p-button label="Cancel" [text]="true" [raised]="true" [severity]="severity" />
+                <p-button label="Cancel" [text]="true" [raised]="true" [severity]="severity"
+                    (onClick)="operationRequestDtoFormVisible=false" />
             </div>
         </form>
     </p-card>
@@ -169,26 +175,27 @@
                     [(ngModel)]="selectedAccount.accountId" />
                 <label for="originAccount">origin account</label>
             </p-floatLabel>
-            <br/>
+            <br />
             <p-floatLabel>
                 <input type="text" pInputText formControlName="destinationAccount" id="destinationAccount" />
                 <label for="destinationAccount">destination account</label>
             </p-floatLabel>
-            <br/>
+            <br />
             <p-floatLabel>
                 <input type="number" pInputText formControlName="transferAmount" id="transferAmount" />
                 <label for="transferAmount">amount</label>
             </p-floatLabel>
-            <br/>
+            <br />
             <p-floatLabel>
                 <input type="text" pInputText formControlName="description" id="description" />
                 <label for="description">description</label>
             </p-floatLabel>
-            <br/>
+            <br />
             <div class="buttons">
                 <p-button label="transfer" [text]="true" [raised]="true" [disabled]="transferRequestDtoForm.invalid"
                     (onClick)="onCreateTransferEvent()" />&nbsp;
-                <p-button label="Cancel" [text]="true" [raised]="true" [severity]="severity" />
+                <p-button label="Cancel" [text]="true" [raised]="true" [severity]="severity"
+                    (onClick)="transferRequestDtoFormVisible=false" />
             </div>
         </form>
     </p-card>

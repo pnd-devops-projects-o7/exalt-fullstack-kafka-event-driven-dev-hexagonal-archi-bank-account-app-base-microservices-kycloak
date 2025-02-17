@@ -17,13 +17,9 @@
 	<properties>
 		<java.version>21</java.version>
 		<spring-cloud.version>2024.0.0-RC1</spring-cloud.version>
+		<loki-lagback-appender.version>1.5.2</loki-lagback-appender.version>
 	</properties>
 	<dependencies>
-		<!--actuator for apis health checking-->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency>
 		<!--cloud gateway mvc-->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -53,6 +49,26 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webflux</artifactId>
+		</dependency>
+		<!--actuator for exposing metrics-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<!-- observability: zipkin for requests tracing -->
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-tracing-bridge-brave</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.zipkin.reporter2</groupId>
+			<artifactId>zipkin-reporter-brave</artifactId>
+		</dependency>
+		<!--observability: grafana/loki for logging-->
+		<dependency>
+			<groupId>com.github.loki4j</groupId>
+			<artifactId>loki-logback-appender</artifactId>
+			<version>${loki-lagback-appender.version}</version>
 		</dependency>
 
 		<dependency>

@@ -1,0 +1,2 @@
+import{jsxs as a,Fragment as n,jsx as r}from"react/jsx-runtime";import{a as c,Q as i,ct as s}from"./main-C047jAp3.js";const d=({secretRequired:l=!0,create:t=!0})=>{const{t:e}=c();return a(n,{children:[r(i,{name:"config.clientId",label:e("clientId"),labelIcon:e("clientIdHelp"),rules:{required:e("required")}}),r(s,{name:"config.clientSecret",label:e("clientSecret"),labelIcon:e("clientSecretHelp"),hasReveal:t,rules:{required:{value:l,message:e("required")}}})]})};export{d as C};
+//# sourceMappingURL=ClientIdSecret-D8YFRWLH.js.map

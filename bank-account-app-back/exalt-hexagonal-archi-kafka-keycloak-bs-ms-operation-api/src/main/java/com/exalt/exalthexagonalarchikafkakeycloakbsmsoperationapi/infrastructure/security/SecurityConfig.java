@@ -36,7 +36,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorization -> {
-                            authorization.requestMatchers("/swagger-ui/**", "/api-docs/**")
+                            authorization.requestMatchers(
+                                            "/swagger-ui/**",
+                                            "/api-docs/**",
+                                            "/actuator/**")
                                     .permitAll();
                             authorization.anyRequest().authenticated();
                         }
@@ -62,20 +65,21 @@ public class SecurityConfig {
 
             return new JwtAuthenticationToken(jwt, authorities, jwt.getClaim("preferred_username"));
         }
+
         @Value("${security.oauth2.converter.keycloak.backend-gateway-client-id}")
         private String backendGatewayClientId;
         @Value("${security.oauth2.converter.keycloak.public-angular-app-client-id}")
         private String publicAngularAppClientId;
+
         private Collection<GrantedAuthority> extractAuthorities(Jwt jwt) {
             Map<String, Object> resourceAccess = jwt.getClaim("resource_access");
             if (resourceAccess == null) {
                 return Set.of();
             }
             Map<String, Object> clientIdRoles = null;
-            if(resourceAccess.containsKey(publicAngularAppClientId)) {
+            if (resourceAccess.containsKey(publicAngularAppClientId)) {
                 clientIdRoles = (Map<String, Object>) resourceAccess.get(publicAngularAppClientId);
-            }
-            else if(resourceAccess.containsKey(backendGatewayClientId)) {
+            } else if (resourceAccess.containsKey(backendGatewayClientId)) {
                 clientIdRoles = (Map<String, Object>) resourceAccess.get(backendGatewayClientId);
             }
             if (clientIdRoles == null) {

@@ -5,12 +5,7 @@ import { routes } from './app.routes';
 import { KeycloakBearerInterceptor, KeycloakService } from 'keycloak-angular';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideAnimations} from '@angular/platform-browser/animations'
-import { environment } from '../environments/environment';
-
-function initializeKeycloak(keycloak: KeycloakService): () => Promise<any> {
-  return () =>
-    keycloak.init(environment.keycloackConfInit);
-}
+import { initializeKeycloak } from './shared/services/keycloak/keycloak-init.factory';
 
 export const appConfig: ApplicationConfig = {
   providers: [

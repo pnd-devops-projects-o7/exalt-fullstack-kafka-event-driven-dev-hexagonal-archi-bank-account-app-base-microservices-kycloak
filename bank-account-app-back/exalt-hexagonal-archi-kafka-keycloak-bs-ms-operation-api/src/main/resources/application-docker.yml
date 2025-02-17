@@ -51,31 +51,36 @@ kafka:
 
 server:
   port: ${OPERATION_API_SERVER_PORT}
-# atcuator config, to be used by K8s for healthcheck
+
+# actuator for exposing metrics
 management:
   endpoints:
     web:
       exposure:
-        include: health
+        include: prometheus, metrics, info, health, shutdown, beans
   endpoint:
     health:
       show-components: always
       probes:
         enabled: true # enable /actuator/health/liveness and /actuator/health/readiness for K8s
+      show-details: always
   health:
     livenessstate:
       enabled: true
     readinessstate:
       enabled: true
+  # zipkin
+  zipkin:
+    tracing:
+      endpoint: http://grafana-zipkin-traces-distributor:9411/api/v2/spans
 
-# eureka server for microservices registration (for testing, it will be removed when deploying into k8s)
+# the url to the registration service
 eureka:
   client:
     service-url:
       defaultZone: http://${SERVICE_REGISTRY_API_APP_NAME}:${SERVICE_REGISTRY_API_SERVER_PORT}/eureka/
 
-# remote customer
-
+# remote clients needed by operation microservice
 remote-client:
   client1:
     name: ${ROUTE1_ID}

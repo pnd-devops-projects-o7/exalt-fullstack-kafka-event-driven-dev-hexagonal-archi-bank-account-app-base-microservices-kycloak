@@ -1,4 +1,4 @@
-import { KeycloakOptions } from "keycloak-angular";
+import { KeycloakOptions } from "keycloak-angular"
 
 // The list of file replacements can be found in `angular.json`.
 const keycloakInitOptions: KeycloakOptions = {

@@ -1,0 +1,36 @@
+global:
+  scrape_interval: 10s
+  evaluation_interval: 10s
+
+scrape_configs:
+  - job_name: 'bs-ms-bank-account-api'
+    scrape_interval: 5s
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['exalt-hexagonal-archi-kafka-keycloak-bs-ms-bank-account-api:8281']
+        labels:
+          application: 'bank account microservice api'
+
+  - job_name: 'bs-ms-customer-api'
+    scrape_interval: 5s
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['exalt-hexagonal-archi-kafka-keycloak-bs-ms-customer-api:8282']
+        labels:
+          application: 'customer microservice api'
+
+  - job_name: 'bs-ms-operation-api'
+    scrape_interval: 5s
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['exalt-hexagonal-archi-kafka-keycloak-bs-ms-operation-api:8283']
+        labels:
+          application: 'operation microservice api'
+
+  - job_name: 'bs-ms-notification-api'
+    scrape_interval: 5s
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['exalt-hexagonal-archi-kafka-keycloak-bs-ms-notification-api:8284']
+        labels:
+          application: 'notification microservice api'

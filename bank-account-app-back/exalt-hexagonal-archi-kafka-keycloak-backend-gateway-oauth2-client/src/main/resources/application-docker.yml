@@ -53,12 +53,12 @@ spring:
           predicates:
             - Path=${ROUTE4_PREDICATE}
 
-# actuator for health check
+# actuator for exposing metrics
 management:
   endpoints:
     web:
       exposure:
-        include: health
+        include: prometheus, metrics, info, health, shutdown, beans
   endpoint:
     health:
       show-components: always
@@ -69,7 +69,11 @@ management:
       enabled: true
     readinessstate:
       enabled: true
-
+  # zipkin
+  zipkin:
+    tracing:
+      endpoint: http://grafana-zipkin-traces-distributor:9411/api/v2/spans
+# url to registration server
 eureka:
   client:
     service-url:
