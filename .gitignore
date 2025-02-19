@@ -1,6 +1,8 @@
 .idea
 **/**/src/main/resources/*-local.yml
-keycloak-auth-certificate/signing-key.key
-keycloak-auth-certificate/certificate-signing-request.csr
-stack-docker-compose/.env
+#keycloak-auth-certificate/signing-key.key
+#keycloak-auth-certificate/certificate-signing-request.csr
+#stack-docker-compose/bank-acc-app-stack/.env
+#stack-docker-compose/grafana-stack/.env
 works-sql-requests
+pnd_realm.json
